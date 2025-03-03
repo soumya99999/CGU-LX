@@ -20,7 +20,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
-                <Route path="/buy" element={<Buy />} />  {/* Removed ProtectedRoute */}
+                <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />  
                 <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
             </Routes>
             <Footer />
