@@ -9,13 +9,9 @@ const Login = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // 🔥 Check if user is already logged in
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      navigate("/"); // Redirect to home if already logged in
-    }
-  }, [navigate]);
+
+  
+  
 
   const handleGoogleSignIn = async () => {
     setError("");

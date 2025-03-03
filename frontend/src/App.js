@@ -16,9 +16,10 @@ function App() {
         <div className="app-content">
             <Navbar />
             <Routes>
-                <Route path="/" element={<Home />} />
+                
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
                 <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />  
                 <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />

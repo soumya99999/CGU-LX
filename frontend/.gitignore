@@ -139,3 +139,5 @@ yarn-error.log*
 
 
 
+backend/config/firebaseAdminConfig.json
+frontend/src/firebase/firebaseConfig.js

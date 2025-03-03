@@ -45,12 +45,10 @@ const Sell = () => {
             alert("Please fill in all fields and upload at least one image.");
             return;
         }
-    
+
         try {
-            console.log("Uploading images to Firebase...");
             const imageUrls = await uploadImagesToFirebase(product.images);
-            console.log("Image URLs:", imageUrls);
-    
+
             const productData = {
                 name: product.name,
                 price: product.price,
@@ -58,29 +56,25 @@ const Sell = () => {
                 address: product.address,
                 images: imageUrls,
             };
-    
-            console.log("Sending data to API:", productData);
+
             const response = await fetch("/api/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(productData),
             });
-    
+
             if (response.ok) {
                 alert("Product listed successfully!");
                 setProduct({ name: "", price: "", description: "", address: "", images: [] });
                 setImagePreviews([]);
             } else {
-                const errorText = await response.text();
-                console.error("API Response Error:", errorText);
-                alert("Error listing product (API error)");
+                alert("Error listing product 1");
             }
         } catch (error) {
             console.error("Error submitting product:", error);
-            alert("Error listing product (Check console for details)");
+            alert("Error listing product 2");
         }
     };
-    
 
     return (
         <div className="container mx-auto p-6">
