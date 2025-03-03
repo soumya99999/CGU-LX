@@ -53,7 +53,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Google Sign-In Error:", error.message);
-      setError("Google Sign-In failed.");
+      setError("Google Sign-In failed1.");
     } finally {
       setLoading(false);
     }
