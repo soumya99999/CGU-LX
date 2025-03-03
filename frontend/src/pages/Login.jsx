@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { auth, googleProvider } from "../firebase/firebaseConfig";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -6,16 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
-  // 🔥 Check if user is already logged in
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      navigate("/"); // Redirect to home if already logged in
-    }
-  }, [navigate]);
 
   const handleGoogleSignIn = async () => {
     setError("");
@@ -38,16 +29,18 @@ const Login = () => {
       // Send login request to backend with token
       const response = await fetch("http://localhost:5000/api/auth/google-login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: idToken }),
+        headers: { 
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ token: idToken }), // ✅ Send token in body
       });
+      
+      
 
       const data = await response.json();
-      if (response.ok) {
-        console.log("✅ User logged in successfully!");
-        localStorage.setItem("user", JSON.stringify(data.user)); // 🔥 Store user data
-        setUser(data.user);
-        navigate("/"); // 🔀 Redirect to home
+      if (data.success) {
+        console.log("User logged in successfully!");
+        navigate("/"); // Redirect to home page
       } else {
         setError(data.message || "Login failed.");
       }
@@ -66,16 +59,13 @@ const Login = () => {
 
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* 🔥 Hide button if user is already logged in */}
-        {!user && (
-          <button
-            onClick={handleGoogleSignIn}
-            className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login with Google"}
-          </button>
-        )}
+        <button
+          onClick={handleGoogleSignIn}
+          className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login with Google"}
+        </button>
       </div>
     </div>
   );

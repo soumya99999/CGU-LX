@@ -57,5 +57,7 @@ docker-compose.override.yml
 # Ignore generated API documentation
 docs/_site/
 docs/api/
+backend/config/firebaseAdminConfig.json
+frontend/src/firebase/firebaseConfig.js
 
-firebaseConfig.js
+
