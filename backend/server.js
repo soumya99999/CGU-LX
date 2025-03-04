@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
-import { sendOtp } from "./utils/otpService.js"; // Import OTP service
+
 
 // Load environment variables
 dotenv.config();
@@ -27,29 +27,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
-// OTP Route (WhatsApp OTP via Twilio)
-app.post("/api/otp", async (req, res) => {
-  const { phoneNumber } = req.body;
 
-  if (!phoneNumber) {
-    return res.status(400).json({ message: "Phone number is required" });
-  }
-
-  const otp = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit OTP
-
-  try {
-    const response = await sendOtp(phoneNumber, otp.toString());
-
-    if (response.success) {
-      return res.status(200).json({ message: "OTP sent successfully", otp });
-    } else {
-      return res.status(500).json({ message: "Failed to send OTP", error: response.error });
-    }
-  } catch (error) {
-    console.error("Error sending OTP:", error);
-    return res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-});
 
 // Connect to MongoDB
 const connectDB = async () => {
