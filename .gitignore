@@ -61,3 +61,8 @@ backend/config/firebaseAdminConfig.json
 frontend/src/firebase/firebaseConfig.js
 
 
+<<<<<<< HEAD
+backend/config/firebaseAdminConfig.json
+frontend/src/firebase/firebaseConfig.js
+=======
+>>>>>>> e178c133daf351e7879851bf08b3c90c3b5e0dad
