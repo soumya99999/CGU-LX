@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import ProductDetails from "../components/ProductDetails";
 
 const Buy = () => {
     // Dummy product data (replace with API data)
@@ -26,7 +27,9 @@ const Buy = () => {
                     </div>
                 ))}
             </div>
+
         </div>
+        
     );
 };
 
