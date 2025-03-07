@@ -10,8 +10,8 @@ import Home from "./pages/Home";
 import Sell from "./pages/Sell";
 import Buy from "./pages/Buy";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import Register from "./pages/Register";
-import UserProfile from "./components/UserProfile";
 import ProductList from "./components/ProductList";
 import ProductDetails from "./components/ProductDetails";
 
@@ -35,7 +35,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
                 <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />  
-                <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/" element={<ProductList products={products} />} />
                 <Route path="/product/:id" element={<ProductDetails products={products} />} />
             </Routes>

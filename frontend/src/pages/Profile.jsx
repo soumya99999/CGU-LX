@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Pencil } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const [user, setUser] = useState({
@@ -33,14 +34,11 @@ const Profile = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("Fetched Profile Data:", data);
-        if (data && Object.keys(data).length > 0) {
-          setUser({
-            ...data,
-            profilePicture: data.profilePicture || getDiceBearAvatar(data.email),
-          });
-          setEditedUser(data);
-        }
+        setUser({
+          ...data,
+          profilePicture: data.profilePicture || getDiceBearAvatar(data.email),
+        });
+        setEditedUser(data);
       } catch (error) {
         console.error("Error fetching profile:", error.response?.data || error.message);
         navigate("/login");
@@ -64,10 +62,7 @@ const Profile = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put("http://localhost:5000/api/auth/profile", editedUser, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       setUser(editedUser);
@@ -75,33 +70,41 @@ const Profile = () => {
       setIsEditing(false);
     } catch (error) {
       setMessage("Error updating profile.");
-      console.error("Profile update error:", error.response?.data || error.message);
     }
   };
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-4">Profile</h2>
-        {message && <p className="text-center text-green-500 mb-4">{message}</p>}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-300 to-purple-300 p-6">
+      <div className="bg-white bg-opacity-90 p-8 rounded-xl shadow-xl w-full max-w-md backdrop-blur-md relative transition-all hover:scale-105">
+        
+        {/* Welcome Message */}
+        <h1 className="text-2xl font-semibold text-center text-gray-700 mb-2">
+          Welcome to your profile!
+        </h1>
+
+        {/* Greeting */}
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          Hi, {user.name || "Guest"}! 👋
+        </h2>
+        <p className="text-center text-gray-600 mb-4 italic">{message}</p>
 
         {/* Profile Picture */}
         <div className="flex flex-col items-center mb-4">
           <img
             src={user.profilePicture || getDiceBearAvatar(user.email)}
             alt="Profile"
-            className="w-24 h-24 rounded-full shadow-md border-2 border-gray-300"
+            className="w-28 h-28 rounded-full shadow-lg border-4 border-white hover:scale-110 transition-transform"
           />
         </div>
 
-        {/* Profile Information */}
+        {/* Profile Info */}
         <div className="space-y-3">
           {["name", "phone", "course", "semester"].map((field) => (
-            <div key={field} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm">
+            <div key={field} className="flex items-center justify-between bg-gray-100 p-3 rounded-lg shadow-sm transition-all hover:bg-gray-200">
               <span className="text-gray-700 font-medium capitalize">{field}:</span>
-              <span className="text-gray-900">{user[field] || "N/A"}</span>
+              <span className="text-gray-900">{user[field] || "Not provided"}</span>
               <button onClick={() => setIsEditing(true)} className="text-blue-500 hover:text-blue-700">
                 <Pencil size={18} />
               </button>
@@ -110,10 +113,10 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Modal for Editing Profile */}
+      {/* Edit Modal */}
       {isEditing && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Edit Profile</h3>
 
             <form onSubmit={handleUpdate} className="space-y-4">
@@ -152,11 +155,10 @@ const Profile = () => {
   );
 };
 
-/** 🐣🐰 Generate Cute Avatar (Adventurer or Micah) */
+/** 🐣 Generate Cute Avatar */
 const getDiceBearAvatar = (email) => {
   const seed = email ? encodeURIComponent(email) : "default";
-  const avatarStyle = Math.random() < 0.5 ? "adventurer" : "micah"; // Cute avatar styles
-  return `https://api.dicebear.com/7.x/${avatarStyle}/svg?seed=${seed}&backgroundColor=ffd5dc,d1d4f9,c0aede&radius=50`;
+  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=ffd5dc,d1d4f9,c0aede&radius=50`;
 };
 
 export default Profile;
