@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { onAuthStateChanged, signInWithPopup, signOut, getIdToken } from "firebase/auth";
+import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebaseConfig";
 
 export const AuthContext = createContext();
@@ -14,20 +14,21 @@ export const AuthProvider = ({ children }) => {
                 try {
                     const token = await currentUser.getIdToken();
                     console.log("📤 Sending Token:", token);
-                     // Get Firebase ID token
 
                     const res = await fetch("http://localhost:5000/api/auth/google-login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ token }),
                     });
-                    console.log("📤 Sending Token:", token);
 
                     const data = await res.json();
                     if (res.ok) {
-                        setUser(data.user); // Store user from backend response
+                        console.log("✅ Backend Login Success:", data);
+                        localStorage.setItem("token", token);
+                        localStorage.setItem("user", JSON.stringify(data.user));
+                        setUser(data.user);
                     } else {
-                        alert(data.message); // Show error if login fails
+                        console.error("🚨 Backend Login Failed:", data);
                         await logout();
                     }
                 } catch (error) {
@@ -44,18 +45,22 @@ export const AuthProvider = ({ children }) => {
 
     const signInWithGoogle = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
+            const result = await signInWithPopup(auth, googleProvider);
+            return result; // ✅ Ensure we return the result
         } catch (error) {
-            console.error("Google Sign-In Error:", error.message);
+            console.error("🚨 Google Sign-In Error:", error);
+            return null; // Return null if sign-in fails
         }
     };
 
     const logout = async () => {
         try {
             await signOut(auth);
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
             setUser(null);
         } catch (error) {
-            console.error("Logout Error:", error.message);
+            console.error("Logout Error:", error);
         }
     };
 
@@ -69,4 +74,3 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
     return useContext(AuthContext);
 };
-

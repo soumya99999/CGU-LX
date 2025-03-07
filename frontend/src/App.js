@@ -9,7 +9,8 @@ import Sell from "./pages/Sell";
 import Buy from "./pages/Buy";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import UserProfile from "./components/UserProfile";
+import Profile from "./pages/Profile";
+
 
 function App() {
     return (
@@ -22,7 +23,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
                 <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />  
-                <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             </Routes>
             <Footer />
         </div>
