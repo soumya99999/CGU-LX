@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { onAuthStateChanged, signInWithPopup, signOut, getIdToken } from "firebase/auth";
+import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebaseConfig";
 
 export const AuthContext = createContext();
@@ -12,23 +12,21 @@ export const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 try {
-                    const token = await currentUser.getIdToken();
+                    const token = await currentUser.getIdToken(); // Get Firebase ID token
                     console.log("📤 Sending Token:", token);
-                     // Get Firebase ID token
-
+    
                     const res = await fetch("http://localhost:5000/api/auth/google-login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ token }),
                     });
-                    console.log("📤 Sending Token:", token);
-
+    
                     const data = await res.json();
                     if (res.ok) {
                         setUser(data.user); // Store user from backend response
                     } else {
-                        alert(data.message); // Show error if login fails
-                        await logout();
+                        console.error("Login Failed:", data.message);
+                        await logout();  // Ensure logout is awaited properly
                     }
                 } catch (error) {
                     console.error("Auth Error:", error);
@@ -38,9 +36,10 @@ export const AuthProvider = ({ children }) => {
             }
             setLoading(false);
         });
-
+    
         return () => unsubscribe();
     }, []);
+    
 
     const signInWithGoogle = async () => {
         try {

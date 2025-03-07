@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 
 const UserProfile = () => {

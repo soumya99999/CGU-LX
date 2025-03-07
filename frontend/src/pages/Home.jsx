@@ -1,6 +1,5 @@
 import React from "react";
 import ProductList from "../components/ProductList";
-import Carousel from "../components/Carousel";
 import EarlyBirdCarousel from "../components/EarlyBirdCarousel";
 
 const products = [
