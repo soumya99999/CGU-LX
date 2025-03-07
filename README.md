@@ -31,8 +31,6 @@ frontend/
 │── .gitignore
 │── README.md
 
-
-
 backend/
 │── config/
 │   ├── db.js                # MongoDB connection setup
