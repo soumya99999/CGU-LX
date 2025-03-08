@@ -1,10 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-<<<<<<< HEAD
+
 import cloudinary from "../config/cloudinary.js"; // Ensure this path is correct
 
-// Configure Cloudinary Storage
-=======
 import multer from "multer";
 
 // Configure Cloudinary with environment variables
@@ -21,7 +19,6 @@ console.log("Cloudinary Config:", {
 });
 
 // Set up Cloudinary storage for Multer
->>>>>>> c4114f99194437ff9ad2e33db83c366dba76bd81
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -31,10 +28,7 @@ const storage = new CloudinaryStorage({
   },
 });
 
-<<<<<<< HEAD
 // Initialize Multer with Cloudinary Storage
-=======
->>>>>>> c4114f99194437ff9ad2e33db83c366dba76bd81
 const upload = multer({ storage });
 
 export default upload;

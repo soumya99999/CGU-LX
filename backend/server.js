@@ -16,7 +16,7 @@ app.use(cors({ origin: "http://localhost:3000" })); // Adjust the origin as need
 // Middleware setup
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true }));
-<<<<<<< HEAD
+
 app.use(cors({
   origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT"], // Added "PUT" here
@@ -24,7 +24,6 @@ app.use(cors({
 }));
 
 
-=======
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -32,7 +31,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
->>>>>>> c4114f99194437ff9ad2e33db83c366dba76bd81
 
 // Routes setup
 app.use("/api/auth", authRoutes);

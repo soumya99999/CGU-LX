@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const Sell = () => {
-<<<<<<< HEAD
+
     const [product, setProduct] = useState({
         name: "",
         price: "",
@@ -18,7 +18,7 @@ const Sell = () => {
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files).slice(0, 5);
         setImages(files);
-=======
+
   const [product, setProduct] = useState({
     name: "",
     price: "",
@@ -36,7 +36,6 @@ const Sell = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files).slice(0, 5); // Allow up to 5 images
     setImages(files);
->>>>>>> c4114f99194437ff9ad2e33db83c366dba76bd81
 
     const previews = files.map((file) => URL.createObjectURL(file));
     setImagePreviews(previews);
@@ -89,7 +88,6 @@ const Sell = () => {
         <label className="block mb-2 font-semibold">Product Name:</label>
         <input type="text" name="name" value={product.name} onChange={handleChange} className="w-full border px-3 py-2 rounded" required />
 
-<<<<<<< HEAD
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -161,7 +159,6 @@ const Sell = () => {
                     List Product
                 </button>
             </form>
-=======
         <label className="block mt-4 mb-2 font-semibold">Price ($):</label>
         <input type="number" name="price" value={product.price} onChange={handleChange} className="w-full border px-3 py-2 rounded" required />
 
@@ -178,7 +175,7 @@ const Sell = () => {
           {imagePreviews.map((src, index) => (
             <img key={index} src={src} alt="Preview" className="w-20 h-20 object-cover rounded" />
           ))}
->>>>>>> c4114f99194437ff9ad2e33db83c366dba76bd81
+
         </div>
 
         <button type="submit" disabled={loading} className="mt-5 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700">

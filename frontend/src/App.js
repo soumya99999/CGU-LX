@@ -12,7 +12,7 @@ import Buy from "./pages/Buy";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
-<<<<<<< HEAD
+
 import ProductList from "./components/ProductList";
 import ProductDetails from "./components/ProductDetails";
 
@@ -43,11 +43,17 @@ function App() {
             <Footer />
         </div>
     );
-=======
+
 import UserProfile from "./components/UserProfile";
 import Cart from "./pages/Cart"; // Add this import
 
 function App() {
+
+import UserProfile from "./components/UserProfile";
+import Cart from "./pages/Cart"; // Add this import
+
+function App() {
+
   return (
     <div className="app-content">
       <Navbar />
@@ -63,7 +69,7 @@ function App() {
       <Footer />
     </div>
   );
->>>>>>> c4114f99194437ff9ad2e33db83c366dba76bd81
+
 }
 
 export default App;

@@ -1,8 +1,8 @@
-<<<<<<< HEAD
+
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import ProductDetails from "../components/ProductDetails";
-=======
+
 import { useEffect, useState, useContext } from "react";
 import { Star, ShoppingCart, Heart, Share2, Shield, Truck, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from 'ui/card';
@@ -13,7 +13,7 @@ import { Badge } from 'ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from 'ui/dialog';
 import { CartContext } from '../contexts/CartContext'; // Adjust path as needed
 import { Toaster } from 'ui/toaster'; // Assuming you have this component
->>>>>>> c4114f99194437ff9ad2e33db83c366dba76bd81
+
 
 const Buy = () => {
   const [products, setProducts] = useState([]);
@@ -49,7 +49,6 @@ const Buy = () => {
 
   if (error) {
     return (
-<<<<<<< HEAD
         <div className="container mx-auto p-6">
             <h1 className="text-3xl font-bold text-center text-blue-600">Available Products</h1>
             
@@ -68,12 +67,11 @@ const Buy = () => {
 
         </div>
         
-=======
+
       <Alert variant="destructive" className="mx-auto max-w-lg mt-10">
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
->>>>>>> c4114f99194437ff9ad2e33db83c366dba76bd81
     );
   }
 
