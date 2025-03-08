@@ -12,15 +12,15 @@ export const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 try {
-                    const token = await currentUser.getIdToken();
+                    const token = await currentUser.getIdToken(); // Get Firebase ID token
                     console.log("📤 Sending Token:", token);
-
+    
                     const res = await fetch("http://localhost:5000/api/auth/google-login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ token }),
                     });
-
+    
                     const data = await res.json();
                     if (res.ok) {
                         console.log("✅ Backend Login Success:", data);
@@ -28,8 +28,8 @@ export const AuthProvider = ({ children }) => {
                         localStorage.setItem("user", JSON.stringify(data.user));
                         setUser(data.user);
                     } else {
-                        console.error("🚨 Backend Login Failed:", data);
-                        await logout();
+                        console.error("Login Failed:", data.message);
+                        await logout();  // Ensure logout is awaited properly
                     }
                 } catch (error) {
                     console.error("Auth Error:", error);
@@ -39,9 +39,10 @@ export const AuthProvider = ({ children }) => {
             }
             setLoading(false);
         });
-
+    
         return () => unsubscribe();
     }, []);
+    
 
     const signInWithGoogle = async () => {
         try {

@@ -54,15 +54,17 @@ coverage/
 .dockerignore
 docker-compose.override.yml
 
-# Ignore generated API documentation
+
+# Ignore Firebase Admin Config
+firebaseAdminConfig.json
+firebaseConfig.js
+
+# Ignore API Documentation
 docs/_site/
 docs/api/
-backend/config/firebaseAdminConfig.json
-frontend/src/firebase/firebaseConfig.js
 
 
-<<<<<<< HEAD
-backend/config/firebaseAdminConfig.json
-frontend/src/firebase/firebaseConfig.js
-=======
->>>>>>> e178c133daf351e7879851bf08b3c90c3b5e0dad
+
+
+
+
