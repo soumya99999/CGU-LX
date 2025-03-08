@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import React, { useState } from "react";
+
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -8,6 +10,7 @@ import Home from "./pages/Home";
 import Sell from "./pages/Sell";
 import Buy from "./pages/Buy";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import UserProfile from "./components/UserProfile";
 import Cart from "./pages/Cart"; // Add this import

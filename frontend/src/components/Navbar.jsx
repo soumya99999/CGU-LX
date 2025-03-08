@@ -4,7 +4,17 @@ import { AuthContext } from "../contexts/AuthContext";
 import { CartContext } from "../contexts/CartContext"; // Add this import
 import { auth } from "../firebase/firebaseConfig";
 import { signOut } from "firebase/auth";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
+// Button variants for hover and tap effects.
+const buttonVariants = {
+  hover: {
+    scale: 1.05,
+    boxShadow: "0px 0px 8px rgba(0,0,0,0.3)",
+    transition: { duration: 0.3 },
+  },
+  tap: { scale: 0.95 },
+};
 
 const Navbar = () => {
   const { user } = useContext(AuthContext);

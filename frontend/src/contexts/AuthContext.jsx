@@ -23,7 +23,10 @@ export const AuthProvider = ({ children }) => {
     
                     const data = await res.json();
                     if (res.ok) {
-                        setUser(data.user); // Store user from backend response
+                        console.log("✅ Backend Login Success:", data);
+                        localStorage.setItem("token", token);
+                        localStorage.setItem("user", JSON.stringify(data.user));
+                        setUser(data.user);
                     } else {
                         console.error("Login Failed:", data.message);
                         await logout();  // Ensure logout is awaited properly
@@ -43,18 +46,22 @@ export const AuthProvider = ({ children }) => {
 
     const signInWithGoogle = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
+            const result = await signInWithPopup(auth, googleProvider);
+            return result; // ✅ Ensure we return the result
         } catch (error) {
-            console.error("Google Sign-In Error:", error.message);
+            console.error("🚨 Google Sign-In Error:", error);
+            return null; // Return null if sign-in fails
         }
     };
 
     const logout = async () => {
         try {
             await signOut(auth);
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
             setUser(null);
         } catch (error) {
-            console.error("Logout Error:", error.message);
+            console.error("Logout Error:", error);
         }
     };
 
@@ -68,4 +75,3 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
     return useContext(AuthContext);
 };
-

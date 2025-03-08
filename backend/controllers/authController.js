@@ -1,64 +1,62 @@
-import User from "../models/User.js";
-import admin from "firebase-admin";
-import fs from "fs";
+import admin from "../config/firebase-config.js";
+import User from "../models/User.js"; // Import the User model
 
-// Initialize Firebase Admin SDK
-const serviceAccount = JSON.parse(fs.readFileSync("./config/firebaseAdminConfig.json", "utf-8"));
-
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
-}
-
-const googleLogin = async (req, res) => {
-    console.log("📩 Received Request on /google-login");
-    console.log("📦 Full Request Body:", req.body);
-
-    // Extract token from body or headers
-    const token = req.body.token || req.headers.authorization?.split(" ")[1];
-
-    console.log("🔑 Extracted Token:", token);
-
-    if (!token) {
-        return res.status(400).json({ message: "Token is missing" });
-    }
+export const googleLogin = async (req, res) => {
+    const { token } = req.body;
 
     try {
-        // Verify the Firebase token
         const decodedToken = await admin.auth().verifyIdToken(token);
-        console.log("✅ Decoded Token:", decodedToken);
-        
-        const { name, email, picture, phone_number } = decodedToken;
-
-        // Ensure only CGU emails are allowed
-        if (!email.endsWith("@cgu-odisha.ac.in")) {
-            return res.status(403).json({ message: "Only CGU college emails are allowed." });
-        }
-
-        let user = await User.findOne({ email });
-
-        if (!user) {
-            user = new User({
-                name,
-                email,
-                avatar: picture,
-                phoneNumber: phone_number || "Not provided",
-            });
-            await user.save();
-        } else {
-            if (!user.phoneNumber && phone_number) {
-                user.phoneNumber = phone_number;
-                await user.save();
-            }
-        }
-        res.status(200).json({ success: true, message: "Login successful", user });
-
+        return res.json({ token, user: decodedToken });
     } catch (error) {
-        console.error("Google Login Error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+        return res.status(401).json({ message: "Invalid token" });
     }
 };
 
+export const getProfile = async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 
-export default googleLogin;
+    try {
+        const user = await User.findOne({ firebaseUID: req.user.id }); // Find user in DB
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.json({
+            name: user.name || "",
+            phone: user.phone || "",
+            course: user.course || "",
+            semester: user.semester || "",
+            email: user.email || "",
+            profilePicture: user.profilePicture || "",
+        });
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
+export const updateProfile = async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const updatedUser = await User.findOneAndUpdate(
+            { firebaseUID: req.user.id },  // Ensure this matches your DB field
+            { $set: req.body },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.json({ message: "Profile updated successfully!", user: updatedUser });
+    } catch (error) {
+        console.error("Profile update error:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
+
