@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ToastProvider, ToastViewport, Toast, ToastTitle, ToastDescription, ToastClose } from './toast';
-import { useToast } from '../hooks/use-toast'; // Adjust path
+import { useToast } from '../hooks/use-toast';
 
 export function Toaster() {
   const { toasts } = useToast();

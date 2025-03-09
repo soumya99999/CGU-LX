@@ -66,9 +66,10 @@ export function CartProvider({ children }) {
       }).catch(() => {
         navigator.clipboard.writeText(shareMessage + "\n" + window.location.href);
         toast({
-          title: "Link Copied",
-          description: "Product link has been copied to clipboard.",
+          title: "Added to Cart",
+          description: `${product.name} has been added to your cart.`,
         });
+        
       });
     } else {
       navigator.clipboard.writeText(shareMessage + "\n" + window.location.href);

@@ -1,19 +1,13 @@
-
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import ProductDetails from "../components/ProductDetails";
-
 import { useEffect, useState, useContext } from "react";
 import { Star, ShoppingCart, Heart, Share2, Shield, Truck, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from 'ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from 'ui/avatar';
-import { Button } from 'ui/button';
-import { Alert, AlertTitle, AlertDescription } from 'ui/alert';
-import { Badge } from 'ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from 'ui/dialog';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../ui/card';
+import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
+import { Button } from '../ui/button';
+import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
+import { Badge } from '../ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { CartContext } from '../contexts/CartContext'; // Adjust path as needed
-import { Toaster } from 'ui/toaster'; // Assuming you have this component
-
+import { Toaster } from '../ui/toaster'; // Assuming you have this component
 
 const Buy = () => {
   const [products, setProducts] = useState([]);
@@ -49,25 +43,6 @@ const Buy = () => {
 
   if (error) {
     return (
-        <div className="container mx-auto p-6">
-            <h1 className="text-3xl font-bold text-center text-blue-600">Available Products</h1>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-                {products.map((product) => (
-                    <div key={product.id} className="bg-white shadow-lg rounded-lg p-4">
-                        <img className="w-full h-40 object-cover rounded" src={product.image} alt={product.name} />
-                        <h3 className="text-lg font-bold mt-2">{product.name}</h3>
-                        <p className="text-gray-600">${product.price}</p>
-                        <Link to={`/product/${product.id}`} className="block mt-3 bg-green-500 text-white text-center py-2 rounded hover:bg-green-700">
-                            View Details
-                        </Link>
-                    </div>
-                ))}
-            </div>
-
-        </div>
-        
-
       <Alert variant="destructive" className="mx-auto max-w-lg mt-10">
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
@@ -178,10 +153,11 @@ const Buy = () => {
               <div className="flex items-center gap-2"><RotateCcw className="w-4 h-4" />7 Day Return</div>
             </div>
             <Button 
-              className="w-full bg-blue-600 hover:bg-blue-700 transition-colors"
+              className="w-full bg-blue-600 hover:scale-105 hover:bg-blue-700  transition-transform duration-200"
+
               onClick={() => addToCart(product)}
             >
-              <ShoppingCart className="h-5 w-5 mr-2" />
+              <ShoppingCart className="h-5 w-5 mr-2 " />
               Add to Cart
             </Button>
           </div>
