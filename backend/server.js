@@ -3,19 +3,17 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
-import productRoutes from "./routes/productRoutes.js"; // Fixed typo from your note
+import productRoutes from "./routes/productRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 
-// Load environment variables
 dotenv.config();
 
-// Initialize Express app
 const app = express();
-app.use(cors({ origin: "http://localhost:3000" })); // Adjust the origin as needed
 
-// Middleware setup
-app.use(express.json()); // Parse JSON request bodies
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json());  // Parses incoming JSON
+app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
+
+
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -24,14 +22,11 @@ app.use(
   })
 );
 
-// Routes setup
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
-// Error handling middleware (must be after routes)
 app.use(errorHandler);
 
-// Connect to MongoDB
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
@@ -44,7 +39,6 @@ const connectDB = async () => {
   }
 };
 
-// Start server after connecting to DB
 const startServer = async () => {
   await connectDB();
 
@@ -54,5 +48,4 @@ const startServer = async () => {
   });
 };
 
-// Run the server
 startServer();

@@ -1,74 +1,55 @@
-import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { auth, googleProvider } from "../firebase/firebaseConfig";
+import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Login = () => {
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const { signInWithGoogle, user } = useAuth();
     const navigate = useNavigate();
 
-    const handleGoogleSignIn = async () => {
+    const handleGoogleLogin = async () => {
         setError("");
-        setLoading(true);
-
         try {
-            const result = await signInWithGoogle();
-            if (!result) {
-                setError("Google Sign-In failed. Please try again.");
-                setLoading(false);
-                return;
-            }
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            const idToken = await user.getIdToken(); // ✅ Get the Firebase ID token
 
-            const email = result.user.email;
-            if (!email.endsWith("@cgu-odisha.ac.in")) {
-                setError("Use your college email (@cgu-odisha.ac.in) to log in.");
-                setLoading(false);
-                return;
-            }
-
-            const idToken = await result.user.getIdToken();
-            localStorage.setItem("token", idToken);
-
+            // Send token to backend
             const response = await fetch("http://localhost:5000/api/auth/google-login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token: idToken }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${idToken}`, // ✅ Send token in Authorization header
+                },
+                body: JSON.stringify({ email: user.email, name: user.displayName }),
             });
 
             const data = await response.json();
-            if (response.ok) {
-                console.log("✅ Backend Login Success:", data);
-                localStorage.setItem("user", JSON.stringify(data.user));
+            if (data.success) {
+                console.log("✅ User logged in successfully!");
                 navigate("/");
             } else {
-                console.error("🚨 Backend Login Failed:", data);
                 setError(data.message || "Login failed.");
             }
         } catch (error) {
-            console.error("🚨 Google Sign-In Error:", error);
-            setError("Google Sign-In failed.");
-        } finally {
-            setLoading(false);
+            console.error("❌ Google Login Error:", error.message);
+            setError("Google Login failed. Please try again.");
         }
     };
 
     return (
-        <div className="flex justify-center items-center h-screen">
-            <div className="bg-white p-6 rounded-lg shadow-md w-96 text-center">
+        <div className="flex justify-center items-center h-screen bg-gray-100">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
                 <h2 className="text-2xl font-bold text-blue-600 mb-4">Login</h2>
 
                 {error && <p className="text-red-500">{error}</p>}
 
-                {!user && (
-                    <button
-                        onClick={handleGoogleSignIn}
-                        className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
-                        disabled={loading}
-                    >
-                        {loading ? "Logging in..." : "Login with Google"}
-                    </button>
-                )}
+                <button
+                    onClick={handleGoogleLogin}
+                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                >
+                    Login with Google
+                </button>
             </div>
         </div>
     );

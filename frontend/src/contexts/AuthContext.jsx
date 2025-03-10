@@ -12,13 +12,15 @@ export const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 try {
-                    const token = await currentUser.getIdToken(); // Get Firebase ID token
+                    const token = await currentUser.getIdToken(); // ✅ Get Firebase ID token
                     console.log("📤 Sending Token:", token);
 
                     const res = await fetch("http://localhost:5000/api/auth/google-login", {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ token }),
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`, // ✅ Send token in Authorization header
+                        },
                     });
 
                     const data = await res.json();
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children }) => {
                         localStorage.setItem("user", JSON.stringify(data.user));
                         setUser(data.user);
                     } else {
-                        console.error("🚨 Backend Login Failed:", data);
+                        console.error("🚨 Backend Loginahaha Failed:", data);
                         await logout();
                     }
                 } catch (error) {
@@ -39,10 +41,10 @@ export const AuthProvider = ({ children }) => {
             }
             setLoading(false);
         });
-    
+
         return () => unsubscribe();
     }, []);
-    
+
     const signInWithGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
