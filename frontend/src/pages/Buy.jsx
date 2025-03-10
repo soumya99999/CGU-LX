@@ -8,6 +8,8 @@ import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { CartContext } from '../contexts/CartContext'; // Adjust path as needed
 import { Toaster } from '../ui/toaster'; // Assuming you have this component
+import { motion } from "framer-motion";
+
 
 const Buy = () => {
   const [products, setProducts] = useState([]);
@@ -77,17 +79,35 @@ const Buy = () => {
 
   const ProductDialog = ({ product }) => (
     <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && setSelectedProduct(null)}>
-      <DialogContent className="max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>{product.name}</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="max-w-screen-xl w-full p-12">
+        {/* <DialogHeader>
+          
+        </DialogHeader> */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
           <div className="relative">
             <img
               src={product.images[currentImageIndex]}
               alt={product.name}
-              className="w-full h-[300px] object-cover rounded-lg"
+              className="w-full h-[500px] object-cover rounded-lg"
             />
+            <div className="absolute top-4 right-4 space-y-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="bg-white hover:bg-gray-100 shadow-md"
+                        onClick={(e) => e.stopPropagation()} // Placeholder until wishlist is added
+                      >
+                        <Heart className="h-5 w-5 text-red-500" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="bg-white hover:bg-gray-100 shadow-md"
+                        onClick={(e) => e.stopPropagation()} // Placeholder until share is added
+                      >
+                        <Share2 className="h-5 w-5 text-gray-600" />
+                      </Button>
+                    </div>
             {product.images.length > 1 && (
               <>
                 <Button
@@ -108,21 +128,23 @@ const Buy = () => {
                 </Button>
               </>
             )}
-            {product.discount > 0 && (
+            {/* {product.discount > 0 && (
               <Badge variant="destructive" className="absolute top-4 left-4">
                 {product.discount}% OFF
               </Badge>
-            )}
+            )} */}
           </div>
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <StarRating rating={product.rating || 4.5} />
+          <div className="flex flex-col justify-end space-y-6 p-6 mt-auto">
+
+            {/* <div className="flex items-center gap-2">
+              <StarRating rating={product.rating || 1} />
               <span className="text-sm text-gray-600">
                 ({(product.reviews?.length || 0).toLocaleString()} reviews)
               </span>
-            </div>
+            </div> */}
+            <DialogTitle>{product.name}</DialogTitle>
             <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-gray-900">${product.price}</span>
+              <span className="text-3xl font-bold text-green-600">₹{product.price}</span>
               {product.originalPrice > product.price && (
                 <span className="text-sm text-gray-500 line-through">
                   ${product.originalPrice}
@@ -130,7 +152,7 @@ const Buy = () => {
               )}
             </div>
             <p className="text-gray-600 text-sm whitespace-pre-line">{product.description}</p>
-            {product.reviews && product.reviews.length > 0 && (
+            {/* {product.reviews && product.reviews.length > 0 && (
               <div className="mt-4 max-h-40 overflow-y-auto">
                 <h3 className="font-semibold text-gray-700">Reviews</h3>
                 {product.reviews.map((review, index) => (
@@ -146,19 +168,19 @@ const Buy = () => {
                   </div>
                 ))}
               </div>
-            )}
+            )} */}
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-              <div className="flex items-center gap-2"><Shield className="w-4 h-4" />Warranty</div>
-              <div className="flex items-center gap-2"><Truck className="w-4 h-4" />Free Delivery</div>
-              <div className="flex items-center gap-2"><RotateCcw className="w-4 h-4" />7 Day Return</div>
+              <div className="flex items-center gap-2"><Shield className="w-4 h-4" />Local & Convenient</div>
+              <div className="flex items-center gap-2"><Truck className="w-4 h-4" />Student-Friendly Prices</div>
+              <div className="flex items-center gap-2"><RotateCcw className="w-4 h-4" />Platform Fees Discount</div>
             </div>
             <Button 
-              className="w-full bg-blue-600 hover:scale-105 hover:bg-blue-700  transition-transform duration-200"
+              className="w-full bg-blue-300 hover:scale-105 hover:bg-orange-200  transition-transform duration-100"
 
               onClick={() => addToCart(product)}
             >
               <ShoppingCart className="h-5 w-5 mr-2 " />
-              Add to Cart
+              Chat on Whatsaap to Buy
             </Button>
           </div>
         </div>
@@ -167,12 +189,13 @@ const Buy = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">Featured Products</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">Listed Products</h1> */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.length > 0 ? (
             products.map((product) => (
+              
               <Card 
                 key={product._id} 
                 className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
@@ -181,18 +204,15 @@ const Buy = () => {
                   setCurrentImageIndex(0);
                 }}
               >
-                <CardHeader>
-                  <CardTitle>{product.name}</CardTitle>
-                  <CardDescription>{product.description.split('\n')[0]}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative group">
-                    <img
+                    <motion.img
                       src={product.images[0]}
                       alt={product.name}
                       className="w-full h-64 object-cover"
+                      whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0,0,0,0.2)" }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
                     />
-                    <div className="absolute top-4 right-4 space-y-2">
+
+                    {/* <div className="absolute top-4 right-4 space-y-2">
                       <Button 
                         variant="ghost" 
                         size="icon" 
@@ -209,20 +229,36 @@ const Buy = () => {
                       >
                         <Share2 className="h-5 w-5 text-gray-600" />
                       </Button>
+                    </div> */}
+                <CardHeader>
+                  <CardTitle>{product.name}</CardTitle>
+                  <CardDescription>{product.description.split('\n')[0]}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                <div className="relative group">  
+                  <div className="mt-0 gap-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-bold text-green-600">₹{product.price}</span>
+                        {product.originalPrice > product.price && (
+                          <span className="text-sm text-gray-500 line-through">
+                            ${product.originalPrice}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    {product.discount > 0 && (
+                    {/* {product.discount > 0 && (
                       <Badge variant="destructive" className="absolute top-4 left-4">
                         {product.discount}% OFF
                       </Badge>
-                    )}
+                    )} */}
                   </div>
-                  <div className="flex items-center gap-2 mt-3">
+                  {/* <div className="flex items-center gap-2 mt-3">
                     <StarRating rating={product.rating || 4.5} />
                     <span className="text-sm text-gray-600">
                       ({(product.reviews?.length || 0).toLocaleString()} reviews)
                     </span>
-                  </div>
-                  {product.reviews && product.reviews.length > 0 && (
+                  </div> */}
+                  {/* {product.reviews && product.reviews.length > 0 && (
                     <div className="mt-4">
                       <h3 className="font-semibold text-gray-700">Reviews</h3>
                       {product.reviews.slice(0, 1).map((review, index) => (
@@ -238,35 +274,26 @@ const Buy = () => {
                         </div>
                       ))}
                     </div>
-                  )}
-                  <div className="mt-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-gray-900">${product.price}</span>
-                      {product.originalPrice > product.price && (
-                        <span className="text-sm text-gray-500 line-through">
-                          ${product.originalPrice}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mt-4">
+                  )} */}
+                  
+                  {/* <div className="flex items-center gap-4 text-sm text-gray-600 mt-4">
                     <div className="flex items-center gap-1"><Shield className="h-4 w-4" />Warranty</div>
                     <div className="flex items-center gap-1"><Truck className="h-4 w-4" />Free Delivery</div>
                     <div className="flex items-center gap-1"><RotateCcw className="h-4 w-4" />7 Day Return</div>
-                  </div>
+                  </div> */}
                 </CardContent>
-                <CardFooter>
+                {/* <CardFooter>
                   <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700 transition-colors"
+                    className="w-full bg-blue-300 hover:scale-105 hover:bg-orange-200  transition-transform duration-100"
                     onClick={(e) => {
                       e.stopPropagation();
                       addToCart(product);
                     }}
                   >
                     <ShoppingCart className="h-5 w-5 mr-2" />
-                    Add to Cart
+                    Chat on Whatsaap to Buy
                   </Button>
-                </CardFooter>
+                </CardFooter> */}
               </Card>
             ))
           ) : (

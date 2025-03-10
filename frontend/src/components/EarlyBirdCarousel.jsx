@@ -45,7 +45,8 @@ const EarlyBirdCarousel = () => {
 
   return (
     <div className="relative flex items-center justify-center h-screen bg-gray-100 overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-0.001 text-center z-10">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10">
+
         {/* <h2 className="ml15 text-7xl font-bold text-white">
           <span className="word">Coming Soon...</span>
         </h2> */}
@@ -56,7 +57,7 @@ const EarlyBirdCarousel = () => {
           Sign Up to Get Early Bird Offers
         </button>
       </div>
-      <div className="w-full h-screen relative">
+      <div className="w-full h-full relative">
         <Swiper
           modules={[Autoplay, Navigation, Pagination]}
           spaceBetween={50}
@@ -64,7 +65,7 @@ const EarlyBirdCarousel = () => {
           navigation
           pagination={{ clickable: true }}
           autoplay={{ delay: 3000, disableOnInteraction: false }}
-          className="rounded-lg shadow-lg h-full"
+          className="rounded-lg shadow-lg h-full max-h-96"
         >
           <SwiperSlide>
             <img

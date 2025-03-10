@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ProductList from "../components/ProductList";
-import EarlyBirdCarousel from "../components/EarlyBirdCarousel";
+import Carousel from "../components/Carousel";
+import Buy from "./Buy";
 
 function Home() {
     const [products] = useState([
@@ -13,14 +14,15 @@ function Home() {
     return (
         <div className="app-content">
             {/* Carousel Section */}
-            {/* <Carousel /> */}
-            <EarlyBirdCarousel />
+            <Carousel />
+            {/* <EarlyBirdCarousel /> */}
             <div className="container mx-auto p-4">
-                <h1 className="text-3xl font-bold mb-4">Featured Products</h1>
+                <h1 className="text-3xl font-bold mb-0 ">Featured Products</h1>
             </div>
             {/* Featured Products Section */}
             <div>
-                <ProductList products={products} />
+                {/* <ProductList products={products} /> */}
+                <Buy/>
             </div>
         </div>
     );

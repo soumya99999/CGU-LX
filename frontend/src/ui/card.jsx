@@ -5,60 +5,54 @@ import { motion } from "framer-motion";
 const Card = React.forwardRef(({ className, ...props }, ref) => (
   <motion.div
     ref={ref}
-    initial={{ opacity: 0, scale: 0.95 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.3, ease: "easeOut" }}
-    whileHover={{ scale: 1.02, boxShadow: "0px 4px 15px rgba(0,0,0,0.2)" }}
+    initial={{ opacity: 0, scale: 0.9 }} // Start smaller and invisible
+    animate={{ opacity: 1, scale: 1 }}  // Fade in and scale up slightly
+    transition={{ duration: 0.5, ease: "easeOut" }} // Smooth transition
+    whileHover={{ scale: 1.03, boxShadow: "0px 6px 18px rgba(0,0,0,0.2)" }} // Slight hover effect
     className={cn("rounded-xl border bg-card text-card-foreground shadow-sm", className)}
     {...props}
   />
 ));
+
 Card.displayName = "Card";
 
+
+
+
 const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <motion.header 
+  <header 
     ref={ref} 
-    initial={{ opacity: 0, y: -10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3, ease: "easeOut" }}
-    className={cn("flex flex-col gap-2 p-6", className)} 
+    className={cn("flex flex-col gap-0 p-6", className)} 
     {...props} 
   />
 ));
 CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef(({ className, children, ...props }, ref) => (
-  <motion.h3 
+  <h3 
     ref={ref} 
-    whileHover={{ scale: 1.05 }}
-    className={cn("text-lg font-bold", className)} 
+    className={cn("text-base text-gray-400 m-0 font-bold", className)} 
     {...props}
   >
     {children}
-  </motion.h3>
+  </h3>
 ));
 CardTitle.displayName = "CardTitle";
 
 const CardDescription = React.forwardRef(({ className, children, ...props }, ref) => (
-  <motion.p 
+  <p 
     ref={ref} 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.3, ease: "easeOut" }}
-    className={cn("text-sm text-muted-foreground", className)} 
+    className={cn("text-base text-muted-foreground m-0 leading-tight", className)} 
     {...props}
   >
     {children}
-  </motion.p>
+  </p>
 ));
 CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef(({ className, ...props }, ref) => (
-  <motion.section 
+  <section 
     ref={ref} 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.3, ease: "easeOut" }}
     className={cn("p-6 pt-0", className)} 
     {...props} 
   />
@@ -66,11 +60,8 @@ const CardContent = React.forwardRef(({ className, ...props }, ref) => (
 CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
-  <motion.footer 
+  <footer 
     ref={ref} 
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3, ease: "easeOut" }}
     className={cn("flex items-center p-6 pt-0", className)} 
     {...props} 
   />

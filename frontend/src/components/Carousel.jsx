@@ -4,15 +4,17 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { Link} from "react-router-dom";
 
 const images = [
-  "/temp1.png",
-  "/temp2.png",
-  "/temp3.png",
+  "/temp01.png",
+  "/temp02.png",
+  "/temp03.png",
 ];
 
 const Carousel = () => {
   return (
+    <Link to="/register">
     <div className="w-full">
       <Swiper
         modules={[Autoplay, Navigation, Pagination]}
@@ -22,7 +24,7 @@ const Carousel = () => {
         loop={true} // Infinite loop
         navigation={true} // Arrows
         pagination={{ clickable: true }} // Dots below
-        className="w-full h-[600px]" // Full width & height
+        className="w-full h-96" // Full width & height
       >
         {images.map((src, index) => (
           <SwiperSlide key={index}>
@@ -39,6 +41,7 @@ const Carousel = () => {
         ))}
       </Swiper>
     </div>
+    </Link>
   );
 };
 
