@@ -198,11 +198,11 @@ const Navbar = () => {
                 onClick={() => navigate("/login")}
                 className="bg-green-500 px-5 py-2 rounded-full text-white font-semibold transition shadow-lg"
               >
-                Login
+                Login/Register
               </motion.button>
 
 
-              <motion.button
+              {/* <motion.button
                 variants={buttonVariants}
                 initial={{ opacity: 0, y: -10 }} // Fade in with slight upward movement
                 animate={{ opacity: 1, y: 0 }}   // Smoothly drop into place
@@ -217,7 +217,7 @@ const Navbar = () => {
                 className="bg-yellow-400 px-5 py-2 rounded-full transition shadow-lg"
               >
                 Register
-              </motion.button>
+              </motion.button> */}
 
             </>
           )}

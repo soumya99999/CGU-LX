@@ -2,6 +2,7 @@ import { auth, googleProvider } from "../firebase/firebaseConfig";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Link} from "react-router-dom";
 
 const Login = () => {
     const [error, setError] = useState("");
@@ -68,7 +69,7 @@ const Login = () => {
                   </svg>
                   <span className="text-lg">Login with Google</span>
                 </button>
-
+                <p className="mt-6">Don't have an account?<Link to="/register" className="text-blue-500"> Register now!</Link></p>
             </div>
         </div>
     );

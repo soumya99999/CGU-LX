@@ -7,9 +7,9 @@ import "swiper/css/pagination";
 import { Link} from "react-router-dom";
 
 const images = [
-  "/temp01.png",
-  "/temp02.png",
-  "/temp03.png",
+  "/temp01.JPG",
+  "/temp02.JPG",
+  "/temp03.JPG",
 ];
 
 const Carousel = () => {
@@ -24,7 +24,7 @@ const Carousel = () => {
         loop={true} // Infinite loop
         navigation={true} // Arrows
         pagination={{ clickable: true }} // Dots below
-        className="w-full h-96" // Full width & height
+        className="w-full h-400" // Full width & height
       >
         {images.map((src, index) => (
           <SwiperSlide key={index}>
