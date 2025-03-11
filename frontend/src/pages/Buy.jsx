@@ -18,7 +18,7 @@ const Buy = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addToCart } = useContext(CartContext); // Use CartContext
-  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     const fetchProducts = async () => {

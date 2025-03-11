@@ -17,7 +17,7 @@ const Register = () => {
             const user = result.user;
             const email = user.email;
             const name = user.displayName;
-            const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+            const API_BASE_URL = process.env.REACT_APP_BACKEND_URL ;
     
             // Restrict email domain
             if (!email.endsWith("@cgu-odisha.ac.in")) {
