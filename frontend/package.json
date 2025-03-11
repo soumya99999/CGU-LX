@@ -37,15 +37,16 @@
     "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.3",
+    "serve": "^14.2.4",
     "slick-carousel": "^1.8.1",
     "swiper": "^11.2.4",
     "ws": "^8.18.1"
   },
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start": "serve -s build"
   },
   "eslintConfig": {
     "extends": [
