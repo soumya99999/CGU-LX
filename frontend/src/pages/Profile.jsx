@@ -20,6 +20,8 @@ const Profile = () => {
   const [editedUser, setEditedUser] = useState(user);
 
   const navigate = useNavigate();
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -30,7 +32,7 @@ const Profile = () => {
       }
 
       try {
-        const { data } = await axios.get("http://localhost:5000/api/auth/profile", {
+        const { data } = await axios.get("${API_BASE_URL}/api/auth/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -61,7 +63,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      await axios.put("http://localhost:5000/api/auth/profile", editedUser, {
+      await axios.put("${API_BASE_URL}/api/auth/profile", editedUser, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

@@ -17,6 +17,7 @@ const Register = () => {
             const user = result.user;
             const email = user.email;
             const name = user.displayName;
+            const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
     
             // Restrict email domain
             if (!email.endsWith("@cgu-odisha.ac.in")) {
@@ -25,7 +26,7 @@ const Register = () => {
             }
     
             // Send user data to backend
-            const response = await fetch("http://localhost:5000/api/auth/google-register", {
+            const response = await fetch("${API_BASE_URL}/api/auth/google-register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, phone, course, semester }),

@@ -10,6 +10,7 @@ const Sell = () => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
@@ -40,7 +41,7 @@ const Sell = () => {
     images.forEach((image) => formData.append("images", image));
   
     try {
-      const response = await fetch("http://localhost:5000/api/products", {
+      const response = await fetch("${API_BASE_URL}/api/products", {
         method: "POST",
         body: formData,
       });

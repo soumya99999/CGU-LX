@@ -7,6 +7,7 @@ import { Link} from "react-router-dom";
 const Login = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
     const handleGoogleLogin = async () => {
         setError("");
@@ -16,7 +17,7 @@ const Login = () => {
             const idToken = await user.getIdToken(); // ✅ Get the Firebase ID token
 
             // Send token to backend
-            const response = await fetch("http://localhost:5000/api/auth/google-login", {
+            const response = await fetch("${API_BASE_URL}/api/auth/google-login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
