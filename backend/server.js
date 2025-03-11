@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://cgumarketplacee.onrender.com",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -42,7 +42,7 @@ const connectDB = async () => {
 const startServer = async () => {
   await connectDB();
 
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT;
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
   });
