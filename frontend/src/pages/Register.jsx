@@ -48,7 +48,7 @@ const Register = () => {
             }
         } catch (error) {
             console.error("❌ Google Register Error:", error.message);
-            setError("User already registered. Please login.");
+            setError("error");
         }
     };
     

@@ -80,7 +80,7 @@ const Buy = () => {
 
   const ProductDialog = ({ product }) => (
     <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && setSelectedProduct(null)}>
-      <DialogContent className="max-w-screen-xl w-full p-12">
+      <DialogContent className="max-w-screen-md w-[90%] sm:max-w-screen-lg md:max-w-screen-xl max-h-[90vh] overflow-y-auto p-4 sm:p-8 md:p-12">
         {/* <DialogHeader>
           
         </DialogHeader> */}
