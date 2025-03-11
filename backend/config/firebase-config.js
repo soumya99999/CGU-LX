@@ -25,8 +25,11 @@ if (!fs.existsSync(firebaseConfigPath)) {
 
 const firebaseConfig = JSON.parse(fs.readFileSync(firebaseConfigPath, "utf8"));
 
-initializeApp({
+const firebaseAdmin = initializeApp({
     credential: cert(firebaseConfig)
 });
 
 console.log("Firebase initialized successfully");
+
+export default firebaseAdmin;
+
