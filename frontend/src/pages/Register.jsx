@@ -26,7 +26,7 @@ const Register = () => {
             }
     
             // Send user data to backend
-            const response = await fetch("${API_BASE_URL}/api/auth/google-register", {
+            const response = await fetch(`${API_BASE_URL}/api/auth/google-register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, phone, course, semester }),

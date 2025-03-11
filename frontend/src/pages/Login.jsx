@@ -17,7 +17,7 @@ const Login = () => {
             const idToken = await user.getIdToken(); // ✅ Get the Firebase ID token
 
             // Send token to backend
-            const response = await fetch("${API_BASE_URL}/api/auth/google-login", {
+            const response = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

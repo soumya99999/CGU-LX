@@ -41,7 +41,7 @@ const Sell = () => {
     images.forEach((image) => formData.append("images", image));
   
     try {
-      const response = await fetch("${API_BASE_URL}/api/products", {
+      const response = await fetch(`${API_BASE_URL}/api/products`, {
         method: "POST",
         body: formData,
       });

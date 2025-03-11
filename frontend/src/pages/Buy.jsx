@@ -19,11 +19,11 @@ const Buy = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addToCart } = useContext(CartContext); // Use CartContext
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("${API_BASE_URL}/api/products");
+        const response = await fetch(`${API_BASE_URL}/api/products`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }

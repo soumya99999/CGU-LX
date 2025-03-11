@@ -32,7 +32,7 @@ const Profile = () => {
       }
 
       try {
-        const { data } = await axios.get("${API_BASE_URL}/api/auth/profile", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -63,7 +63,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      await axios.put("${API_BASE_URL}/api/auth/profile", editedUser, {
+      await axios.put(`${API_BASE_URL}/api/auth/profile`, editedUser, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
