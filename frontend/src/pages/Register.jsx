@@ -9,47 +9,25 @@ const Register = () => {
     const [semester, setSemester] = useState("1st Semester");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const { signInWithGoogle } = useContext(AuthContext);
 
     const handleGoogleRegister = async () => {
         setError("");
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
-            const email = user.email;
-            const name = user.displayName;
-            const API_BASE_URL = process.env.REACT_APP_BACKEND_URL ;
-    
-            // Restrict email domain
-            if (!email.endsWith("@cgu-odisha.ac.in")) {
-                setError("Use your college email (@cgu-odisha.ac.in) to register.");
-                return;
-            }
-    
-            // Send user data to backend
-            const response = await fetch(`${API_BASE_URL}/api/auth/google-register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, phone, course, semester }),
-            });
-    
-            // ✅ Check if response is actually JSON
-            if (!response.ok) {
-                const errorText = await response.text(); // Read raw response
-                console.error("❌ Backend Error:", errorText); 
-                throw new Error(`Server Error: ${response.status} - ${errorText}`);
-            }
-    
-            const data = await response.json();
-            if (data.success) {
-                console.log("✅ Registration successful!");
-                navigate("/login");
-            } else {
-                setError(data.message || "Registration failed.");
-            }
-        } catch (error) {
-            console.error("❌ Google Register Error:", error.message);
-            setError("error");
+        const response = await signInWithGoogle(true, { phone, course, semester });
+
+        if (response.error) {
+            setError(response.error);
+            return;
         }
+
+        if (response.alreadyRegistered) {
+            setError(response.message);
+            setTimeout(() => navigate("/login"), 2000);
+            return;
+        }
+
+        console.log("✅ Registration successful!");
+        navigate("/login");
     };
     
 

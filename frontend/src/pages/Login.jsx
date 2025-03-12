@@ -4,40 +4,27 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Link} from "react-router-dom";
 
+
 const Login = () => {
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
-    const API_BASE_URL = process.env.REACT_APP_BACKEND_URL ;
+  const { signInWithGoogle } = useAuth();
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-    const handleGoogleLogin = async () => {
-        setError("");
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
-            const idToken = await user.getIdToken(); // ✅ Get the Firebase ID token
-
-            // Send token to backend
-            const response = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${idToken}`, // ✅ Send token in Authorization header
-                },
-                body: JSON.stringify({ email: user.email, name: user.displayName }),
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                console.log("✅ User logged in successfully!");
-                navigate("/");
-            } else {
-                setError(data.message || "Login failed.");
-            }
-        } catch (error) {
-            console.error("❌ Google Login Error:", error.message);
-            setError("Google Login failed. Please try again.");
-        }
-    };
+  const handleGoogleLogin = async () => {
+      setError("");
+      try {
+          const result = await signInWithGoogle(); // ✅ Call from AuthContext
+          if (result) {
+              console.log("✅ User logged in successfully!");
+              navigate("/");
+          } else {
+              setError("Login failed. Please try again.");
+          }
+      } catch (error) {
+          console.error("❌ Google Login Error:", error.message);
+          setError("Google Login failed. Please try again.");
+      }
+  };
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-200">
