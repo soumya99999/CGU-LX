@@ -41,8 +41,16 @@ const Buy = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-center mt-10">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+          <p className="mt-4 text-lg font-semibold text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
   }
+  
 
   if (error) {
     return (
@@ -175,7 +183,7 @@ const Buy = () => {
               <div className="flex items-center gap-2"><Truck className="w-4 h-4" />Student-Friendly Prices</div>
               <div className="flex items-center gap-2"><RotateCcw className="w-4 h-4" />Platform Fees Discount</div>
               <div className="flex items-center gap-2">
-                <img src="/path-to-your-image/logo1.png" alt="Logo" className="w-6 h-6" />
+                <img src="/src/logo1.png" alt="Logo" className="w-6 h-6" />
                 <span>C-Assured Free For Early Bird Access</span>
               </div>
             </div>
