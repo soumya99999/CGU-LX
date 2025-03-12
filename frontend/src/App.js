@@ -28,10 +28,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Home />} />
-        <Route path="/buy" element={<Buy />} />
-        <Route path="/sell" element={<Sell />} />
-        {/* <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} /> */}
-        {/* <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} /> */}
+        {/* <Route path="/buy" element={<Buy />} />
+        <Route path="/sell" element={<Sell />} /> */}
+        <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
+        <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} /> {/* Add this route */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
