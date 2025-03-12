@@ -174,6 +174,10 @@ const Buy = () => {
               <div className="flex items-center gap-2"><Shield className="w-4 h-4" />Local & Convenient</div>
               <div className="flex items-center gap-2"><Truck className="w-4 h-4" />Student-Friendly Prices</div>
               <div className="flex items-center gap-2"><RotateCcw className="w-4 h-4" />Platform Fees Discount</div>
+              <div className="flex items-center gap-2">
+                <img src="/path-to-your-image/logo1.png" alt="Logo" className="w-6 h-6" />
+                <span>C-Assured Free For Early Bird Access</span>
+              </div>
             </div>
             <Button 
               className="w-full bg-blue-300 hover:scale-105 hover:bg-orange-200  transition-transform duration-100"
