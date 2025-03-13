@@ -86,16 +86,30 @@ export const updateProfile = async (req, res) => {
     if (!req.user || !req.user.email) {
         return res.status(401).json({ success: false, message: "Unauthorized" });
     }
+
     try {
+        const { semester, avatar } = req.body; // Extract semester & avatar fields
+
+        const updatedFields = {};
+        if (semester) updatedFields.semester = semester;
+        if (avatar) updatedFields.avatar = avatar; // ✅ Allow avatar update
+
         const updatedUser = await User.findOneAndUpdate(
-            { email: req.user.email }, // Match by email
-            { $set: req.body },
-            { new: true }
+            { email: req.user.email },
+            { $set: updatedFields },
+            { new: true, select: "semester avatar" } // Return updated fields
         );
+
         if (!updatedUser) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
-        return res.json({ success: true, message: "Profile updated successfully!", user: updatedUser });
+
+        return res.json({ 
+            success: true, 
+            message: "Profile updated!", 
+            semester: updatedUser.semester, 
+            avatar: updatedUser.avatar 
+        });
     } catch (error) {
         console.error("Profile update error:", error);
         return res.status(500).json({ success: false, message: "Server error" });

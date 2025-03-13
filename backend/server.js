@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
 app.use(
   cors({
     origin: "https://cgumarketplacee.onrender.com",
+    // origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
