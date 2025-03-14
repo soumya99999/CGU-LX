@@ -1,6 +1,9 @@
 import { useState } from "react";
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext"; // ✅ Import useAuth
 
 const Sell = () => {
+  const { user } = useAuth(); // ✅ Get logged-in user details
   const [product, setProduct] = useState({
     name: "",
     price: "",
@@ -10,52 +13,53 @@ const Sell = () => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
-  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL ;
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, 5); // Allow up to 5 images
+    const files = Array.from(e.target.files);
     setImages(files);
-
     const previews = files.map((file) => URL.createObjectURL(file));
     setImagePreviews(previews);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
+    if (!user || !user.email) { // ✅ Ensure user is logged in
+      alert("User not logged in");
+      setLoading(false);
+      return;
+    }
+
     if (!product.name || !product.price || !product.description || !product.address || images.length === 0) {
       alert("Please fill in all fields and upload at least one image.");
       setLoading(false);
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("name", product.name);
     formData.append("price", product.price);
     formData.append("description", product.description);
     formData.append("address", product.address);
+    formData.append("email", user.email); // ✅ Send email from AuthContext
     images.forEach((image) => formData.append("images", image));
-  
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/products`, {
-        method: "POST",
-        body: formData,
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        alert("Product listed successfully!");
-        setProduct({ name: "", price: "", description: "", address: "" });
-        setImages([]);
-        setImagePreviews([]);
-      } else {
-        const errorData = await response.json();
-        alert(`Error listing product: ${errorData.message}`);
-      }
+      const response = await axios.post(
+        "http://localhost:5000/api/products/create", // ✅ Use localhost
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      alert("Product listed successfully!");
+      setProduct({ name: "", price: "", description: "", address: "" });
+      setImages([]);
+      setImagePreviews([]);
     } catch (error) {
       console.error("Error submitting product:", error);
       alert("Error listing product");
@@ -63,6 +67,7 @@ const Sell = () => {
       setLoading(false);
     }
   };
+  
   
   return (
     <div className="bg-gray-200">

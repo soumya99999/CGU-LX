@@ -18,13 +18,13 @@ const Buy = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addToCart } = useContext(CartContext); // Use CartContext
-  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  // const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // const response = await fetch("http://localhost:5000/api/products");
-        const response = await fetch(`${API_BASE_URL}/api/products`);
+        const response = await fetch("http://localhost:5000/api/products");
+        // const response = await fetch(`${API_BASE_URL}/api/products`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -189,13 +189,23 @@ const Buy = () => {
               </div>
             </div>
             <Button 
-              className="w-full bg-blue-300 hover:scale-105 hover:bg-orange-200  transition-transform duration-100"
-
-              onClick={() => addToCart(product)}
+              className="w-full bg-green-500 text-white hover:scale-105 hover:bg-green-600 transition-transform duration-100"
+              onClick={() => {
+                if (!product.seller?.phone) {
+                  alert('Seller contact unavailable');
+                  return;
+                }
+                const message = encodeURIComponent(`Hello, I'm interested in buying ${product.name}. Is it available?`);
+                const whatsappURL = `https://wa.me/${product.seller.phone}?text=${message}`;
+                window.open(whatsappURL, '_blank');
+              }}
             >
-              <ShoppingCart className="h-5 w-5 mr-2 " />
-              Chat on Whatsaap to Buy
+              <ShoppingCart className="h-5 w-5 mr-2" />
+              Chat on WhatsApp to Buy
             </Button>
+
+
+
           </div>
         </div>
       </DialogContent>
