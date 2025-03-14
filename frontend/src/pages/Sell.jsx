@@ -13,6 +13,7 @@ const Sell = () => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL ;
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
@@ -49,12 +50,18 @@ const Sell = () => {
     formData.append("email", user.email); // ✅ Send email from AuthContext
     images.forEach((image) => formData.append("images", image));
 
+    // try {
+    //   const response = await axios.post(
+    //     "http://localhost:5000/api/products/create", // ✅ Use localhost
+    //     formData,
+    //     { headers: { "Content-Type": "multipart/form-data" } }
+    //   );
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/products/create", // ✅ Use localhost
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      const response = await fetch(`${API_BASE_URL}/api/products/create`, {
+        method: "POST",
+        body: formData,
+      });
+  
 
       alert("Product listed successfully!");
       setProduct({ name: "", price: "", description: "", address: "" });

@@ -31,7 +31,7 @@ const Profile = () => {
   const [newSemester, setNewSemester] = useState("");
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [avatarCategory, setAvatarCategory] = useState("male");
-  // const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -44,12 +44,12 @@ const Profile = () => {
       }
   
       try {
-        // const { data } = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
-        //   headers: { Authorization: `Bearer ${token}` },
-        // });
-        const { data } = await axios.get("http://localhost:5000/api/auth/profile", {
-                  headers: { Authorization: `Bearer ${token}` },
+        const { data } = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        // const { data } = await axios.get("http://localhost:5000/api/auth/profile", {
+        //           headers: { Authorization: `Bearer ${token}` },
+        // });
   
         if (data.success) {
           const storedAvatar = localStorage.getItem("avatar");
@@ -82,20 +82,20 @@ const Profile = () => {
         return;
       }
   
-      // const { data } = await axios.put(
-      //   `${API_BASE_URL}/api/auth/profile`,
-      //   { semester: newSemester },
-      //   {
-      //     headers: { Authorization: `Bearer ${token}` },
-      //   }
-      // );
       const { data } = await axios.put(
-        "http://localhost:5000/api/auth/profile",
+        `${API_BASE_URL}/api/auth/profile`,
         { semester: newSemester },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      // const { data } = await axios.put(
+      //   "http://localhost:5000/api/auth/profile",
+      //   { semester: newSemester },
+      //   {
+      //     headers: { Authorization: `Bearer ${token}` },
+      //   }
+      // );
   
       if (data.success) {
         setUser((prevUser) => ({ ...prevUser, semester: newSemester }));
@@ -113,16 +113,16 @@ const Profile = () => {
   const handleAvatarChange = async (avatar) => {
     try {
       const token = localStorage.getItem("token");
-      // const { data } = await axios.put(
-      //   `${API_BASE_URL}/api/auth/profile`,
-      //   { avatar },
-      //   { headers: { Authorization: `Bearer ${token}` } }
-      // );
       const { data } = await axios.put(
-        "http://localhost:5000/api/auth/profile",
+        `${API_BASE_URL}/api/auth/profile`,
         { avatar },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      // const { data } = await axios.put(
+      //   "http://localhost:5000/api/auth/profile",
+      //   { avatar },
+      //   { headers: { Authorization: `Bearer ${token}` } }
+      // );
   
       if (data.success) {
         setUser((prevUser) => ({ ...prevUser, avatar }));

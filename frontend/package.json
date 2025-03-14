@@ -46,7 +46,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start": "react-scripts start"
+    
+    "start": "serve -s build"
+    
   },
   "eslintConfig": {
     "extends": [
