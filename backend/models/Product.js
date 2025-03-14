@@ -6,6 +6,7 @@ const productSchema = new mongoose.Schema({
   description: { type: String },
   address: { type: String, required: true },
   images: [{ type: String }], // Store Cloudinary image URLs
+  seller: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to the seller
   createdAt: { type: Date, default: Date.now },
 });
 
