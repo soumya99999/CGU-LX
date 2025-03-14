@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
                     const token = await currentUser.getIdToken();
                     console.log("📤 Sending Token:", token);
     
-                    const res = await fetch("http://localhost:5000/api/auth/google-login", {
+                    const res = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
