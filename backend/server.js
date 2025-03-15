@@ -5,15 +5,14 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
+import firebaseAdmin from "./config/firebase-config.js"; // ✅ Import Firebase Config
 
 dotenv.config();
 
 const app = express();
 
-app.use(express.json());  // Parses incoming JSON
+app.use(express.json()); // Parses incoming JSON
 app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
-
-// origin: "http://localhost:3000",
 
 app.use(
   cors({
@@ -26,38 +25,9 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
-app.use(errorHandler);
-
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      dbName: "CGU_LX",
-    });
-    console.log("✅ MongoDB connected successfully");
-  } catch (error) {
-    console.error("❌ MongoDB connection failed:", error);
-    process.exit(1);
-  }
-};
-
-// const startServer = async () => {
-//   await connectDB();
-
-//   const PORT = process.env.PORT||5000;
-//   app.listen(PORT, () => {
-//     console.log(`🚀 Server running on http://localhost:${PORT}`);
-//   });
-// };
-
-// startServer();
-const startServer = async () => {
-  await connectDB();
-
-  const PORT = process.env.PORT;
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
-};
+// ✅ Middleware for authentication
+app.post("/api/auth/google-login", async (req, res) => {
+  console.log("🟢 Received Headers:", req.headers);
 
   if (!req.headers.authorization) {
     return res.status(401).json({ error: "Missing Authorization Header" });
@@ -76,6 +46,29 @@ const startServer = async () => {
   }
 });
 
+app.use(errorHandler);
 
+// ✅ MongoDB Connection
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      dbName: "CGU_LX",
+    });
+    console.log("✅ MongoDB connected successfully");
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error);
+    process.exit(1);
+  }
+};
+
+// ✅ Start Server
+const startServer = async () => {
+  await connectDB();
+
+  const PORT = process.env.PORT || 5000; // ✅ Added Default Port
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+};
 
 startServer();
