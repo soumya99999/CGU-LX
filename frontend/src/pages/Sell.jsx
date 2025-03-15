@@ -57,7 +57,7 @@ const Sell = () => {
     //     { headers: { "Content-Type": "multipart/form-data" } }
     //   );
     try {
-      const response = await fetch("http://localhost:5000/api/products/create", {
+      const response = await fetch(`${API_BASE_URL}/api/products/create`, {
         method: "POST",
         body: formData,
       });

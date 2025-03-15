@@ -1,5 +1,4 @@
 import React from "react";
-import ProductList from "../components/ProductList";
 import Carousel from "../components/Carousel";
 import Buy from "./Buy";
 
