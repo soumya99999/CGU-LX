@@ -34,6 +34,6 @@ const firebaseAdmin = getApps().length
 
 console.log("✅ Firebase initialized successfully");
 
-export default firebaseAdmin;
+export default admin;
 
 
