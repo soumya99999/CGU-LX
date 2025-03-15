@@ -13,11 +13,10 @@ const app = express();
 app.use(express.json());  // Parses incoming JSON
 app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
 
-
+// origin: "https://cgumarketplacee.onrender.com",
 app.use(
   cors({
-    origin: "https://cgumarketplacee.onrender.com",
-    // origin: "http://localhost:3000",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })

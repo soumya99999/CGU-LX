@@ -57,7 +57,7 @@ const Sell = () => {
     //     { headers: { "Content-Type": "multipart/form-data" } }
     //   );
     try {
-      const response = await fetch(`${API_BASE_URL}/api/products/create`, {
+      const response = await fetch("http://localhost:5000/api/products/create", {
         method: "POST",
         body: formData,
       });
@@ -106,7 +106,7 @@ const Sell = () => {
           type="submit"
           disabled={loading}
           className="mt-5 w-full bg-blue-500 text-white py-3 rounded-full font-semibold transition-all duration-300 shadow-md hover:bg-blue-800 hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed">
-          {loading ? "Listing Product..." : "List Product"}
+          {loading ? "Uploading..." : "List Product"}
         </button>
 
       </form>

@@ -1,24 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import ProductList from "../components/ProductList";
 import Carousel from "../components/Carousel";
 import Buy from "./Buy";
 
 function Home() {
-
-
     return (
-        <div className="app-content">
+        <div className="bg-gray-100 text-gray-900 font-sans">
             {/* Carousel Section */}
-            <Carousel />
-            {/* <EarlyBirdCarousel /> */}
-            <div className="container mx-auto p-4">
-                <h1 className="text-3xl font-bold mb-0 ">Featured Products</h1>
-            </div>
+            <section >
+                <Carousel />
+            </section>
+            
             {/* Featured Products Section */}
-            <div>
-                {/* <ProductList products={products} /> */}
-                <Buy/>
-            </div>
+            <section className="mt-20">
+            <h2 className="text-5xl font-bold text-center mt-4 mb-6">Featured Products</h2>
+            </section>
+            
+
+                    <Buy />
+
         </div>
     );
 }

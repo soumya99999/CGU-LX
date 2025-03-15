@@ -22,7 +22,7 @@ import Cart from "./pages/Cart"; // Add this import
 function App() {
 
   return (
-    <div className="app-content">
+    <div className="app-content bg-gray-100 pt-[40px]">
       <Navbar />
       <Routes>
         <Route path="/login" element={<Login />} />
