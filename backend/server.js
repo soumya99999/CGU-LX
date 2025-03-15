@@ -59,4 +59,23 @@ const startServer = async () => {
   });
 };
 
+  if (!req.headers.authorization) {
+    return res.status(401).json({ error: "Missing Authorization Header" });
+  }
+
+  const token = req.headers.authorization.replace("Bearer ", "");
+  console.log("🟢 Extracted Token:", token);
+
+  try {
+    const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
+    console.log("✅ Token Verified:", decodedToken);
+    res.json({ message: "User authenticated", uid: decodedToken.uid });
+  } catch (error) {
+    console.error("🔴 Firebase Token Verification Failed:", error.message);
+    res.status(401).json({ error: "Invalid Token", details: error.message });
+  }
+});
+
+
+
 startServer();
