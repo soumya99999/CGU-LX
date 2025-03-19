@@ -10,7 +10,7 @@ export const googleLogin = async (req, res) => {
         }
 
         const token = authHeader.split(" ")[1]; // Extract token
-        console.log("🔍 Received Token:", token); // Log token
+        console.log("🔍 Received Token:", token); // Log token                                                                                                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                                                                                                                                                                    
         // ✅ Verify Firebase Token
         const decodedToken = await admin.auth().verifyIdToken(token);

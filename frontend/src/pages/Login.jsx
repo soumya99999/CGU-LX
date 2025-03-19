@@ -58,6 +58,7 @@ const Login = () => {
                   </svg>
                   <span className="text-lg">Login with Google</span>
                 </button>
+                <p6 className="text-gray-400">By logging in you agree to the ridiculously long *terms that you didn't bother to read!</p6>
                 <p className="mt-6">Don't have an account?<Link to="/register" className="text-blue-500"> Register now!</Link></p>
             </div>
         </div>

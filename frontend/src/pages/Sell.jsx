@@ -50,17 +50,17 @@ const Sell = () => {
     formData.append("email", user.email); // ✅ Send email from AuthContext
     images.forEach((image) => formData.append("images", image));
 
-    // try {
-    //   const response = await axios.post(
-    //     "http://localhost:5000/api/products/create", // ✅ Use localhost
-    //     formData,
-    //     { headers: { "Content-Type": "multipart/form-data" } }
-    //   );
     try {
-      const response = await fetch(`${API_BASE_URL}/api/products/create`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/products/create", // ✅ Use localhost
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+    // try {
+    //   const response = await fetch(`${API_BASE_URL}/api/products/create`, {
+    //     method: "POST",
+    //     body: formData,
+    //   });
   
 
       alert("Product listed successfully!");
@@ -103,11 +103,32 @@ const Sell = () => {
         </div>
 
         <button
-          type="submit"
-          disabled={loading}
-          className="mt-5 w-full bg-blue-500 text-white py-3 rounded-full font-semibold transition-all duration-300 shadow-md hover:bg-blue-800 hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed">
-          {loading ? "Uploading..." : "List Product"}
-        </button>
+  type="submit"
+  disabled={loading}
+  className={`mt-5 w-full text-white py-3 rounded-full font-semibold transition-all duration-300 shadow-md 
+              flex justify-center items-center gap-3 relative overflow-hidden 
+              bg-gradient-to-r from-blue-500 to-indigo-500 bg-[length:200%_200%] 
+              hover:shadow-xl disabled:bg-gray-300 disabled:cursor-not-allowed
+              ${loading ? "animate-gradient" : ""}`}>
+
+  {/* Inner Glow Effect (Only when loading) */}
+  {loading && (
+    <span className="absolute inset-0 bg-white opacity-10 blur-lg animate-pulse"></span>
+  )}
+
+  {loading ? (
+    <span className="flex items-center gap-2 relative">
+      {/* Rotating Gradient Loader */}
+      <div className="w-5 h-5 border-4 border-transparent border-t-white border-l-white rounded-full animate-spin"></div>
+
+      {/* Hypnotic Pulsing Text */}
+      <span className="animate-pulse text-lg">Uploading</span>
+    </span>
+  ) : (
+    <span className="relative z-10 text-lg">List Product</span>
+  )}
+</button>
+
 
       </form>
     </div>

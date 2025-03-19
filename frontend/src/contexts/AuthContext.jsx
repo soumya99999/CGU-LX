@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebaseConfig";
+import Swal from "sweetalert2";
 
 export const AuthContext = createContext();
 
@@ -19,7 +20,7 @@ export const AuthProvider = ({ children }) => {
                     const token = await currentUser.getIdToken();
                     console.log("📤 Sending Token:", token);
     
-                    const res = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
+                    const res = await fetch("http://localhost:5000/api/auth/google-login", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -30,14 +31,28 @@ export const AuthProvider = ({ children }) => {
                     const data = await res.json();
                     if (res.status === 307) {
                         console.warn("🚨 User not registered. Redirecting...");
-    
+                        
+                        Swal.fire({
+                            icon: "warning",
+                            title: "🚨 Access Restricted",
+                            text: "Use your College Email or Register to Continue.",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "black",
+                            background: "white",
+                            color: "black",
+                            customClass: {
+                                popup: "rounded-xl",
+                                confirmButton: "rounded-lg"
+                            }
+                        });
+
                         localStorage.removeItem("token");
                         localStorage.removeItem("user");
                         setUser(null);
     
                         setTimeout(() => {
                             navigate("/register");
-                        }, 5000);
+                        }, 300);
                     } else if (res.ok) {
                         console.log("✅ Backend Login Success:", data);
                         localStorage.setItem("token", token);
@@ -81,7 +96,7 @@ export const AuthProvider = ({ children }) => {
                 ? JSON.stringify({ ...userData, name: user.displayName, email })
                 : null;
 
-            const res = await fetch(`${API_BASE_URL}/api/auth/${endpoint}`, {
+            const res = await fetch(`http://localhost:5000/api/auth/${endpoint}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: body ? body : undefined,

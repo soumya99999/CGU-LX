@@ -1,6 +1,6 @@
 const Footer = () => {
     return (
-        <footer className="bg-black text-gray-400 text-center py-6 mt-12 border-t border-gray-700">
+        <footer className="bg-black text-gray-400 text-center py-6 border-t border-gray-700 absolute bottom-0 w-full">
             <div className="max-w-7xl mx-auto px-4 sm:flex sm:justify-between sm:items-center">
                 <p className="text-sm text-gray-500">&copy; {new Date().getFullYear()} CGU Marketplace | CV Raman Global University</p>
                 <nav className="flex justify-center space-x-6 mt-3 sm:mt-0">

@@ -1,23 +1,20 @@
 import React from "react";
 import Carousel from "../components/Carousel";
 import Buy from "./Buy";
+import FeaturedProducts from "../components/FeaturedProducts.jsx"; // Import FeaturedProducts
 
 function Home() {
     return (
-        <div className="bg-gray-100 text-gray-900 font-sans">
+        <div className="text-gray-900 font-sans min-h-screen px-4 flex flex-col items-center">
             {/* Carousel Section */}
-            <section >
+            <section>
                 <Carousel />
             </section>
-            
+
             {/* Featured Products Section */}
-            <section className="mt-20">
-            <h2 className="text-5xl font-bold text-center mt-4 mb-6">Featured Products</h2>
-            </section>
-            
+            <FeaturedProducts /> {/* Now it's a separate component */}
 
-                    <Buy />
-
+            <Buy />
         </div>
     );
 }

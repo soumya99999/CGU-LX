@@ -23,22 +23,25 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        'fixed left-1/2 top-1/2 z-50 w-full max-w-md transform -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white/90 backdrop-blur-lg shadow-2xl p-6 transition-all data-[state=open]:scale-100 data-[state=closed]:scale-95',
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
-        <Cross2Icon className="h-5 w-5" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <DialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          'relative w-full max-w-[90vw] max-h-[85vh] overflow-y-auto rounded-2xl bg-white/90 backdrop-blur-lg shadow-2xl p-6 transition-all transform data-[state=open]:scale-100 data-[state=closed]:scale-95',
+          className
+        )}
+        {...props}
+      >
+        {children}
+        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+          <Cross2Icon className="h-5 w-5" />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
+      </DialogPrimitive.Content>
+    </div>
   </DialogPortal>
 ));
+
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({ className, ...props }) => (
