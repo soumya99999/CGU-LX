@@ -29,14 +29,14 @@ const Login = () => {
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-200">
-            <div className="bg-white p-20 rounded-3xl shadow-lg w-96 text-center">
-                <h2 className="text-3xl font-bold text-blue-600 mb-4 ">Login</h2>
+            <div className="bg-white p-20 rounded-3xl shadow-lg w-96 text-center space-y-6 border-2 border-black">
+                <h2 className="text-3xl font-bold text-black  mb-10 ">Login</h2>
 
                 {error && <p className="text-red-500">{error}</p>}
 
                 <button
                   onClick={handleGoogleLogin}
-                  className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 font-semibold py-2 rounded-full border border-gray-300 shadow-md transition duration-300 ease-in-out hover:bg-gray-100 hover:shadow-lg"
+                  className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 font-semibold py-2 rounded-full border border-gray-300 shadow-md transition duration-200 ease-in-out hover:bg-gray-100 hover:shadow-lg hover:scale-95"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 48 48">
                     <path
@@ -58,7 +58,8 @@ const Login = () => {
                   </svg>
                   <span className="text-lg">Login with Google</span>
                 </button>
-                <p className="mt-6">Don't have an account?<Link to="/register" className="text-blue-500"> Register now!</Link></p>
+                <p6 className="text-gray-400 text-xs">By logging in you agree to the ridiculously long *terms that you didn't bother to read!</p6>
+                <p className="mt-6 text-lg">Don't have an account?<Link to="/register" className="text-blue-500 hover:text-blue-700"> Register now!</Link></p>
             </div>
         </div>
     );

@@ -132,6 +132,7 @@ const Profile = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200 p-6">
       <div className="bg-white bg-opacity-90 p-8 rounded-3xl shadow-xl w-full max-w-md backdrop-blur-md text-center">
         <h2 className="text-3xl font-bold text-gray-800 mb-2"> {user.name || "Guest"} </h2>
+        <h6 className="text-gray-500">*You are anonymus only people wants to buy will see you.  </h6>
 
         {/* Avatar Section */}
         <div className="relative inline-block mb-4">
