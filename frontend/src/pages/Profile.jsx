@@ -46,7 +46,7 @@ const Profile = () => {
 
       try {
         // Fetch user profile
-        const { data } = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
+        const { data } = await axios.get("http://localhost:5000/api/auth/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -60,7 +60,7 @@ const Profile = () => {
           setAvatarCategory(data.user.gender === "female" ? "female" : "male");
 
           // Fetch user's listed products
-          const { data: productsData } = await axios.get(`${API_BASE_URL}/api/products/user`, {
+          const { data: productsData } = await axios.get("http://localhost:5000/api/products/user", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -87,7 +87,7 @@ const Profile = () => {
     try {
       const token = localStorage.getItem("token");
       const { data } = await axios.put(
-        `${API_BASE_URL}/api/auth/profile`,
+        "http://localhost:5000/api/auth/profile",
         { avatar },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -107,7 +107,7 @@ const Profile = () => {
     try {
       const token = localStorage.getItem("token");
       const { data } = await axios.delete(
-        `${API_BASE_URL}/api/products/${productId}`,
+        `http://localhost:5000/api/products/${productId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

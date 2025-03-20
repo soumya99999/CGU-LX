@@ -1,12 +1,8 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
-<<<<<<< HEAD
-import React from "react";
-=======
 import React, { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
->>>>>>> 7fc2afe7c958882eb1b6ee26a70866b818189a96
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -18,63 +14,6 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
-<<<<<<< HEAD
-import EditProduct from "./pages/EditProduct";
-
-function App() {
-  return (
-    <div className="app-content bg-gray-100 pt-[40px]">
-      <Navbar />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Home />} />
-
-        {/* Protected Routes */}
-        <Route
-          path="/sell"
-          element={
-            <ProtectedRoute>
-              <Sell />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/buy"
-          element={
-            <ProtectedRoute>
-              <Buy />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-        path="/edit-product/:id"
-        element={
-          <ProtectedRoute>
-            <EditProduct />
-          </ProtectedRoute>
-          }
-          />
-      </Routes>
-      <Footer />
-=======
 import About from "./components/About";
 import Terms from "./components/terms";
 import Privacy from "./components/privacy";
@@ -123,7 +62,6 @@ function App() {
         )}
         <Footer />
       </div>
->>>>>>> 7fc2afe7c958882eb1b6ee26a70866b818189a96
     </div>
   );
 }
