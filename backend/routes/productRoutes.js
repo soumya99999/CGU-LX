@@ -1,16 +1,30 @@
-    import express from "express";
-    import { createProduct, getProducts } from "../controllers/productController.js";
-    import upload from "../middleware/upload.js"; // Ensure correct path
+import express from "express";
+import {
+  createProduct,
+  getProducts,
+  getUserProducts,
+  deleteProduct,
+  updateProduct,
+} from "../controllers/productController.js";
+import upload from "../middleware/upload.js"; // Ensure correct path
+import authMiddleware from "../middleware/authMiddleware.js"; // Ensure correct path
+const router = express.Router();
 
-    const router = express.Router();
+// ✅ Public Routes (No authentication required)
+// Fetch all products (for Buy Page)
+router.get("/", getProducts);
 
-    // ✅ Use `upload.array("images", 5)` for multiple files
-    router.post("/create", upload.array("images", 5), createProduct);
+// ✅ Protected Routes (Authentication required)
+// Create a new product (with image upload middleware)
+router.post("/create", authMiddleware, upload.array("images", 5), createProduct);
 
-    // Create a new product (with image upload middleware)
-    router.post("/", upload.array("images", 5), createProduct); // Allow up to 5 images
+// Fetch products listed by the logged-in user (for Profile Page)
+router.get("/user", authMiddleware, getUserProducts);
 
-    // Fetch all products
-    router.get("/", getProducts);
+// Delete a product
+router.delete("/:productId", authMiddleware, deleteProduct);
 
-    export default router;
+// Update a product
+router.put("/:productId", authMiddleware, upload.array("images", 5), updateProduct);
+
+export default router;

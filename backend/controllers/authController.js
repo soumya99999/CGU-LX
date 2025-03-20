@@ -11,7 +11,7 @@ export const googleLogin = async (req, res) => {
 
         const token = authHeader.split(" ")[1]; // Extract token
         console.log("🔍 Received Token:", token); // Log token
-                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
         // ✅ Verify Firebase Token
         const decodedToken = await admin.auth().verifyIdToken(token);
         console.log("✅ Decoded Token:", decodedToken); // Log decoded data
@@ -26,16 +26,14 @@ export const googleLogin = async (req, res) => {
             return res.status(307).json({ success: false, message: "User not registered. Redirect to register." });
         }
 
-        // ✅ Return user data
-        return res.json({ success: true, token, user });
+        // ✅ Return user data along with Firebase decodedToken
+        return res.json({ success: true, token, user: { ...user.toObject(), ...decodedToken } });
 
     } catch (error) {
         console.error("🚨 Token Verification Error:", error);
         return res.status(401).json({ success: false, message: "Invalid token" });
     }
 };
-
-
 
 export const googleRegister = async (req, res) => {
     try {

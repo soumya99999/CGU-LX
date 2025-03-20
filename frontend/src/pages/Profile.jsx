@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Pencil } from "lucide-react"; 
+import { Pencil, Trash } from "lucide-react"; // Import Trash icon for delete functionality
 
 const maleAvatars = [
   "adventurer",  // Explorer, warrior-like  
@@ -18,6 +18,7 @@ const femaleAvatars = [
   "croodles",         // Cute, friendly cartoon faces  
   "pixel-art-neutral" // Cute, pixel-style feminine faces  
 ];
+
 const Profile = () => {
   const [user, setUser] = useState({
     name: "",
@@ -27,13 +28,13 @@ const Profile = () => {
     avatar: localStorage.getItem("avatar") || "adventurer",
   });
   const [loading, setLoading] = useState(true);
-  const [isEditingSemester, setIsEditingSemester] = useState(false);
-  const [newSemester, setNewSemester] = useState("");
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [avatarCategory, setAvatarCategory] = useState("male");
+  const [listedProducts, setListedProducts] = useState([]); // State for user's listed products
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -42,15 +43,13 @@ const Profile = () => {
         navigate("/login");
         return;
       }
-  
+
       try {
+        // Fetch user profile
         const { data } = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // const { data } = await axios.get("http://localhost:5000/api/auth/profile", {
-        //           headers: { Authorization: `Bearer ${token}` },
-        // });
-  
+
         if (data.success) {
           const storedAvatar = localStorage.getItem("avatar");
           setUser((prevUser) => ({
@@ -59,6 +58,17 @@ const Profile = () => {
             avatar: storedAvatar || data.user.avatar || "adventurer", 
           }));
           setAvatarCategory(data.user.gender === "female" ? "female" : "male");
+
+          // Fetch user's listed products
+          const { data: productsData } = await axios.get(`${API_BASE_URL}/api/products/user`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          console.log("Products Data:", productsData); // Debugging log
+
+          if (productsData.success) {
+            setListedProducts(productsData.products);
+          }
         } else {
           navigate("/login");
         }
@@ -69,46 +79,9 @@ const Profile = () => {
         setLoading(false);
       }
     };
-  
+
     fetchProfile();
   }, [navigate]);
-  
-
-  const handleSemesterUpdate = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("No token found. User not authenticated.");
-        return;
-      }
-  
-      const { data } = await axios.put(
-        `${API_BASE_URL}/api/auth/profile`,
-        { semester: newSemester },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      // const { data } = await axios.put(
-      //   "http://localhost:5000/api/auth/profile",
-      //   { semester: newSemester },
-      //   {
-      //     headers: { Authorization: `Bearer ${token}` },
-      //   }
-      // );
-  
-      if (data.success) {
-        setUser((prevUser) => ({ ...prevUser, semester: newSemester }));
-        setIsEditingSemester(false);
-        console.log("Semester updated successfully!");
-      } else {
-        console.error("Failed to update semester.");
-      }
-    } catch (error) {
-      console.error("Error updating semester:", error.message);
-    }
-  };
-  
 
   const handleAvatarChange = async (avatar) => {
     try {
@@ -118,12 +91,7 @@ const Profile = () => {
         { avatar },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // const { data } = await axios.put(
-      //   "http://localhost:5000/api/auth/profile",
-      //   { avatar },
-      //   { headers: { Authorization: `Bearer ${token}` } }
-      // );
-  
+
       if (data.success) {
         setUser((prevUser) => ({ ...prevUser, avatar }));
         localStorage.setItem("avatar", avatar); // Store it in localStorage
@@ -134,7 +102,25 @@ const Profile = () => {
       setShowAvatarModal(false);
     }
   };
-  
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const { data } = await axios.delete(
+        `${API_BASE_URL}/api/products/${productId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        setListedProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== productId)
+        );
+        alert("Product deleted successfully!");
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error.message);
+    }
+  };
 
   const getAvatarUrl = (avatarName) => {
     return `https://api.dicebear.com/7.x/${avatarName}/svg?seed=${user.name}`;
@@ -145,7 +131,6 @@ const Profile = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200 p-6">
       <div className="bg-white bg-opacity-90 p-8 rounded-3xl shadow-xl w-full max-w-md backdrop-blur-md text-center">
-        {/* <h1 className="text-2xl font-semibold text-gray-700 mb-2">Welcome to Your Profile</h1> */}
         <h2 className="text-3xl font-bold text-gray-800 mb-2"> {user.name || "Guest"} </h2>
 
         {/* Avatar Section */}
@@ -200,14 +185,12 @@ const Profile = () => {
                 ))}
               </div>
 
-
               <button
                 onClick={() => setShowAvatarModal(false)}
                 className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 w-full"
               >
                 Cancel
               </button>
-              
             </div>
           </div>
         )}
@@ -227,36 +210,49 @@ const Profile = () => {
             <span className="text-gray-900">{user.course || "Not provided"}</span>
           </div>
           <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
-          </div>
-        </div>
-        {/* Editable Semester Field */}
-        <div className="bg-gray-100 p-3 rounded-lg shadow-sm flex justify-between items-center">
-          <div>
             <span className="text-gray-700 font-medium">Semester: </span>
-            {isEditingSemester ? (
-              <input
-                type="text"
-                value={newSemester}
-                onChange={(e) => setNewSemester(e.target.value)}
-                className="border border-gray-400 p-1 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            ) : (
-              <span className="text-gray-900">{user.semester || "Not provided"}</span>
-            )}
+            <span className="text-gray-900">{user.semester || "Not provided"}</span>
           </div>
-          <button
-            onClick={() => {
-              if (isEditingSemester) handleSemesterUpdate();
-              setIsEditingSemester(!isEditingSemester);
-            }}
-            className="text-blue-500 font-semibold hover:underline transition duration-200"
-          >
-            {isEditingSemester ? "Save" : "Edit"}
-          </button>
         </div>
 
+        {/* Listed Products Section */}
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">My Listed Items</h3>
+          {listedProducts.length === 0 ? (
+            <p className="text-gray-500">You have no listed items.</p>
+          ) : (
+            <div className="space-y-4">
+              {listedProducts.map((product) => (
+                <div key={product._id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h4 className="text-lg font-medium text-gray-800">{product.name}</h4>
+                      <p className="text-gray-600">₹{product.price}</p>
+                      <p className="text-gray-600">{product.description}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => navigate(`/edit-product/${product._id}`)} // Navigate to edit page
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProduct(product._id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
+
 export default Profile;

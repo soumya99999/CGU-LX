@@ -15,7 +15,7 @@ const Buy = () => {
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/products`)
+    fetch("http://localhost:5000/api/products")
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch(console.error)
