@@ -14,7 +14,9 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
-
+import About from "./components/About";
+import Terms from "./components/terms";
+import Privacy from "./components/privacy";
 function App() {
   const [fade, setFade] = useState(false);
   const [showContent, setShowContent] = useState(true);
@@ -42,19 +44,21 @@ function App() {
       ></div>
 
       {/* Smooth fade for content */}
-      <div className={`app-content bg-gray-100 pt-[40px] transition-opacity duration-[1000ms] ease-in-out ${fade ? "opacity-0" : "opacity-100"}`}>
+      <div className={`app-content bg-gray-100 pt-[70px] transition-opacity duration-[1000ms] ease-in-out ${fade ? "opacity-0" : "opacity-100"}`}>
         <Navbar />
         {showContent && (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<Home />} />
+            <Route path="/About" element={<About />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
             <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
             <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           </Routes>
-          
         )}
         <Footer />
       </div>

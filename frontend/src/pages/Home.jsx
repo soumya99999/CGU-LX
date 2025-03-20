@@ -2,6 +2,8 @@ import React from "react";
 import Carousel from "../components/Carousel";
 import Buy from "./Buy";
 import FeaturedProducts from "../components/FeaturedProducts.jsx"; // Import FeaturedProducts
+import About from "../components/About";
+import Terms from "../components/terms";
 
 function Home() {
     return (
@@ -15,6 +17,7 @@ function Home() {
             <FeaturedProducts /> {/* Now it's a separate component */}
 
             <Buy />
+            
         </div>
     );
 }
