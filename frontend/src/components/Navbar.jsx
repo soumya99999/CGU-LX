@@ -28,7 +28,7 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className="bg-white/60 backdrop-blur-md mb-10 border-blue-500 px-8 py-3 shadow-md fixed top-0 w-full z-50"
+      className="bg-white/60 backdrop-blur-md border-b-2 border-blue-500 px-8 py-3 shadow-2xl fixed top-0 w-full z-50 rounded-b-3xl mb-10"
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -49,7 +49,7 @@ const Navbar = () => {
               <Link to="/profile" className="text-gray-700 hover:text-black transition-colors text-sm font-medium">Profile</Link>
               <button
                 onClick={handleLogout}
-                className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md hover:bg-gray-800 transition"
+                className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-lg hover:bg-gray-700 hover:scale-90 transition duration-200"
               >
                 Logout
               </button>
@@ -57,7 +57,7 @@ const Navbar = () => {
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="bg-black text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md hover:bg-gray-800 transition"
+              className="bg-black text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-lg hover:bg-gray-700 hover:scale-90 transition duration-200"
             >
               Login
             </button>
@@ -98,7 +98,7 @@ const Navbar = () => {
                     handleLogout();
                     setMenuOpen(false);
                   }}
-                  className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md hover:bg-gray-800 transition"
+                  className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md hover:bg-gray-200 transition "
                 >
                   Logout
                 </button>
@@ -109,7 +109,7 @@ const Navbar = () => {
                   navigate("/login");
                   setMenuOpen(false);
                 }}
-                className="bg-black text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md hover:bg-gray-800 transition"
+                className="bg-black text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md hover:bg-gray-800 transition duration-200 hover:scale-95"
               >
                 Login
               </button>

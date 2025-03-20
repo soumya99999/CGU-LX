@@ -16,8 +16,7 @@ function Home() {
             {/* Featured Products Section */}
             <FeaturedProducts /> {/* Now it's a separate component */}
 
-            <Buy />
-            
+            {/* <Buy /> */}
         </div>
     );
 }

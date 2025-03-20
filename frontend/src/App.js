@@ -38,13 +38,13 @@ function App() {
     <div className="relative">
       {/* Blurred transition overlay */}
       <div 
-        className={`fixed inset-0 bg-white/80 backdrop-blur-lg transition-opacity duration-[1000ms] ease-in-out ${
+        className={`fixed inset-0 bg-white/80 backdrop-blur-lg transition-opacity duration-[800ms] ease-in-out ${
           fade ? "opacity-100" : "opacity-0"
         } pointer-events-none z-50`}
       ></div>
 
       {/* Smooth fade for content */}
-      <div className={`app-content bg-gray-100 pt-[70px] transition-opacity duration-[1000ms] ease-in-out ${fade ? "opacity-0" : "opacity-100"}`}>
+      <div className={`app-content bg-gray-200 pt-[55px]  transition-opacity duration-[1000ms] ease-in-out ${fade ? "opacity-0" : "opacity-100"}`}>
         <Navbar />
         {showContent && (
           <Routes>
