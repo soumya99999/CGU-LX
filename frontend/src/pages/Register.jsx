@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
+import { Link} from "react-router-dom";
 
 const countryOptions = [
     { name: "India", code: "+91" }, { name: "Nepal", code: "+977" },
@@ -66,8 +67,8 @@ const Register = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-200">
-            <div className="bg-white p-12 rounded-3xl shadow-lg w-96 text-center space-y-6 border-2 border-black">
+        <div className="flex justify-center items-center h-screen bg-white">
+            <div className="bg-white p-12 rounded-3xl w-100 text-center space-y-6 border-2 border-black">
                 <h2 className="text-3xl font-bold text-black mb-8">Register</h2>
 
                 {/* Display error if exists */}
@@ -131,7 +132,7 @@ const Register = () => {
 
                 <button
                     onClick={handleGoogleRegister}
-                    className="w-full flex items-center justify-center gap-3 bg-blue-500 text-gray-700 font-semibold py-2 rounded-full border border-blue-300 shadow-md transition duration-300 ease-in-out hover:scale-90 hover:bg-blue-300 hover:shadow-lg"
+                    className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 font-semibold py-2 rounded-md border border-blue-300 shadow-md transition duration-300 ease-in-out hover:scale-90 hover:bg-blue-300 hover:shadow-lg"
                 >
                     {/* <svg className="w-5 h-5" viewBox="0 0 48 48">
                         <path fill="#4285F4" d="M24 9.5c3.15 0 5.79 1.07 7.92 3.14l5.85-5.85C33.75 3.01 29.25 1 24 1 14.95 1 7.15 6.99 3.95 14.93l7.06 5.53C12.88 14.66 17.01 9.5 24 9.5z" />
@@ -139,9 +140,9 @@ const Register = () => {
                         <path fill="#FBBC05" d="M10.65 28.98C9.95 27.3 9.5 25.48 9.5 23.5c0-1.98.45-3.8 1.15-5.48l-7.07-5.54C1.35 16.02 0 19.64 0 23.5c0 3.86 1.35 7.48 3.57 10.52l7.08-5.04z" />
                         <path fill="#EA4335" d="M24 47c5.97 0 10.98-1.98 14.63-5.35l-7.6-5.88c-2.02 1.36-4.55 2.16-7.03 2.16-7.02 0-12.17-4.7-14.05-10.96l-7.08 5.04C7.15 41.01 14.95 47 24 47z" />
                     </svg> */}
-                    <span className="text-lg text-white">Submit</span>
+                    <span className="text-lg text-black">Submit</span>
                 </button>
-                <p6 className="text-gray-400 text-xs">By registering yourself you agree to the ridiculously long *terms that you didn't bother to read!</p6>
+                <p6 className="text-gray-400 text-xs">By registering yourself you agree to the ridiculously long <Link to="/terms" className=" text-xs text-blue-500 hover:text-blue-700">terms</Link> that you didn't bother to read!</p6>
             </div>
         </div>
     );

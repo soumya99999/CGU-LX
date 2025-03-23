@@ -143,13 +143,18 @@ const Buy = () => {
           <div className="w-10 h-10 border-4 border-t-transparent border-gray-500 rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         {products.sort(() => 0.5 - Math.random()).slice(0, 8).map((product) => (
 
-            <motion.div key={product._id} whileHover={{ scale: 1.05 }} className="bg-white p-6 rounded-xl shadow-lg cursor-pointer" onClick={() => setSelectedProduct(product)}>
-              <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-lg" />
-              <h3 className="mt-4 text-xl font-medium text-gray-4500">{product.name}</h3>
-              <span className="text-lg text-gray-700">₹{product.price}</span>
+            <motion.div key={product._id} whileHover={{ scale: 1 }} className="bg-white p-4 rounded-3xl border cursor-pointer" onClick={() => setSelectedProduct(product)}>
+              <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" />
+              <h3 className="mt-4 text-md font-bold text-gray-400">{product.name}</h3>
+              <h3 className="mt-1 text-md  text-gray-900 truncate whitespace-nowrap overflow-hidden">{product.description}</h3>
+              <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
+              <span className="text-xl font-bold text-gray-700">₹{product.price}</span> 
+              <div>
+              <span className=" text-xs font-bold text-green-700">₹0 platform fee(EarlyBirdOffer)</span> 
+              </div>
             </motion.div>
           ))}
         </div>

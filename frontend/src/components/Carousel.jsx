@@ -7,9 +7,8 @@ import "swiper/css/pagination";
 import { Link } from "react-router-dom";
 
 const images = [
-  "/temp01.JPG",
-  "/temp02.JPG",
-  "/temp03.JPG",
+  "/temp01.png",  
+  "/temmp02.png",
 ];
 
 const Carousel = () => {

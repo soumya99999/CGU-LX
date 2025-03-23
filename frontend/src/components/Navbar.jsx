@@ -28,17 +28,20 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className="bg-white/60 backdrop-blur-md border-b-2 border-blue-500 px-8 py-3 shadow-2xl fixed top-0 w-full z-50 rounded-b-3xl mb-10"
+      className="bg-white border-b-2 border-blue-300 px-8 py-3 fixed top-0 w-full z-50 mb-10"
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+      // transition={{ duration: 0.5, ease: "easeInOut" }}
     >
-      <div className="flex justify-between items-center max-w-6xl mx-auto ">
+      <div className="flex justify-between items-center max-w-6xl px-4 mx-auto">
         {/* Logo */}
-        <Link to="/" className="text-2xl font-semibold tracking-tight text-black">
-          <span className="text-blue-500">CGU</span>
-          <span className="text-yellow-500">Marketplace</span>
+        <Link to="/" className="flex items-center space-x-2 text-3xl font-semibold tracking-tight text-black">
+        <img src={require("../logo1.png")} alt="CGU Logo" className="h-10 w-10 object-contain" />          <span>
+            <span className="text-blue-700">CGU</span>
+            <span className="text-yellow-500">Marketplace</span>
+          </span>
         </Link>
+
 
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-8 items-center">

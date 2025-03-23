@@ -44,7 +44,7 @@ function App() {
       ></div>
 
       {/* Smooth fade for content */}
-      <div className={`app-content bg-gray-200 pt-[55px]  transition-opacity duration-[1000ms] ease-in-out ${fade ? "opacity-0" : "opacity-100"}`}>
+      <div className={`app-content  pt-[65px]  transition-opacity duration-[1000ms] ease-in-out ${fade ? "opacity-0" : "opacity-100"}`}>
         <Navbar />
         {showContent && (
           <Routes>

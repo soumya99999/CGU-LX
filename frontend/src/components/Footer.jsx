@@ -3,7 +3,7 @@ import { Mail, Instagram } from "lucide-react"; // ✅ Import icons
 
 const Footer = () => {
   return (
-    <footer className=" mt-20 bg-gray-800 text-gray-400 text-center py-6 border-t-4 border-gray-400 absolute bottom-0 w-full rounded-t-3xl ">
+    <footer className=" mt-20 bg-gray-800 text-gray-400 text-center py-6 border-t-4 border-gray-400 absolute bottom-0 w-full  ">
       <div className="max-w-7xl mx-auto px-1 flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <p className="text-xs text-gray-400">
           &copy; {new Date().getFullYear()} CGUMarketplace
@@ -28,7 +28,7 @@ const Footer = () => {
             </a>
           </div>
         </div>
-      </div>
+      </div>+
     </footer>
   );
 };
