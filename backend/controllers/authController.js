@@ -1,5 +1,14 @@
+import admin from "firebase-admin";
 import { auth } from "../config/firebase-config.js"; // Ensure correct path
 import User from "../models/User.js";
+
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.applicationDefault(), // Or use service account credentials
+    });
+}
+
 
 export const googleLogin = async (req, res) => {
     try {
