@@ -95,7 +95,7 @@ const Sell = () => {
       <h1 className="text-4xl font-bold text-gray-900">Sell an Item</h1>
       <label className="text-lg text-gray-400">List your item for sale to CGU peoples.</label>
       
-      <form onSubmit={handleSubmit} className="bg-white p-6 md:p-10 rounded-3xl border-4 border-gray-100">
+      <form onSubmit={handleSubmit} className="bg-white p-6 md:p-10 rounded-3xl border border-black">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
             {error}
