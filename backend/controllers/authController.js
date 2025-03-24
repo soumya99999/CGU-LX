@@ -1,5 +1,5 @@
-import admin from "firebase-admin";
-import { auth } from "../config/firebase-config.js"; // Ensure correct path
+// import admin from "firebase-admin";
+import admin  from "../config/firebase-config.js"; // Ensure correct path
 import User from "../models/User.js";
 
 // Initialize Firebase Admin if not already initialized
