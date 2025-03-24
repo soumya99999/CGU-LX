@@ -13,6 +13,7 @@
 
 // ⚠️ below comented code is for rendering on server
 import { initializeApp, cert, getApps } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 import fs from "fs";
 
 const firebaseConfigPath = "/etc/secrets/firebaseAdminConfig.json";
@@ -34,4 +35,6 @@ const firebaseAdmin = getApps().length
 
 console.log("✅ Firebase initialized successfully");
 
+// ✅ Export both app and auth instance
+export const auth = getAuth(firebaseAdmin);
 export default firebaseAdmin;

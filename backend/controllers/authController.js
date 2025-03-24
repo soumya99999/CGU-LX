@@ -1,4 +1,4 @@
-import admin from "../config/firebase-config.js";
+import { auth } from "../config/firebase-config.js"; // Ensure correct path
 import User from "../models/User.js";
 
 export const googleLogin = async (req, res) => {
