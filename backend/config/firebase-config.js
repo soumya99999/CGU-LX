@@ -17,7 +17,6 @@ import fs from "fs";
 
 const firebaseConfigPath = "/etc/secrets/firebaseAdminConfig.json";
 
-// ✅ Check if config file exists before attempting to read it
 if (!fs.existsSync(firebaseConfigPath)) {
   console.error("❌ Firebase config file not found!");
   process.exit(1);
@@ -25,7 +24,8 @@ if (!fs.existsSync(firebaseConfigPath)) {
 
 const firebaseConfig = JSON.parse(fs.readFileSync(firebaseConfigPath, "utf8"));
 
-// ✅ Prevent reinitialization in case of multiple function calls
+console.log("🛠️ Firebase Config Loaded:", firebaseConfig.project_id);
+
 const firebaseAdmin = getApps().length
   ? getApps()[0]
   : initializeApp({
@@ -34,9 +34,4 @@ const firebaseAdmin = getApps().length
 
 console.log("✅ Firebase initialized successfully");
 
-// ✅ Corrected Export
 export default firebaseAdmin;
-
-
-
-
