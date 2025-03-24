@@ -62,7 +62,7 @@ const Sell = () => {
     formData.append("seller", user._id); // Add seller field
     images.forEach((image) => formData.append("images", image));
 
-    const response = await fetch("http://localhost:5000/products/create", {
+    const response = await fetch(`${API_BASE_URL}/api/products/create`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`, // Include the token in the header
@@ -87,6 +87,7 @@ const Sell = () => {
     setLoading(false);
   }
 };
+
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4 md:p-8">
