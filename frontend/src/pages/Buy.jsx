@@ -5,6 +5,12 @@ import { Dialog, DialogContent } from '../ui/dialog';
 import { CartContext } from '../contexts/CartContext';
 import { FaWhatsapp } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
 
 const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevImage }) => (
   <AnimatePresence>
@@ -27,7 +33,7 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
           exit={{ opacity: 0, scale: 0.95, y: 30 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <DialogContent className="w-[90vw] max-w-[90vw] h-[85vh] max-h-[85vh] bg-white/95 rounded-2xl shadow-2xl overflow-y-auto p-4 sm:p-6 flex flex-col">
+          <DialogContent className="w-[90vw] max-w-[90vw] h-[85vh] max-h-[85vh] bg-white rounded-2xl  overflow-y-auto p-4 sm:p-6 flex flex-col">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Product Image */}
               <div className="relative flex justify-center items-center">
@@ -35,7 +41,7 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
                   key={currentImageIndex}
                   src={product.images[currentImageIndex]}
                   alt={product.name}
-                  className="w-full max-h-[250px] sm:max-h-[350px] md:max-h-[500px] object-cover rounded-xl shadow-md"
+                  className="w-full max-h-[250px] sm:max-h-[350px] md:max-h-[500px] object-cover rounded-xl "
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
@@ -119,9 +125,10 @@ const Buy = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addToCart } = useContext(CartContext);
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch(`${API_BASE_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch(console.error)
@@ -135,20 +142,49 @@ const Buy = () => {
 
   const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % selectedProduct.images.length);
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length);
+  const [hoveredProduct, setHoveredProduct] = useState(null);
+
 
   return (
     <div className="min-h-screen p-6">
       {loading ? (
         <div className="flex items-center justify-center h-screen">
-          <div className="w-10 h-10 border-4 border-t-transparent border-gray-500 rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-gray-500 rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
           {products.map((product) => (
-            <motion.div key={product._id} whileHover={{ scale: 1.05 }} className="bg-white p-6 rounded-xl shadow-lg cursor-pointer" onClick={() => setSelectedProduct(product)}>
-              <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-lg" />
-              <h3 className="mt-4 text-xl font-medium text-gray-900">{product.name}</h3>
-              <span className="text-lg text-gray-700">₹{product.price}</span>
+            <motion.div key={product._id} whileHover={{ scale: 1 }} className="bg-white p-4 rounded-3xl border cursor-pointer" onClick={() => setSelectedProduct(product)}>
+              {/* <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" /> */}
+              <div className="w-full h-72 rounded-xl overflow-hidden relative"
+                onMouseEnter={() => setHoveredProduct(product._id)}
+                onMouseLeave={() => setHoveredProduct(null)}
+              >
+                {hoveredProduct === product._id ? (
+                  <Swiper
+                    modules={[Autoplay, Pagination]}
+                    pagination={{ clickable: true }}
+                    autoplay={{ delay: 500 }}
+                    loop
+                    className="w-full h-72"
+                  >
+                    {product.images.map((image, index) => (
+                      <SwiperSlide key={index}>
+                        <img src={image} alt={`${product.name} ${index}`} className="w-full h-72 object-cover rounded-xl" />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                ) : (
+                  <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" />
+                )}
+              </div>
+              <h3 className="mt-4 text-md font-bold text-gray-400">{product.name}</h3>
+              <h3 className="mt-1 text-md  text-gray-900 truncate whitespace-nowrap overflow-hidden">{product.description}</h3>
+              <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
+              <span className="text-xl font-bold text-gray-700">₹{product.price}</span> 
+              <div>
+              <span className=" text-xs font-bold text-green-700">₹0 platform fee(EarlyBirdOffer)</span> 
+              </div>
             </motion.div>
           ))}
         </div>

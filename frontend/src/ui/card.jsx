@@ -9,7 +9,7 @@ const Card = React.forwardRef(({ className, ...props }, ref) => (
     animate={{ opacity: 1, scale: 1 }}  // Fade in and scale up slightly
     transition={{ duration: 0.5, ease: "easeOut" }} // Smooth transition
     whileHover={{ scale: 1.03, boxShadow: "0px 6px 18px rgba(0,0,0,0.2)" }} // Slight hover effect
-    className={cn("rounded-xl border bg-card text-card-foreground shadow-sm", className)}
+    className={cn("rounded-xl border bg-card text-card-foreground ", className)}
     {...props}
   />
 ));
