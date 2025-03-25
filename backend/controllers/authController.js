@@ -1,16 +1,5 @@
-import admin from "firebase-admin";
-// import admin  from "../config/firebase-config.js"; // Ensure correct path
+import admin from "../config/firebase-config.js";
 import User from "../models/User.js";
-
-
-
-// Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.applicationDefault(), // Or use service account credentials
-    });
-}
-
 
 export const googleLogin = async (req, res) => {
     try {
@@ -21,8 +10,8 @@ export const googleLogin = async (req, res) => {
         }
 
         const token = authHeader.split(" ")[1]; // Extract token
-        console.log("🔍 Received Token:", token); // Log token
-
+        console.log("🔍 Received Token:", token); // Log token                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                   
         // ✅ Verify Firebase Token
         const decodedToken = await admin.auth().verifyIdToken(token);
         console.log("✅ Decoded Token:", decodedToken); // Log decoded data
@@ -37,14 +26,16 @@ export const googleLogin = async (req, res) => {
             return res.status(307).json({ success: false, message: "User not registered. Redirect to register." });
         }
 
-        // ✅ Return user data along with Firebase decodedToken
-        return res.json({ success: true, token, user: { ...user.toObject(), ...decodedToken } });
+        // ✅ Return user data
+        return res.json({ success: true, token, user });
 
     } catch (error) {
         console.error("🚨 Token Verification Error:", error);
         return res.status(401).json({ success: false, message: "Invalid token" });
     }
 };
+
+
 
 export const googleRegister = async (req, res) => {
     try {
