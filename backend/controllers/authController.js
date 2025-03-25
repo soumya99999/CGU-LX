@@ -23,7 +23,7 @@ export const googleLogin = async (req, res) => {
 
         // ❌ If user is not found, return 307 to redirect to registration
         if (!user) {
-            return res.status(307).json({ success: false, message: "User not registered. Redirect to register." });
+            return res.status(401).json({ success: false, message: "User not registered." });
         }
 
         // ✅ Return user data
@@ -47,7 +47,7 @@ export const googleRegister = async (req, res) => {
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(409).json({ success: false, message: "User already registered." });
+            return res.status(409).json({ success: false, message: "User already registered" });
         }
         
 

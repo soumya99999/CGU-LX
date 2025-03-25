@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebaseConfig";
+import Swal from "sweetalert2";
 
 export const AuthContext = createContext();
 
@@ -11,45 +12,46 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
-  // Check if API_BASE_URL is defined
   if (!API_BASE_URL) {
     console.error("❌ REACT_APP_BACKEND_URL is not defined in .env");
   }
 
-  // Check authentication state on app load
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
-      if (currentUser) {
+
+      if (!currentUser) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const token = await currentUser.getIdToken();
+        console.log("📤 Sending Token:", token);
+
+        const res = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const responseText = await res.text();
+        let data;
+
         try {
-          const token = await currentUser.getIdToken();
-          console.log("📤 Sending Token:", token);
+          data = JSON.parse(responseText);
+        } catch (error) {
+          console.error("🚨 Backend returned invalid JSON:", responseText);
+          throw new Error("Invalid JSON response from backend.");
+        }
 
-          const res = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
+        if (!res.ok) {
+          console.warn("❌ Backend returned an error:", data.message);
 
-          // Handle non-JSON responses
-          if (!res.ok) {
-            const text = await res.text();
-            console.error("🚨 Backend Response (Text):", text);
-            throw new Error("Backend returned an error: " + text);
-          }
-
-          const data = await res.json();
-          console.log("Backend Response Data:", data); // Debugging line
-
-          if (res.status === 307) {
-            console.warn("🚨 User not registered. Redirecting...");
-
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            setUser(null);
-
+          if (data.message.includes("User not registered")) {
             navigate("/register", {
               state: {
                 email: currentUser.email,
@@ -57,84 +59,109 @@ export const AuthProvider = ({ children }) => {
                 picture: currentUser.photoURL,
               },
             });
-          } else if (res.ok) {
-            console.log("✅ Backend Login Success:", data);
-
-            // Merge Firebase user data with backend user data
-            const userData = {
-              ...data.user,
-              getIdToken: () => Promise.resolve(token), // Add getIdToken method
-              email: currentUser.email,
-              displayName: currentUser.displayName,
-              photoURL: currentUser.photoURL,
-            };
-
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(userData));
-            setUser(userData); // Set the merged user object
-          } else {
-            console.error("🚨 Backend Login Failed:", data);
-            await logout();
+            setLoading(false);
+            return;
           }
-        } catch (error) {
-          console.error("Auth Error:", error);
         }
-      } else {
-        setUser(null);
+
+        const userData = {
+          ...data.user,
+          getIdToken: () => Promise.resolve(token),
+          email: currentUser.email,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL,
+        };
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+      } catch (error) {
+        console.error("❌ Auth Error:", error);
       }
+
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, [navigate]);
 
-  // Sign in with Google
-  const signInWithGoogle = async (register = false, userData = {}) => {
+  const signInWithGoogle = async (register = false, userPayload = {}) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       const token = await user.getIdToken();
       const email = user.email;
 
-      // Restrict login to college email
       if (!email.endsWith("@cgu-odisha.ac.in")) {
         await signOut(auth);
-        console.warn("❌ Unauthorized Email: " + email);
-        return { error: "❌ Use your college email to continue." };
+        await Swal.fire({
+          icon: "error",
+          title: "Access Denied",
+          text: "Use your college email to continue.",
+          confirmButtonText: "OK",
+          confirmButtonColor: "black",
+        });
+        return { error: "Use your college email to continue." };
       }
 
       const endpoint = register ? "google-register" : "google-login";
-      const body = register
-        ? JSON.stringify({ ...userData, name: user.displayName, email })
-        : null;
+
+      // ✅ Ensure userPayload is always defined
+      if (register) {
+        userPayload = { ...userPayload, name: user.displayName, email };
+      }
 
       const res = await fetch(`${API_BASE_URL}/api/auth/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: body ? body : undefined,
+        body: register ? JSON.stringify(userPayload) : undefined,
       });
 
-      // Handle non-JSON responses
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("🚨 Backend Response (Text):", text);
-        throw new Error("Backend returned an error: " + text);
+      const responseText = await res.text();
+      let data;
+
+      try {
+        data = JSON.parse(responseText);
+      } catch (error) {
+        console.error("🚨 Backend returned invalid JSON:", responseText);
+        throw new Error("Invalid JSON response from backend.");
       }
 
-      const data = await res.json();
+      if (data.success === false && data.message.includes("User not registered")) {
+        await Swal.fire({
+          icon: "warning",
+          title: "User Not Registered",
+          text: "Please register to continue.",
+          confirmButtonText: "OK",
+        });
 
-      if (!res.ok) {
-        throw new Error(data.message || "Authentication failed.");
+
+        navigate("/register", {
+          state: {
+            email,
+            name: user.displayName,
+            picture: user.photoURL,
+          },
+        });
+        return;
       }
 
-      if (register && res.status === 409) {
-        return { alreadyRegistered: true, message: "⚠️ You are already registered!" };
+      if (data.message.includes("User already registered")) {
+        Swal.fire({
+            icon: "info",
+            title: "Already Registered",
+            text: "You are already registered. Redirecting to login.",
+            confirmButtonText: "OK",
+        }).then(() => {
+            navigate("/login");
+        });
+        return;
       }
+    
 
-      // Merge Firebase user data with backend user data
       const userData = {
         ...data.user,
-        getIdToken: () => Promise.resolve(token), // Add getIdToken method
+        getIdToken: () => Promise.resolve(token),
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,
@@ -142,25 +169,23 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData); // Set the merged user object
+      setUser(userData);
       navigate("/");
       return data;
     } catch (error) {
-      console.error("🚨 Google Auth Error:", error.message);
+      console.error("❌ Google Auth Error:", error);
       return { error: error.message };
     }
   };
 
-  // Logout
   const logout = async () => {
     try {
       await signOut(auth);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      localStorage.clear();
       setUser(null);
       navigate("/login");
     } catch (error) {
-      console.error("Logout Error:", error);
+      console.error("❌ Logout Error:", error);
     }
   };
 
@@ -171,6 +196,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
