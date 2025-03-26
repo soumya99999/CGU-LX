@@ -5,6 +5,7 @@ import { Dialog, DialogContent } from '../ui/dialog';
 import { CartContext } from '../contexts/CartContext';
 import { FaWhatsapp } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom"; 
 
 const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevImage }) => (
   <AnimatePresence>
@@ -63,6 +64,7 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
                   </>
                 )}
               </div>
+              
               {/* Product Details */}
               <div className="flex flex-col space-y-3 sm:space-y-5">
                 <motion.h2 
@@ -120,6 +122,7 @@ const Buy = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addToCart } = useContext(CartContext);
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/products`)
@@ -138,31 +141,67 @@ const Buy = () => {
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length);
 
   return (
-    <div className="min-h-screen p-6 ">
+    <div className="min-h-screen p-6">
       {loading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="w-10 h-10 border-4 border-t-transparent border-gray-500 rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {products.sort(() => 0.5 - Math.random()).slice(0, 8).map((product) => (
+        <>
+          {/* Featured Products Heading */}
+          <div className="flex items-center mb-6">
+            <h2 className="text-2xl font-bold">Featured Products</h2>
+            <span className="ml-3 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              Latest
+            </span>
+          </div>
 
-            <motion.div key={product._id} whileHover={{ scale: 1 }} className="bg-white p-4 rounded-3xl border cursor-pointer" onClick={() => setSelectedProduct(product)}>
-              <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" />
-              <h3 className="mt-4 text-md font-bold text-gray-400">{product.name}</h3>
-              <h3 className="mt-1 text-md  text-gray-900 truncate whitespace-nowrap overflow-hidden">{product.description}</h3>
-              <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
-              <span className="text-xl font-bold text-gray-700">₹{product.price}</span> 
-              <div>
-              <span className=" text-xs font-bold text-green-700">₹0 platform fee(EarlyBirdOffer)</span> 
-              </div>
-            </motion.div>
-          ))}
-        </div>
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+            {products.sort(() => 0.5 - Math.random()).slice(0, 8).map((product) => (
+              <motion.div 
+                key={product._id} 
+                whileHover={{ scale: 1 }} 
+                className="bg-white p-4 rounded-3xl border cursor-pointer" 
+                onClick={() => setSelectedProduct(product)}
+              >
+                <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" />
+                <h3 className="mt-4 text-md font-bold text-gray-400">{product.name}</h3>
+                <h3 className="mt-1 text-md text-gray-900 truncate whitespace-nowrap overflow-hidden">{product.description}</h3>
+                <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
+                <span className="text-xl font-bold text-gray-700">₹{product.price}</span> 
+                <div>
+                  <span className="text-xs font-bold text-green-700">₹0 platform fee (EarlyBirdOffer)</span> 
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Explore More Button - Navigate to Buy Page */}
+          <div className="flex justify-center mt-10">
+            <button 
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-8 py-2 rounded-md transition-all hover:scale-105"
+              onClick={() => navigate("/buy")} // Navigate to Buy Page
+            >
+              Explore More
+            </button>
+          </div>
+        </>
       )}
-      {selectedProduct && <ProductDialog product={selectedProduct} onClose={() => setSelectedProduct(null)} currentImageIndex={currentImageIndex} nextImage={nextImage} prevImage={prevImage} />}
+
+      {/* Product Dialog */}
+      {selectedProduct && (
+        <ProductDialog 
+          product={selectedProduct} 
+          onClose={() => setSelectedProduct(null)} 
+          currentImageIndex={currentImageIndex} 
+          nextImage={nextImage} 
+          prevImage={prevImage} 
+        />
+      )}
     </div>
   );
+  
 };
 
 export default Buy;
