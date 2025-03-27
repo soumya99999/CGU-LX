@@ -12,7 +12,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Filter from "../components/Filter"
 
-const API_BASE_URL = "http://localhost:5000"; 
+ 
 
 
 const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevImage }) => (
@@ -129,6 +129,7 @@ const Buy = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [hoveredProduct, setHoveredProduct] = useState(null);
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
   const [filters, setFilters] = useState({
     // name: "",
     locationType: "",
