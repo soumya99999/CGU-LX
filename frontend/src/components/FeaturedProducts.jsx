@@ -150,8 +150,8 @@ const Buy = () => {
         <>
           {/* Featured Products Heading */}
           <div className="flex items-center mb-6">
-            <h2 className="text-2xl font-bold">Featured Products</h2>
-            <span className="ml-3 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+            <h2 className="text-3xl font-bold">Featured Products</h2>
+            <span className="ml-3 bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
               Latest
             </span>
           </div>
@@ -180,7 +180,7 @@ const Buy = () => {
           {/* Explore More Button - Navigate to Buy Page */}
           <div className="flex justify-center mt-10">
             <button 
-              className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-8 py-2 rounded-md transition-all hover:scale-95"
+              className="bg-black hover:bg-gray-500 text-white font-medium px-20 py-2 rounded-md transition-all hover:scale-95"
               onClick={() => navigate("/buy")} // Navigate to Buy Page
             >
               Explore More

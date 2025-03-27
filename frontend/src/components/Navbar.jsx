@@ -101,7 +101,7 @@ const Navbar = () => {
                     handleLogout();
                     setMenuOpen(false);
                   }}
-                  className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md hover:bg-gray-200 transition "
+                  className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium  hover:bg-gray-200 transition "
                 >
                   Logout
                 </button>
@@ -112,7 +112,7 @@ const Navbar = () => {
                   navigate("/login");
                   setMenuOpen(false);
                 }}
-                className="bg-black text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md hover:bg-gray-800 transition duration-200 hover:scale-95"
+                className="bg-black text-white px-4 py-1.5 rounded-full text-sm font-medium  hover:bg-gray-800 transition duration-200 hover:scale-95"
               >
                 Login
               </button>
