@@ -7,6 +7,7 @@ import {
   updateProduct,
   getFilteredProducts,
   getProductById,
+  toggleSold,
 } from "../controllers/productController.js";
 import upload from "../middleware/upload.js"; // Ensure correct path
 import authMiddleware from "../middleware/authMiddleware.js"; // Ensure correct path
@@ -15,6 +16,7 @@ const router = express.Router();
 // ✅ Public Routes (No authentication required)
 // Fetch all products (for Buy Page)
 router.get("/", getProducts);
+router.get("/filter", getFilteredProducts);
 
 // ✅ Protected Routes (Authentication required)
 // Create a new product (with image upload middleware)
@@ -32,6 +34,9 @@ router.delete("/:productId", authMiddleware, deleteProduct);
 // Update a product
 router.put("/:productId", authMiddleware, upload.array("images", 5), updateProduct);
 
-router.get("/filter", getFilteredProducts);
+// Toggle sold status
+router.put("/:productId/toggle-sold", authMiddleware, toggleSold);
+
+
 
 export default router;

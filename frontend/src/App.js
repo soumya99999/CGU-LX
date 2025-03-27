@@ -20,7 +20,6 @@ import Terms from "./components/terms";
 import Privacy from "./components/privacy";
 import HowItWorks from "./components/HowItWorks";
 import CommunityGuidelines from "./components/CommunityGuidelines";
-
 function App() {
   const [fade, setFade] = useState(false);
   const [showContent, setShowContent] = useState(true);

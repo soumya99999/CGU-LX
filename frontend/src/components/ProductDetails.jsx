@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { FaWhatsapp } from "react-icons/fa";
 
 const ProductDetails = ({ products }) => {
   const { id } = useParams();
@@ -15,12 +16,32 @@ const ProductDetails = ({ products }) => {
     );
   }
 
-  // Replace the phone number with your WhatsApp number.
   const handleWhatsAppChat = () => {
-    const phoneNumber = "1234567890";
-    const message = `Hello, I'm interested in ${product.name}. Please provide more details.`;
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
+    try {
+      // Log the product data to see what's available
+      console.log('Product data:', product);
+      
+      // Get the seller's phone number from various possible locations
+      const sellerPhone = product.seller?.phone || product.phone || product.contact;
+      
+      // Log the found phone number
+      console.log('Found phone number:', sellerPhone);
+      
+      if (!sellerPhone) {
+        alert('Seller contact information is not available');
+        return;
+      }
+      const cleanPhone = sellerPhone.replace(/[^0-9]/g, '');
+      const formattedPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
+      console.log('Formatted phone number:', formattedPhone);
+      const message = `Hi, I'm interested in buying ${product.name} for ₹${product.price}. Is it still available?`;
+      const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+      console.log('WhatsApp URL:', whatsappUrl);
+      window.open(whatsappUrl, '_blank');
+    } catch (error) {
+      console.error('Error opening WhatsApp:', error);
+      alert('Unable to open WhatsApp. Please try again later.');
+    }
   };
 
   return (
@@ -93,10 +114,11 @@ const ProductDetails = ({ products }) => {
         {/* Action Buttons */}
         <div className="flex space-x-4 mt-4">
           <button
-            className="bg-green-600 text-white text-lg font-bold px-6 py-3 rounded-lg shadow-md transition hover:bg-green-700 hover:scale-105"
+            className="bg-green-600 text-white text-lg font-bold px-6 py-3 rounded-lg shadow-md transition hover:bg-green-700 hover:scale-105 flex items-center gap-2"
             onClick={handleWhatsAppChat}
           >
-            💬 Chat on WhatsApp
+            <FaWhatsapp className="text-xl" />
+            Chat on WhatsApp
           </button>
         </div>
       </div>

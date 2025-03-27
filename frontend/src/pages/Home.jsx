@@ -17,8 +17,6 @@ function Home() {
             <section>
             <CategorySection/>
             </section>
-            
-
             {/* Featured Products Section */}
             <FeaturedProducts /> {/* Now it's a separate component */}
 
