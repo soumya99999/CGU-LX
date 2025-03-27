@@ -26,6 +26,7 @@ const Filter = ({ onFilterChange }) => {
     { label: "Health & Fitness", value: "Health & Fitness" },
   ];
 
+
   const conditions = [
     { label: "All Conditions", value: "" },
     { label: "New", value: "New" },

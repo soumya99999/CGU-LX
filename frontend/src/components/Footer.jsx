@@ -56,7 +56,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="mt-10 pt-6 border-t border-gray-600 text-center text-xs">
         {/* Social Media Icons */}
-        <div className="mt-6 flex justify-center space-x-4">
+        <div className="mt-2 flex justify-center space-x-4">
           <a href="mailto:cgumarketplace@gmail.com" className="hover:text-white transition"><Mail size={30} /></a>
           <a href="https://instagram.com/cgumarketplace" className="hover:text-white transition"><Instagram size={30} /></a>
           <a href="https://www.linkedin.com/company/cgu-marketplace/" className="hover:text-white transition"><Linkedin size={30} /></a>
