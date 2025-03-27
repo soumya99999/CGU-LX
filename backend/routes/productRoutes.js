@@ -16,6 +16,7 @@ const router = express.Router();
 // ✅ Public Routes (No authentication required)
 // Fetch all products (for Buy Page)
 router.get("/", getProducts);
+router.get("/filter", getFilteredProducts);
 
 // ✅ Protected Routes (Authentication required)
 // Create a new product (with image upload middleware)
@@ -36,6 +37,6 @@ router.put("/:productId", authMiddleware, upload.array("images", 5), updateProdu
 // Toggle sold status
 router.put("/:productId/toggle-sold", authMiddleware, toggleSold);
 
-router.get("/filter", getFilteredProducts);
+
 
 export default router;
