@@ -45,6 +45,8 @@ const Profile = () => {
   const [avatarCategory, setAvatarCategory] = useState("male");
   const [listedProducts, setListedProducts] = useState([]);
   const [activeImages, setActiveImages] = useState({});
+  const [editingField, setEditingField] = useState(null);
+  const [editValue, setEditValue] = useState("");
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   const navigate = useNavigate();
@@ -68,16 +70,14 @@ const Profile = () => {
           setUser((prevUser) => ({
             ...prevUser,
             ...data.user,
+            bio: data.user.bio || "",
             avatar: storedAvatar || data.user.avatar || "adventurer",
           }));
           setAvatarCategory(data.user.gender === "female" ? "female" : "male");
 
-          // Fetch user's listed products
           const { data: productsData } = await axios.get(`${API_BASE_URL}/api/products/user`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-
-          console.log("Products Data:", productsData); // Debugging log
 
           if (productsData.success) {
             setListedProducts(productsData.products);
@@ -173,6 +173,57 @@ const Profile = () => {
     }
   };
 
+  const handleEditField = (field, value) => {
+    setEditingField(field);
+    setEditValue(value);
+  };
+
+  const handleSaveField = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const { data } = await axios.put(
+        `${API_BASE_URL}/api/auth/profile`,
+        { [editingField]: editValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        setUser(prev => ({ ...prev, [editingField]: editValue }));
+        setEditingField(null);
+        toast.success("Updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error updating field:", error);
+      toast.error("Failed to update");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingField(null);
+    setEditValue("");
+  };
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      const token = localStorage.getItem("token");
+      try {
+        const { data } = await axios.delete(`${API_BASE_URL}/api/auth/profile`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (data.success) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("avatar");
+          toast.success("Account deleted successfully");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        toast.error("Failed to delete account");
+      }
+    }
+  };
+
   const getAvatarUrl = (avatarName) => {
     return `https://api.dicebear.com/7.x/${avatarName}/svg?seed=${user.name}`;
   };
@@ -185,7 +236,10 @@ const Profile = () => {
       <div className="w-full md:w-1/3">
         <div className="bg-white rounded-lg shadow-sm overflow-hidden h-full">
           <div className="p-4">
-            <h2 className="text-lg font-semibold mb-4">Profile</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Profile</h2>
+            </div>
+
             <div className="flex flex-col items-center">
               <div className="relative w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-3">
                 <img
@@ -215,7 +269,46 @@ const Profile = () => {
 
                 <div className="mb-3">
                   <h3 className="text-xs text-gray-500">Bio</h3>
-                  <p className="text-xs">{user.bio || "No bio yet"}</p>
+                  <div className="flex items-start gap-2">
+                    {editingField === 'bio' ? (
+                      <>
+                        <textarea
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          className="flex-1 px-2 py-1 border rounded text-sm"
+                          rows="3"
+                        />
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={handleSaveField}
+                            className="p-1 text-green-500 hover:text-green-600"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="p-1 text-red-500 hover:text-red-600"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-xs whitespace-pre-wrap flex-1">{user.bio || "No bio yet"}</p>
+                        <button
+                          onClick={() => handleEditField('bio', user.bio)}
+                          className="p-1 text-gray-500 hover:text-gray-700"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <div className="mb-3">
@@ -225,7 +318,51 @@ const Profile = () => {
 
                 <div className="mb-3">
                   <h3 className="text-xs text-gray-500">Semester</h3>
-                  <p className="text-sm">{user.semester || "Not provided"}</p>
+                  <div className="flex items-center gap-2">
+                    {editingField === 'semester' ? (
+                      <>
+                        <select
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          className="px-2 py-1 border rounded text-sm"
+                        >
+                          {[...Array(8)].map((_, i) => (
+                            <option key={i} value={`${i + 1}th Semester`}>
+                              {`${i + 1}th Semester`}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={handleSaveField}
+                            className="p-1 text-green-500 hover:text-green-600"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="p-1 text-red-500 hover:text-red-600"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm">{user.semester || "Not provided"}</p>
+                        <button
+                          onClick={() => handleEditField('semester', user.semester)}
+                          className="p-1 text-gray-500 hover:text-gray-700"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <div className="mb-3">
@@ -238,26 +375,13 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 w-full">
-                <Button
-                  className="bg-pink-400 hover:bg-pink-500 text-white w-full text-sm py-1 h-auto"
-                  onClick={() => navigate("/edit-profile")}
-                >
-                  Edit Profile
-                </Button>
-                <Button
-                  variant="outline"
-                  className="text-red-500 border-red-200 hover:bg-red-50 w-full text-sm py-1 h-auto"
-                  onClick={() => {
-                    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-                      // Handle account deletion
-                      toast.error("Account deletion not implemented yet");
-                    }
-                  }}
-                >
-                  Delete Account
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                className="text-red-500 border-red-200 hover:bg-red-50 w-full text-sm py-1 h-auto"
+                onClick={handleDeleteAccount}
+              >
+                Delete Account
+              </Button>
             </div>
           </div>
         </div>

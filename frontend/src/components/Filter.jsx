@@ -2,7 +2,6 @@ import { useState } from "react";
 
 const Filter = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
-    // name: "",
     locationType: "",
     condition: "",
     category: "",
@@ -25,7 +24,6 @@ const Filter = ({ onFilterChange }) => {
     { label: "Tech & Accessories", value: "Tech & Accessories" },
     { label: "Health & Fitness", value: "Health & Fitness" },
   ];
-
 
   const conditions = [
     { label: "All Conditions", value: "" },
@@ -56,15 +54,6 @@ const Filter = ({ onFilterChange }) => {
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold text-gray-700 text-center mb-4">Filter Products</h2>
       <form className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* <input
-          type="text"
-          name="name"
-          value={filters.name}
-          onChange={handleChange}
-          placeholder="Search by Name"
-          className="p-2 border rounded-md w-full focus:ring focus:ring-blue-200"
-        /> */}
-
         <select
           name="locationType"
           value={filters.locationType}
