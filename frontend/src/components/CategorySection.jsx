@@ -20,7 +20,7 @@ const categories = [
   },
   {
     id: "service",
-    title: "Service",
+    title: "Freelance",
     description: "Offer your freelance services to college peers.",
     icon: Briefcase,
     color: "bg-purple-200 hover:bg-purple-300",

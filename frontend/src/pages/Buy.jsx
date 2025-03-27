@@ -123,26 +123,28 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
 );
 
 
-
 const Buy = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [hoveredProduct, setHoveredProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
   const [filters, setFilters] = useState({
-    // name: "",
     locationType: "",
     condition: "",
     category: "",
     priceRange: "",
   });
 
-  // Fetch products when filters change
   useEffect(() => {
     console.log("Filters updated:", filters);
     fetchProducts();
   }, [filters]);
+
+  useEffect(() => {
+    if (selectedProduct) setCurrentImageIndex(0);
+  }, [selectedProduct]);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -176,6 +178,9 @@ const Buy = () => {
     console.log("Filters received from Filter component:", newFilters);
     setFilters(newFilters);
   };
+
+  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % selectedProduct.images.length);
+  const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length);
 
   return (
     <div className="min-h-screen p-6">
@@ -244,7 +249,13 @@ const Buy = () => {
         </div>
       )}
       {selectedProduct && (
-        <ProductDialog product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+        <ProductDialog 
+          product={{ ...selectedProduct, images: selectedProduct.images }} 
+          onClose={() => setSelectedProduct(null)} 
+          currentImageIndex={currentImageIndex} 
+          nextImage={nextImage} 
+          prevImage={prevImage} 
+        />
       )}
     </div>
   );
