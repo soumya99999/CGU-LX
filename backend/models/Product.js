@@ -18,6 +18,7 @@ const productSchema = new mongoose.Schema({
   }, // Condition filter
   images: [{ type: String }], // Store Cloudinary image URLs
   seller: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to the seller
+  isSold: { type: Boolean, default: false }, // Add isSold field
   createdAt: { type: Date, default: Date.now },
 });
 

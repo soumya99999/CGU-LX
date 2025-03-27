@@ -1,5 +1,6 @@
 import admin from "../config/firebase-config.js";
 import User from "../models/User.js";
+import jwt from "jsonwebtoken";
 
 export const googleLogin = async (req, res) => {
     try {
@@ -35,29 +36,126 @@ export const googleLogin = async (req, res) => {
     }
 };
 
-
-
 export const googleRegister = async (req, res) => {
     try {
-        const { name, email, phone, course, semester } = req.body;
+        const { name, email, phone, course, semester, gender, username, bio, hostelite } = req.body;
 
         if (!name || !email || !phone || !course || !semester) {
             return res.status(400).json({ success: false, message: "All fields are required." });
         }
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
-            return res.status(409).json({ success: false, message: "User already registered" });
+            return res.status(400).json({
+                success: false,
+                message: existingUser.email === email ? "Email already registered" : "Username already taken"
+            });
         }
-        
 
-        const newUser = new User({ name, email, phone, course, semester });
+        const newUser = new User({
+            name,
+            email,
+            phone,
+            course,
+            semester,
+            gender,
+            username,
+            bio,
+            hostelite,
+            joinedDate: new Date()
+        });
+
         await newUser.save();
 
-        return res.json({ success: true, message: "User  successfully!" });
+        // Generate token
+        const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
+            expiresIn: "30d",
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: "Registration successful",
+            token,
+            user: {
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.email,
+                username: newUser.username,
+                course: newUser.course,
+                semester: newUser.semester,
+                gender: newUser.gender,
+                avatar: newUser.avatar,
+                bio: newUser.bio,
+                hostelite: newUser.hostelite,
+                joinedDate: newUser.joinedDate
+            }
+        });
     } catch (error) {
         console.error("❌ Google Register Error:", error);
         return res.status(500).json({ success: false, message: "Server error, please try again later." });
+    }
+};
+
+export const register = async (req, res) => {
+    try {
+        const { name, email, password, phone, course, semester, gender, username, bio, hostelite } = req.body;
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: existingUser.email === email ? "Email already registered" : "Username already taken"
+            });
+        }
+
+        // Create new user
+        const user = new User({
+            name,
+            email,
+            password,
+            phone,
+            course,
+            semester,
+            gender,
+            username,
+            bio,
+            hostelite,
+            joinedDate: new Date()
+        });
+
+        await user.save();
+
+        // Generate token
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "30d",
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Registration successful",
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                username: user.username,
+                course: user.course,
+                semester: user.semester,
+                gender: user.gender,
+                avatar: user.avatar,
+                bio: user.bio,
+                hostelite: user.hostelite,
+                joinedDate: user.joinedDate
+            }
+        });
+    } catch (error) {
+        console.error("Registration error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Registration failed",
+            error: error.message
+        });
     }
 };
 
@@ -80,7 +178,6 @@ export const getProfile = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error" });
     }
 };
-
 
 export const updateProfile = async (req, res) => {
     if (!req.user || !req.user.email) {

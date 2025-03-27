@@ -59,8 +59,8 @@ export const createProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
-    
-    const products = await Product.find().populate("seller", "phone");
+    // Only fetch products that are not sold
+    const products = await Product.find({ isSold: false }).populate("seller", "phone");
     return res.status(200).json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -154,11 +154,8 @@ export const getFilteredProducts = async (req, res) => {
     const {locationType, condition, category, priceRange } = req.query;
 
     // Build filter query dynamically
-    let filter = {};
+    let filter = { isSold: false }; // Add isSold: false to filter out sold products
 
-    // if (name) {
-    //   filter.name = { $regex: name, $options: "i" }; // Case-insensitive search
-    // }
     if (locationType) {
       filter.locationType = locationType;
     }
@@ -215,6 +212,31 @@ export const getProductById = async (req, res) => {
       success: false,
       message: "Error fetching product details"
     });
+  }
+};
+
+export const toggleSold = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const sellerId = req.user._id;
+
+    const product = await Product.findOne({ _id: productId, seller: sellerId });
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found or unauthorized" });
+    }
+
+    // Toggle the isSold status
+    product.isSold = !product.isSold;
+    await product.save();
+
+    res.status(200).json({ 
+      success: true, 
+      message: `Product ${product.isSold ? 'marked as sold' : 'marked as unsold'} successfully`,
+      product 
+    });
+  } catch (error) {
+    console.error("Error toggling sold status:", error.message);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 

@@ -20,6 +20,7 @@ import Terms from "./components/terms";
 import Privacy from "./components/privacy";
 import HowItWorks from "./components/HowItWorks";
 import CommunityGuidelines from "./components/CommunityGuidelines";
+import EditProfile from "./pages/EditProfile";
 
 function App() {
   const [fade, setFade] = useState(false);
@@ -64,6 +65,7 @@ function App() {
             <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
             <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
             <Route path="/edit-product/:productId" element={<ProtectedRoute><EditProduct /></ProtectedRoute>} />
           </Routes>
         )}
