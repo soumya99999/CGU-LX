@@ -1,7 +1,9 @@
-import { useState, useContext, useEffect } from "react"; 
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { Button } from "../ui/button";
 import { AuthContext } from "../contexts/AuthContext";
-import { Link } from "react-router-dom";
 
 const countryOptions = [
   { name: "India", code: "+91", pattern: /^[6-9]\d{9}$/ },
@@ -17,22 +19,31 @@ const countryOptions = [
 ];
 
 const Register = () => {
-  const [phone, setPhone] = useState("");
-  const [course, setCourse] = useState("");
-  const [semester, setSemester] = useState("1st Semester");
-  const [country, setCountry] = useState("India");
-  const [countryCode, setCountryCode] = useState("+91");
-  const [customCountryCode, setCustomCountryCode] = useState(""); // ✅ Defined here
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (error) {
-      console.log("🔥 Updated error state:", error);
-    }
-  }, [error]);
-
   const navigate = useNavigate();
   const { signInWithGoogle } = useContext(AuthContext);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    course: "",
+    semester: ""
+  });
+  const [country, setCountry] = useState("India");
+  const [countryCode, setCountryCode] = useState("+91");
+  const [customCountryCode, setCustomCountryCode] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleCountryChange = (e) => {
     const selectedCountry = e.target.value;
@@ -42,13 +53,13 @@ const Register = () => {
       setCountryCode(foundCountry.code);
     }
     if (selectedCountry !== "Other") {
-      setCustomCountryCode(""); // Reset custom code if not "Other"
+      setCustomCountryCode("");
     }
   };
 
   const validatePhoneNumber = () => {
     const selectedPattern = country === "Other" ? /^.*$/ : countryOptions.find(c => c.name === country)?.pattern;
-    if (selectedPattern && !selectedPattern.test(phone)) {
+    if (selectedPattern && !selectedPattern.test(formData.phone)) {
       setError(`Invalid phone number format for ${country}`);
       return false;
     }
@@ -57,38 +68,75 @@ const Register = () => {
   };
 
   const handleGoogleRegister = async () => {
-    setError("");
+    try {
+      setLoading(true);
+      const response = await signInWithGoogle(true, {
+        course: formData.course,
+        semester: formData.semester
+      });
 
-    if (!validatePhoneNumber()) return;
+      if (response?.error) {
+        toast.error(response.error);
+        return;
+      }
 
-    console.log("🚀 Google Register Attempting...");
+      if (response?.success) {
+        toast.success("Registration successful!");
+        navigate("/profile");
+      }
+    } catch (error) {
+      console.error("Google registration error:", error);
+      toast.error("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const response = await signInWithGoogle(true, {
-      phone: `${country === "Other" ? customCountryCode : countryCode}${phone}`,
-      course, semester, country
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-    console.log("🟢 Response from Auth:", response);
-
-    if (response?.error) {
-      console.error("❌ Error:", response.error);
-      setError(response.error);
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      setLoading(false);
       return;
+    }
+
+    try {
+      const { data } = await axios.post(`${API_BASE_URL}/api/auth/register`, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        course: formData.course,
+        semester: formData.semester
+      });
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        toast.success("Registration successful!");
+        navigate("/profile");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error(error.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-4 bg-white">
-      <div className="bg-white p-6 md:p-12 rounded-3xl w-full max-w-md text-center space-y-6 border-2 border-black">
-        <h2 className="text-2xl md:text-3xl font-bold text-black">Register</h2>
-
+    <div className="min-h-screen bg-gray-50 py-10">
+      <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm p-6">
+        <h1 className="text-2xl font-semibold mb-6">Create Account</h1>
+        
         {error && (
-          <div className="bg-red-200 border-l-4 border-red-600 text-red-800 p-3 rounded text-sm">
-            <strong>Error:</strong> {error}
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+            {error}
           </div>
         )}
 
-        <div className="flex flex-col md:flex-row gap-2 items-center">
+        <div className="flex flex-col md:flex-row gap-2 items-center mb-6">
           <select
             value={country}
             onChange={handleCountryChange}
@@ -116,46 +164,117 @@ const Register = () => {
           <input
             type="text"
             placeholder="WhatsApp Number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\s/g, ""))}
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
             className="border p-2 rounded w-full"
           />
         </div>
 
-        <input
-          type="text"
-          placeholder="Course (e.g., B.Tech CSE)"
-          value={course}
-          onChange={(e) => setCourse(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-        <select
-          value={semester}
-          onChange={(e) => setSemester(e.target.value)}
-          className="border p-2 rounded w-full"
-        >
-          {[...Array(8)].map((_, i) => (
-            <option key={i} value={`${i + 1}th Semester`}>
-              {`${i + 1}th Semester`}
-            </option>
-          ))}
-        </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-        <button
-          onClick={handleGoogleRegister}
-          className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 font-semibold py-2 rounded-md border border-blue-300 shadow-md transition duration-300 ease-in-out hover:scale-95 hover:bg-blue-300 hover:shadow-lg"
-        >
-          <span className="text-lg text-black">Submit</span>
-        </button>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-        <p className="text-gray-400 text-xs">
-          By registering yourself, you agree to the ridiculously long{" "}
-          <Link to="/terms" className="text-xs text-blue-500 hover:text-blue-700">
-            terms
-          </Link>{" "}
-          that you didn’t bother to read!
-        </p>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
+            <input
+              type="text"
+              name="course"
+              value={formData.course}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
+            <input
+              type="text"
+              name="semester"
+              value={formData.semester}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 mt-6">
+            <Button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handleGoogleRegister}
+              className="bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 w-full flex items-center justify-center gap-2"
+              disabled={loading}
+            >
+              <img src="/google-icon.png" alt="Google" className="w-5 h-5" />
+              Continue with Google
+            </Button>
+          </div>
+
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="text-blue-600 hover:text-blue-800 font-medium"
+            >
+              Login here
+            </button>
+          </p>
+        </form>
       </div>
     </div>
   );
