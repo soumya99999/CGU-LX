@@ -191,6 +191,31 @@ export const getFilteredProducts = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-;
+
+export const getProductById = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    
+    const product = await Product.findById(productId);
+    
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      product
+    });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching product details"
+    });
+  }
+};
 
 

@@ -6,6 +6,7 @@ import {
   deleteProduct,
   updateProduct,
   getFilteredProducts,
+  getProductById,
 } from "../controllers/productController.js";
 import upload from "../middleware/upload.js"; // Ensure correct path
 import authMiddleware from "../middleware/authMiddleware.js"; // Ensure correct path
@@ -21,6 +22,9 @@ router.post("/create", authMiddleware, upload.array("images", 5), createProduct)
 
 // Fetch products listed by the logged-in user (for Profile Page)
 router.get("/user", authMiddleware, getUserProducts);
+
+// Get a single product by ID
+router.get("/:productId", authMiddleware, getProductById);
 
 // Delete a product
 router.delete("/:productId", authMiddleware, deleteProduct);
