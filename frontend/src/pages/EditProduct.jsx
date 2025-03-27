@@ -12,6 +12,9 @@ const EditProduct = () => {
     price: "",
     description: "",
     address: "",
+    locationType: "",
+    condition: "",
+    category: "",
     images: [],
   });
   const [newImages, setNewImages] = useState([]);
@@ -28,12 +31,12 @@ const EditProduct = () => {
       }
 
       try {
-        console.log("Fetching product with ID:", productId); // Debugging log
+        console.log("Fetching product with ID:", productId);
         const { data } = await axios.get(`${API_BASE_URL}/api/products/${productId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("API Response:", data); // Debugging log
+        console.log("API Response:", data);
 
         if (data.success) {
           setProduct(data.product);
@@ -90,6 +93,9 @@ const EditProduct = () => {
       formData.append("price", product.price);
       formData.append("description", product.description);
       formData.append("address", product.address);
+      formData.append("locationType", product.locationType);
+      formData.append("condition", product.condition);
+      formData.append("category", product.category);
       newImages.forEach((image) => formData.append("images", image));
 
       const { data } = await axios.put(
@@ -117,100 +123,196 @@ const EditProduct = () => {
     }
   };
 
-  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200 p-6">
-      <div className="bg-white bg-opacity-90 p-8 rounded-3xl shadow-xl w-full max-w-md backdrop-blur-md">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Edit Product</h2>
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="px-4 py-5 sm:p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Edit Product</h2>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-            {error}
-          </div>
-        )}
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600">{error}</p>
+              </div>
+            )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">Product Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={product.name}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded"
-              required
-            />
-          </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={product.name}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold px-3 py-2"
+                    required
+                  />
+                </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">Price (₹):</label>
-            <input
-              type="number"
-              name="price"
-              value={product.price}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded"
-              required
-            />
-          </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Price (₹)</label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={product.price}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold px-3 py-2"
+                    required
+                  />
+                </div>
+              </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">Description:</label>
-            <textarea
-              name="description"
-              value={product.description}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">Address:</label>
-            <input
-              type="text"
-              name="address"
-              value={product.address}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">Existing Images:</label>
-            <div className="flex flex-wrap gap-2">
-              {imagePreviews.map((src, index) => (
-                <img
-                  key={index}
-                  src={src}
-                  alt={`Preview ${index}`}
-                  className="w-20 h-20 object-cover rounded"
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <textarea
+                  name="description"
+                  value={product.description}
+                  onChange={handleChange}
+                  rows={4}
+                  className="mt-1 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold px-3 py-2"
+                  required
                 />
-              ))}
-            </div>
-          </div>
+              </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">Upload New Images (Max 5):</label>
-            <input
-              type="file"
-              onChange={handleImageChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded"
-              multiple
-              accept="image/*"
-            />
-          </div>
+              {/* Location and Condition */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Address</label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={product.address}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold px-3 py-2"
+                    required
+                  />
+                </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-          >
-            {loading ? "Updating..." : "Update Product"}
-          </button>
-        </form>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Location Type</label>
+                  <select
+                    name="locationType"
+                    value={product.locationType}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold px-3 py-2"
+                    required
+                  >
+                    <option value="">Select Location Type</option>
+                    <option value="On-Campus">On-Campus</option>
+                    <option value="nearby">Nearby Area</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Category and Condition */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Category</label>
+                  <select
+                    name="category"
+                    value={product.category}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold px-3 py-2"
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Study Essentials">Study Essentials</option>
+                    <option value="Room & Living">Room & Living</option>
+                    <option value="Tech & Accessories">Tech & Accessories</option>
+                    <option value="Health & Fitness">Health & Fitness</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Condition</label>
+                  <select
+                    name="condition"
+                    value={product.condition}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold px-3 py-2"
+                    required
+                  >
+                    <option value="">Select Condition</option>
+                    <option value="New">New</option>
+                    <option value="Like New">Like New</option>
+                    <option value="Used - Good">Used - Good</option>
+                    <option value="Used - Acceptable">Used - Acceptable</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Images Section */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {imagePreviews.map((src, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={src}
+                        alt={`Preview ${index}`}
+                        className="w-full h-32 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImagePreviews(prev => prev.filter((_, i) => i !== index));
+                          setProduct(prev => ({
+                            ...prev,
+                            images: prev.images.filter((_, i) => i !== index)
+                          }));
+                        }}
+                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <input
+                    type="file"
+                    onChange={handleImageChange}
+                    className="block w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-blue-50 file:text-blue-700
+                      hover:file:bg-blue-100"
+                    multiple
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={() => navigate("/profile")}
+                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Updating..." : "Update Product"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

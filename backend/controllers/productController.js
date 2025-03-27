@@ -2,24 +2,28 @@ import Product from "../models/Product.js";
 import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req, res) => { 
   try {
     console.log("Request body:", req.body);
     console.log("Uploaded files:", req.files);
     console.log("Authenticated user:", req.user); 
 
-    const { name, price, description, address } = req.body;
+    const { name, price, description, address, locationType, condition, category } = req.body;
     const seller = req.user._id; 
 
     if (!seller) {
       return res.status(400).json({ message: "Seller ID is missing." });
     }
 
+    if (!name || !price || !description || !address || !locationType || !condition || !category) {
+      return res.status(400).json({ message: "All fields are required: name, price, description, address, locationType, condition, category." });
+    }
+
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "Please upload at least one image." });
     }
 
-    
+    // Upload images to Cloudinary
     const imageUrls = [];
     for (const file of req.files) {
       try {
@@ -31,12 +35,15 @@ export const createProduct = async (req, res) => {
       }
     }
 
-    
+    // Create and save the product
     const product = new Product({
       name,
       price,
       description,
       address,
+      locationType,
+      condition,
+      category,
       images: imageUrls,
       seller,
     });
@@ -48,6 +55,7 @@ export const createProduct = async (req, res) => {
     return res.status(500).json({ message: error.message || "Error creating product" });
   }
 };
+
 
 export const getProducts = async (req, res) => {
   try {
@@ -100,25 +108,30 @@ export const deleteProduct = async (req, res) => {
 };
 
 
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res) => { 
   try {
     const { productId } = req.params;
     const sellerId = req.user._id; 
-    const { name, price, description, address } = req.body;
+    const { name, price, description, address, locationType, condition, category } = req.body;
 
-    console.log("Product ID:", productId); // Debugging log
-    console.log("Seller ID:", sellerId); // Debugging log
+    console.log("Product ID:", productId); 
+    console.log("Seller ID:", sellerId); 
 
     const product = await Product.findOne({ _id: productId, seller: sellerId });
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found or unauthorized" });
     }
 
+    // Update product fields only if new values are provided
     product.name = name || product.name;
     product.price = price || product.price;
     product.description = description || product.description;
     product.address = address || product.address;
+    product.locationType = locationType || product.locationType;
+    product.condition = condition || product.condition;
+    product.category = category || product.category;
 
+    // If new images are uploaded, update them
     if (req.files && req.files.length > 0) {
       const imageUrls = [];
       for (const file of req.files) {
@@ -135,3 +148,74 @@ export const updateProduct = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const getFilteredProducts = async (req, res) => { 
+  try {
+    const {locationType, condition, category, priceRange } = req.query;
+
+    // Build filter query dynamically
+    let filter = {};
+
+    // if (name) {
+    //   filter.name = { $regex: name, $options: "i" }; // Case-insensitive search
+    // }
+    if (locationType) {
+      filter.locationType = locationType;
+    }
+    if (condition) {
+      filter.condition = condition;
+    }
+    if (category) {
+      filter.category = { $regex: `^${category}$`, $options: "i" }; // Exact case-insensitive match
+    }
+
+    // Price Range Filtering (Updated to match filter.jsx)
+    if (priceRange) {
+      const [minPrice, maxPrice] = priceRange.split("-").map(Number);
+      filter.price = {};
+      if (!isNaN(minPrice)) filter.price.$gte = minPrice;
+      if (!isNaN(maxPrice)) filter.price.$lte = maxPrice;
+    }
+
+    console.log("Filter Query:", filter); // Debugging filter query before fetching data
+
+    const products = await Product.find(filter);
+
+    if (products.length === 0) {
+      return res.status(200).json({ success: true, products: [], message: "No products found" });
+    }
+
+    res.status(200).json({ success: true, products });
+  } catch (error) {
+    console.error("Error filtering products:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const getProductById = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    
+    const product = await Product.findById(productId);
+    
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      product
+    });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching product details"
+    });
+  }
+};
+
+

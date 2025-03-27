@@ -10,6 +10,9 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import Filter from "../components/Filter"
+
+ 
 
 
 const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevImage }) => (
@@ -119,77 +122,141 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
   </AnimatePresence>
 );
 
+
 const Buy = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [hoveredProduct, setHoveredProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { addToCart } = useContext(CartContext);
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  const [filters, setFilters] = useState({
+    locationType: "",
+    condition: "",
+    category: "",
+    priceRange: "",
+  });
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/products`)
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+    console.log("Filters updated:", filters);
+    fetchProducts();
+  }, [filters]);
 
-  // Reset currentImageIndex when selectedProduct changes
   useEffect(() => {
     if (selectedProduct) setCurrentImageIndex(0);
   }, [selectedProduct]);
 
+  const fetchProducts = async () => {
+    setLoading(true);
+    const queryParams = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) queryParams.append(key, value);
+    });
+
+    console.log("Fetching products with query:", queryParams.toString());
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/products/filter?${queryParams.toString()}`);
+      const data = await response.json();
+      console.log("Fetched Products:", data);
+
+      if (data.success) {
+        setProducts(data.products);
+      } else {
+        setProducts([]);
+        console.error("Error:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (newFilters) => {
+    console.log("Filters received from Filter component:", newFilters);
+    setFilters(newFilters);
+  };
+
   const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % selectedProduct.images.length);
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length);
-  const [hoveredProduct, setHoveredProduct] = useState(null);
-
 
   return (
     <div className="min-h-screen p-6">
+      <Filter onFilterChange={handleFilterChange} />
       {loading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="w-10 h-10 border-4 border-gray-500 rounded-full animate-spin"></div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-          {products.map((product) => (
-            <motion.div key={product._id} whileHover={{ scale: 1 }} className="bg-white p-4 rounded-3xl border cursor-pointer" onClick={() => setSelectedProduct(product)}>
-              {/* <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" /> */}
-              <div className="w-full h-52 rounded-xl overflow-hidden relative"
-                onMouseEnter={() => setHoveredProduct(product._id)}
-                onMouseLeave={() => setHoveredProduct(null)}
+          {products.length > 0 ? (
+            products.map((product) => (
+              <motion.div
+                key={product._id}
+                whileHover={{ scale: 1.02 }}
+                className="bg-white p-4 rounded-3xl border cursor-pointer"
+                onClick={() => setSelectedProduct(product)}
               >
-                {hoveredProduct === product._id ? (
-                  <Swiper
-                    modules={[Autoplay, Pagination]}
-                    pagination={{ clickable: true }}
-                    autoplay={{ delay: 500 }}
-                    loop
-                    className="w-full h-52"
-                  >
-                    {product.images.map((image, index) => (
-                      <SwiperSlide key={index}>
-                        <img src={image} alt={`${product.name} ${index}`} className="w-full h-52 object-cover rounded-xl" />
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                ) : (
-                  <img src={product.images[0]} alt={product.name} className="w-full h-52 object-cover rounded-xl" />
-                )}
-              </div>
-              <h3 className="mt-4 text-sm font-bold text-gray-400">{product.name}</h3>
-              <h3 className="mt-1 text-md  text-gray-900 truncate whitespace-nowrap overflow-hidden">{product.description}</h3>
-              <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
-              <span className="text-xl font-bold text-gray-700">₹{product.price}</span> 
-              <div>
-              <span className=" text-xs font-bold text-green-700">₹0 platform fee(EarlyBirdOffer)</span> 
-              </div>
-            </motion.div>
-          ))}
+                <div
+                  className="w-full h-72 rounded-xl overflow-hidden relative"
+                  onMouseEnter={() => setHoveredProduct(product._id)}
+                  onMouseLeave={() => setHoveredProduct(null)}
+                >
+                  {hoveredProduct === product._id ? (
+                    <Swiper
+                      modules={[Autoplay, Pagination]}
+                      pagination={{ clickable: true }}
+                      autoplay={{ delay: 500 }}
+                      loop
+                      className="w-full h-72"
+                    >
+                      {product.images.map((image, index) => (
+                        <SwiperSlide key={index}>
+                          <img
+                            src={image}
+                            alt={`${product.name} ${index}`}
+                            className="w-full h-72 object-cover rounded-xl"
+                          />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  ) : (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-72 object-cover rounded-xl"
+                    />
+                  )}
+                </div>
+                <h3 className="mt-4 text-md font-bold text-gray-400">{product.name}</h3>
+                <h3 className="mt-1 text-md text-gray-900 truncate overflow-hidden">
+                  {product.description}
+                </h3>
+                <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
+                <span className="text-xl font-bold text-gray-700">₹{product.price}</span>
+                <div>
+                  <span className="text-xs font-bold text-green-700">
+                    ₹0 platform fee (EarlyBirdOffer)
+                  </span>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center col-span-4">No products found.</p>
+          )}
         </div>
       )}
-      {selectedProduct && <ProductDialog product={selectedProduct} onClose={() => setSelectedProduct(null)} currentImageIndex={currentImageIndex} nextImage={nextImage} prevImage={prevImage} />}
+      {selectedProduct && (
+        <ProductDialog 
+          product={{ ...selectedProduct, images: selectedProduct.images }} 
+          onClose={() => setSelectedProduct(null)} 
+          currentImageIndex={currentImageIndex} 
+          nextImage={nextImage} 
+          prevImage={prevImage} 
+        />
+      )}
     </div>
   );
 };

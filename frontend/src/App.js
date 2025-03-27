@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
+import EditProduct from "./pages/EditProduct";
 import About from "./components/About";
 import Terms from "./components/terms";
 import Privacy from "./components/privacy";
@@ -63,6 +64,7 @@ function App() {
             <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
             <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/edit-product/:productId" element={<ProtectedRoute><EditProduct /></ProtectedRoute>} />
           </Routes>
         )}
         <Footer />
