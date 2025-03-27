@@ -129,12 +129,9 @@ const Profile = () => {
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200 p-6">
-      <div className="bg-white bg-opacity-90 p-8 rounded-3xl shadow-xl w-full max-w-md backdrop-blur-md text-center">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2"> {user.name || "Guest"} </h2>
-        <h6 className="text-gray-500">*You are anonymus only people wants to buy will see you.  </h6>
-
-        {/* Avatar Section */}
+<div className="flex min-h-xl bg-white p-10 gap-6 ">
+      {/* Profile Card */}
+      <div className="w-1/3 p-6 bg-white rounded-3xl  border-2 border-black text-center">
         <div className="relative inline-block mb-4">
           <img
             src={getAvatarUrl(user.avatar)}
@@ -143,39 +140,36 @@ const Profile = () => {
           />
           <button
             onClick={() => setShowAvatarModal(true)}
-            className="absolute bottom-1 right-1 bg-gray-200 p-1 rounded-full shadow-md hover:bg-gray-300"
+            className="absolute bottom-2 right-2 bg-gray-200 p-1.5 rounded-full shadow-md hover:bg-gray-300 transition"
           >
             <Pencil size={18} className="text-gray-700" />
           </button>
         </div>
 
-        {/* Avatar Selection Modal */}
         {showAvatarModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <div className="bg-white p-6 rounded-xl shadow-lg w-96">
               <h3 className="text-lg font-semibold mb-4">Choose Your Avatar</h3>
-
               <div className="flex justify-center gap-4 mb-4">
                 <button
-                  onClick={() => setAvatarCategory("male")}
-                  className={`px-4 py-2 rounded-lg font-semibold ${
-                    avatarCategory === "male" ? "bg-blue-600 text-white" : "bg-gray-300"
+                  onClick={() => setAvatarCategory('male')}
+                  className={`px-4 py-2 rounded-lg font-semibold transition ${
+                    avatarCategory === 'male' ? 'bg-blue-600 text-white' : 'bg-gray-300 hover:bg-gray-400'
                   }`}
                 >
                   Male Avatars
                 </button>
                 <button
-                  onClick={() => setAvatarCategory("female")}
-                  className={`px-4 py-2 rounded-lg font-semibold ${
-                    avatarCategory === "female" ? "bg-pink-600 text-white" : "bg-gray-300"
+                  onClick={() => setAvatarCategory('female')}
+                  className={`px-4 py-2 rounded-lg font-semibold transition ${
+                    avatarCategory === 'female' ? 'bg-pink-600 text-white' : 'bg-gray-300 hover:bg-gray-400'
                   }`}
                 >
                   Female Avatars
                 </button>
               </div>
-
               <div className="grid grid-cols-3 gap-4">
-                {(avatarCategory === "male" ? maleAvatars : femaleAvatars).map((avatar) => (
+                {(avatarCategory === 'male' ? maleAvatars : femaleAvatars).map((avatar) => (
                   <img
                     key={avatar}
                     src={getAvatarUrl(avatar)}
@@ -185,10 +179,9 @@ const Profile = () => {
                   />
                 ))}
               </div>
-
               <button
                 onClick={() => setShowAvatarModal(false)}
-                className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 w-full"
+                className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 w-full transition"
               >
                 Cancel
               </button>
@@ -196,61 +189,56 @@ const Profile = () => {
           </div>
         )}
 
-        {/* Profile Details */}
-        <div className="space-y-3 text-left">
-          <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
-            <span className="text-gray-700 font-medium">Name: </span>
-            <span className="text-gray-900">{user.name || "Not provided"}</span>
-          </div>
-          <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
-            <span className="text-gray-700 font-medium">Phone: </span>
-            <span className="text-gray-900">{user.phone || "Not provided"}</span>
-          </div>
-          <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
-            <span className="text-gray-700 font-medium">Course: </span>
-            <span className="text-gray-900">{user.course || "Not provided"}</span>
-          </div>
-          <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
-            <span className="text-gray-700 font-medium">Semester: </span>
-            <span className="text-gray-900">{user.semester || "Not provided"}</span>
-          </div>
-        </div>
+        <h2 className="text-2xl font-semibold text-left text-gray-800 mb-0">{user.name || 'Guest'}</h2>
+        <p className="text-gray-500 text-left text-xs mb-4">*Your profile is only visible to you.</p>
 
-        {/* Listed Products Section */}
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">My Listed Items</h3>
-          {listedProducts.length === 0 ? (
-            <p className="text-gray-500">You have no listed items.</p>
-          ) : (
-            <div className="space-y-4">
-              {listedProducts.map((product) => (
-                <div key={product._id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h4 className="text-lg font-medium text-gray-800">{product.name}</h4>
-                      <p className="text-gray-600">₹{product.price}</p>
-                      <p className="text-gray-600">{product.description}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => navigate(`/edit-product/${product._id}`)} // Navigate to edit page
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        <Pencil size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProduct(product._id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash size={18} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="space-y-3 text-left">
+          {[['Name', user.name], ['Phone', user.phone], ['Course', user.course], ['Semester', user.semester]].map(
+            ([label, value]) => (
+              <div key={label} className="bg-gray-100 p-3 rounded-lg shadow-sm">
+                <span className="text-gray-700 font-medium">{label}: </span>
+                <span className="text-gray-900">{value || 'Not provided'}</span>
+              </div>
+            )
           )}
         </div>
+      </div>
+
+      {/* Listed Products */}
+      <div className="w-2/3 p-6 bg-white rounded-3xl border-2 border-black text-center h-[75vh] overflow-y-auto no-scrollbar">
+          
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">My Listed Items</h3>
+        {listedProducts.length === 0 ? (
+          <p className="text-gray-500">You have no listed items.</p>
+        ) : (
+          <div className="space-y-4">
+            {listedProducts.map((product) => (
+              <div key={product._id} className="bg-gray-100 p-4 rounded-lg shadow-sm flex justify-between items-center">
+                <div>
+                  <h4 className="text-lg font-medium text-gray-800">{product.name}</h4>
+                  <p className="text-gray-600">₹{product.price}</p>
+                  <p className="text-gray-600 text-sm">{product.description}</p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => navigate(`/edit-product/${product._id}`)}
+                    className="text-blue-500 hover:text-blue-700 transition"
+                  >
+                    <Pencil size={20} />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProduct(product._id)}
+                    className="text-red-500 hover:text-red-700 transition"
+                  >
+                    <div className="bg-gray-100 border border-red-600 text-red px-4 py-1.5 rounded-full text-sm font-medium  hover:bg-gray-300 transition duration-200 hover:scale-95">
+                    <span className=" text-sm"> mark as sold </span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
