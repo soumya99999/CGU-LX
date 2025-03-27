@@ -100,13 +100,45 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
                   <Button 
                     className="w-full bg-green-500 text-white text-sm sm:text-lg flex items-center justify-center gap-2 py-3 sm:py-4 rounded-xl shadow-lg hover:scale-105 hover:bg-green-600 transition-transform duration-200"
                     onClick={() => {
-                      if (!product.seller?.phone) {
-                        alert('Seller contact unavailable');
-                        return;
+                      try {
+                        // Log the product data to see what's available
+                        console.log('Product data:', product);
+                        
+                        // Get the seller's phone number from various possible locations
+                        const sellerPhone = product.seller?.phone || product.phone || product.contact;
+                        
+                        // Log the found phone number
+                        console.log('Found phone number:', sellerPhone);
+                        
+                        if (!sellerPhone) {
+                          alert('Seller contact information is not available');
+                          return;
+                        }
+
+                        // Clean the phone number - remove spaces, dashes, and other non-numeric characters
+                        const cleanPhone = sellerPhone.replace(/[^0-9]/g, '');
+                        
+                        // Ensure the phone number starts with country code (91 for India)
+                        const formattedPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
+                        
+                        // Log the formatted phone number
+                        console.log('Formatted phone number:', formattedPhone);
+                        
+                        // Create a message with product details
+                        const message = `Hi, I'm interested in buying ${product.name} for ₹${product.price}. Is it still available?`;
+                        
+                        // Create WhatsApp URL with the formatted phone number
+                        const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+                        
+                        // Log the final WhatsApp URL
+                        console.log('WhatsApp URL:', whatsappUrl);
+                        
+                        // Open WhatsApp in a new tab
+                        window.open(whatsappUrl, '_blank');
+                      } catch (error) {
+                        console.error('Error opening WhatsApp:', error);
+                        alert('Unable to open WhatsApp. Please try again later.');
                       }
-                      const message = encodeURIComponent(`Hello, I'm interested in buying ${product.name}. Is it available?`);
-                      const whatsappURL = `https://wa.me/${product.seller.phone}?text=${message}`;
-                      window.open(whatsappURL, '_blank');
                     }}
                   >
                     <FaWhatsapp className="h-5 sm:h-6 w-5 sm:w-6" />
@@ -183,24 +215,26 @@ const Buy = () => {
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length);
 
   return (
-    <div className="min-h-screen p-6">
-      <Filter onFilterChange={handleFilterChange} />
+    <div className="min-h-screen p-4 sm:p-6">
+      <div className="mb-4">
+        <Filter onFilterChange={handleFilterChange} />
+      </div>
       {loading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="w-10 h-10 border-4 border-gray-500 rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
           {products.length > 0 ? (
             products.map((product) => (
               <motion.div
                 key={product._id}
                 whileHover={{ scale: 1.02 }}
-                className="bg-white p-4 rounded-3xl border cursor-pointer"
+                className="bg-white p-2 sm:p-4 rounded-2xl border cursor-pointer"
                 onClick={() => setSelectedProduct(product)}
               >
                 <div
-                  className="w-full h-72 rounded-xl overflow-hidden relative"
+                  className="w-full h-40 sm:h-72 rounded-xl overflow-hidden relative"
                   onMouseEnter={() => setHoveredProduct(product._id)}
                   onMouseLeave={() => setHoveredProduct(null)}
                 >
@@ -210,14 +244,14 @@ const Buy = () => {
                       pagination={{ clickable: true }}
                       autoplay={{ delay: 500 }}
                       loop
-                      className="w-full h-72"
+                      className="w-full h-40 sm:h-72"
                     >
                       {product.images.map((image, index) => (
                         <SwiperSlide key={index}>
                           <img
                             src={image}
                             alt={`${product.name} ${index}`}
-                            className="w-full h-72 object-cover rounded-xl"
+                            className="w-full h-40 sm:h-72 object-cover rounded-xl"
                           />
                         </SwiperSlide>
                       ))}
@@ -226,16 +260,16 @@ const Buy = () => {
                     <img
                       src={product.images[0]}
                       alt={product.name}
-                      className="w-full h-72 object-cover rounded-xl"
+                      className="w-full h-40 sm:h-72 object-cover rounded-xl"
                     />
                   )}
                 </div>
-                <h3 className="mt-4 text-md font-bold text-gray-400">{product.name}</h3>
-                <h3 className="mt-1 text-md text-gray-900 truncate overflow-hidden">
+                <h3 className="mt-2 sm:mt-4 text-sm sm:text-md font-bold text-gray-400">{product.name}</h3>
+                <h3 className="mt-1 text-xs sm:text-md text-gray-900 truncate overflow-hidden">
                   {product.description}
                 </h3>
-                <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
-                <span className="text-xl font-bold text-gray-700">₹{product.price}</span>
+                <h3 className="mt-1 text-xs sm:text-sm font-medium text-gray-400">{product.address}</h3>
+                <span className="text-lg sm:text-xl font-bold text-gray-700">₹{product.price}</span>
                 <div>
                   <span className="text-xs font-bold text-green-700">
                     ₹0 platform fee (EarlyBirdOffer)
@@ -244,7 +278,7 @@ const Buy = () => {
               </motion.div>
             ))
           ) : (
-            <p className="text-gray-500 text-center col-span-4">No products found.</p>
+            <p className="text-gray-500 text-center col-span-2 sm:col-span-3 md:col-span-4">No products found.</p>
           )}
         </div>
       )}

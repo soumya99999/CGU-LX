@@ -45,6 +45,8 @@ const Profile = () => {
   const [avatarCategory, setAvatarCategory] = useState("male");
   const [listedProducts, setListedProducts] = useState([]);
   const [activeImages, setActiveImages] = useState({});
+  const [editingField, setEditingField] = useState(null);
+  const [editValue, setEditValue] = useState("");
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   const navigate = useNavigate();
@@ -68,16 +70,14 @@ const Profile = () => {
           setUser((prevUser) => ({
             ...prevUser,
             ...data.user,
+            bio: data.user.bio || "",
             avatar: storedAvatar || data.user.avatar || "adventurer",
           }));
           setAvatarCategory(data.user.gender === "female" ? "female" : "male");
 
-          // Fetch user's listed products
           const { data: productsData } = await axios.get(`${API_BASE_URL}/api/products/user`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-
-          console.log("Products Data:", productsData); // Debugging log
 
           if (productsData.success) {
             setListedProducts(productsData.products);
@@ -170,6 +170,57 @@ const Profile = () => {
     } catch (error) {
       console.error("Error toggling sold status:", error);
       toast.error(error.response?.data?.message || "Failed to update sold status");
+    }
+  };
+
+  const handleEditField = (field, value) => {
+    setEditingField(field);
+    setEditValue(value);
+  };
+
+  const handleSaveField = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const { data } = await axios.put(
+        `${API_BASE_URL}/api/auth/profile`,
+        { [editingField]: editValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        setUser(prev => ({ ...prev, [editingField]: editValue }));
+        setEditingField(null);
+        toast.success("Updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error updating field:", error);
+      toast.error("Failed to update");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingField(null);
+    setEditValue("");
+  };
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      const token = localStorage.getItem("token");
+      try {
+        const { data } = await axios.delete(`${API_BASE_URL}/api/auth/profile`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (data.success) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("avatar");
+          toast.success("Account deleted successfully");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        toast.error("Failed to delete account");
+      }
     }
   };
 
