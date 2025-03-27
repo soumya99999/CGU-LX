@@ -149,12 +149,12 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-export const getFilteredProducts = async (req, res) => { 
+export const getFilteredProducts = async (req, res) => {
   try {
-    const {locationType, condition, category, priceRange } = req.query;
+    const { locationType, condition, category, priceRange } = req.query;
 
     // Build filter query dynamically
-    let filter = { isSold: false }; // Add isSold: false to filter out sold products
+    let filter = { isSold: false }; // Exclude sold products
 
     if (locationType) {
       filter.locationType = locationType;
@@ -166,7 +166,7 @@ export const getFilteredProducts = async (req, res) => {
       filter.category = { $regex: `^${category}$`, $options: "i" }; // Exact case-insensitive match
     }
 
-    // Price Range Filtering (Updated to match filter.jsx)
+    // Price range filtering
     if (priceRange) {
       const [minPrice, maxPrice] = priceRange.split("-").map(Number);
       filter.price = {};
@@ -174,18 +174,19 @@ export const getFilteredProducts = async (req, res) => {
       if (!isNaN(maxPrice)) filter.price.$lte = maxPrice;
     }
 
-    console.log("Filter Query:", filter); // Debugging filter query before fetching data
+    console.log("Filter Query:", filter); // Debugging filter query
 
-    const products = await Product.find(filter);
+    // Fetch products along with the seller's phone number
+    const products = await Product.find(filter).populate("seller", "phone");
 
     if (products.length === 0) {
       return res.status(200).json({ success: true, products: [], message: "No products found" });
     }
 
-    res.status(200).json({ success: true, products });
+    return res.status(200).json({ success: true, products });
   } catch (error) {
     console.error("Error filtering products:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 

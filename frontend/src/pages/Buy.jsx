@@ -12,9 +12,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Filter from "../components/Filter"
 
- 
-
-
 const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevImage }) => (
   <AnimatePresence>
     {product && (
@@ -36,7 +33,7 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
           exit={{ opacity: 0, scale: 0.95, y: 30 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <DialogContent className="w-[90vw] max-w-[90vw] h-[85vh] max-h-[85vh] bg-white rounded-2xl  overflow-y-auto p-4 sm:p-6 flex flex-col">
+          <DialogContent className="w-[90vw] max-w-[90vw] h-[75vh] max-h-[75vh] bg-white/95 rounded-2xl shadow-2xl overflow-y-auto p-4 sm:p-6 flex flex-col">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Product Image */}
               <div className="relative flex justify-center items-center">
@@ -44,7 +41,7 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
                   key={currentImageIndex}
                   src={product.images[currentImageIndex]}
                   alt={product.name}
-                  className="w-full max-h-[250px] sm:max-h-[350px] md:max-h-[500px] object-cover rounded-xl "
+                  className="w-full max-h-[250px] sm:max-h-[350px] md:max-h-[500px] object-cover rounded-xl shadow-md"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
@@ -72,6 +69,7 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
                   </>
                 )}
               </div>
+              
               {/* Product Details */}
               <div className="flex flex-col space-y-3 sm:space-y-5">
                 <motion.h2 
