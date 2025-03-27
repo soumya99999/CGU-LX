@@ -156,7 +156,7 @@ const Buy = () => {
           {products.map((product) => (
             <motion.div key={product._id} whileHover={{ scale: 1 }} className="bg-white p-4 rounded-3xl border cursor-pointer" onClick={() => setSelectedProduct(product)}>
               {/* <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" /> */}
-              <div className="w-full h-72 rounded-xl overflow-hidden relative"
+              <div className="w-full h-52 rounded-xl overflow-hidden relative"
                 onMouseEnter={() => setHoveredProduct(product._id)}
                 onMouseLeave={() => setHoveredProduct(null)}
               >
@@ -166,19 +166,19 @@ const Buy = () => {
                     pagination={{ clickable: true }}
                     autoplay={{ delay: 500 }}
                     loop
-                    className="w-full h-72"
+                    className="w-full h-52"
                   >
                     {product.images.map((image, index) => (
                       <SwiperSlide key={index}>
-                        <img src={image} alt={`${product.name} ${index}`} className="w-full h-72 object-cover rounded-xl" />
+                        <img src={image} alt={`${product.name} ${index}`} className="w-full h-52 object-cover rounded-xl" />
                       </SwiperSlide>
                     ))}
                   </Swiper>
                 ) : (
-                  <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" />
+                  <img src={product.images[0]} alt={product.name} className="w-full h-52 object-cover rounded-xl" />
                 )}
               </div>
-              <h3 className="mt-4 text-md font-bold text-gray-400">{product.name}</h3>
+              <h3 className="mt-4 text-sm font-bold text-gray-400">{product.name}</h3>
               <h3 className="mt-1 text-md  text-gray-900 truncate whitespace-nowrap overflow-hidden">{product.description}</h3>
               <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
               <span className="text-xl font-bold text-gray-700">₹{product.price}</span> 

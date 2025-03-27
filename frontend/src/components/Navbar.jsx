@@ -31,7 +31,7 @@ const Navbar = () => {
       className="bg-white border-b border-blue-300 px-6 py-4 fixed top-0 w-full z-[100]"
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
-      // transition={{ duration: 0.5, ease: "easeInOut" }}
+      transition={{ duration: 1.5, ease: "easeInOut" }}
     >
       <div className="flex justify-between items-center max-w-6xl px-2 mx-auto">
         {/* Logo */}
@@ -52,7 +52,7 @@ const Navbar = () => {
               <Link to="/profile" className="text-gray-700 hover:text-black transition-colors text-sm font-medium">Profile</Link>
               <button
                 onClick={handleLogout}
-                className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-lg hover:bg-gray-700 hover:scale-90 transition duration-200"
+                className="bg-gray-900 text-white px-4 py-1.5 rounded-md text-sm font-medium shadow-lg hover:bg-gray-700 hover:scale-90 transition duration-200"
               >
                 Logout
               </button>
@@ -60,7 +60,7 @@ const Navbar = () => {
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="bg-black text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-lg hover:bg-gray-700 hover:scale-90 transition duration-200"
+              className="bg-black text-white px-4 py-1.5 rounded-md text-sm font-medium shadow-lg hover:bg-gray-700 hover:scale-90 transition duration-200"
             >
               Login
             </button>

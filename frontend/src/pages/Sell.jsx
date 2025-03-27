@@ -114,7 +114,7 @@ const Sell = () => {
                 name="name"
                 value={product.name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter product name"
               />
             </div>
@@ -128,7 +128,7 @@ const Sell = () => {
                 name="price"
                 value={product.price}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="Set a price"
               />
             </div>
@@ -142,7 +142,7 @@ const Sell = () => {
                 name="address"
                 value={product.address}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter pickup address"
               />
             </div>
@@ -159,7 +159,7 @@ const Sell = () => {
                 value={product.description}
                 onChange={handleChange}
                 rows="5"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="Describe your product in detail"
               />
             </div>
@@ -168,7 +168,7 @@ const Sell = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Upload Images (Max 5) 
               </label>
-              <div className="flex items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-lg p-6 transition-colors hover:border-blue-500">
+              <div className="flex items-center justify-center w-full border-2 border-dashed border-gray-400 rounded-lg p-6 transition-all hover:scale-95 hover:border-blue-500">
                 <input
                   type="file"
                   onChange={handleImageChange}
