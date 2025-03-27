@@ -1,14 +1,19 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 
 const countryOptions = [
-  { name: "India", code: "+91" }, { name: "Nepal", code: "+977" },
-  { name: "USA", code: "+1" }, { name: "UK", code: "+44" },
-  { name: "Australia", code: "+61" }, { name: "Bangladesh", code: "+880" },
-  { name: "Japan", code: "+81" }, { name: "France", code: "+33" },
-  { name: "Germany", code: "+49" }, { name: "Other", code: "" }
+  { name: "India", code: "+91", pattern: /^[6-9]\d{9}$/ },
+  { name: "Nepal", code: "+977", pattern: /^\d{10}$/ },
+  { name: "USA", code: "+1", pattern: /^\d{10}$/ },
+  { name: "UK", code: "+44", pattern: /^\d{10}$/ },
+  { name: "Australia", code: "+61", pattern: /^\d{9}$/ },
+  { name: "Bangladesh", code: "+880", pattern: /^\d{10}$/ },
+  { name: "Japan", code: "+81", pattern: /^\d{9,10}$/ },
+  { name: "France", code: "+33", pattern: /^\d{9}$/ },
+  { name: "Germany", code: "+49", pattern: /^\d{10}$/ },
+  { name: "Other", code: "", pattern: /^.*$/ }
 ];
 
 const Register = () => {
@@ -17,7 +22,7 @@ const Register = () => {
   const [semester, setSemester] = useState("1st Semester");
   const [country, setCountry] = useState("India");
   const [countryCode, setCountryCode] = useState("+91");
-  const [customCountryCode, setCustomCountryCode] = useState("");
+  const [customCountryCode, setCustomCountryCode] = useState(""); // ✅ Defined here
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -36,15 +41,30 @@ const Register = () => {
     if (foundCountry) {
       setCountryCode(foundCountry.code);
     }
+    if (selectedCountry !== "Other") {
+      setCustomCountryCode(""); // Reset custom code if not "Other"
+    }
+  };
+
+  const validatePhoneNumber = () => {
+    const selectedPattern = country === "Other" ? /^.*$/ : countryOptions.find(c => c.name === country)?.pattern;
+    if (selectedPattern && !selectedPattern.test(phone)) {
+      setError(`Invalid phone number format for ${country}`);
+      return false;
+    }
+    setError("");
+    return true;
   };
 
   const handleGoogleRegister = async () => {
-    setError(""); // Reset error before new request
+    setError("");
+
+    if (!validatePhoneNumber()) return;
 
     console.log("🚀 Google Register Attempting...");
 
     const response = await signInWithGoogle(true, {
-      phone: countryCode + phone,
+      phone: `${country === "Other" ? customCountryCode : countryCode}${phone}`,
       course, semester, country
     });
 
@@ -55,15 +75,6 @@ const Register = () => {
       setError(response.error);
       return;
     }
-
-    if (response?.alreadyRegistered) {
-      console.warn("⚠ User Already Registered:", response.message);
-      setError(response.message || "This account is already registered. Redirecting...");
-      setTimeout(() => navigate("/login"), 2000);
-      return;
-    }
-
-    navigate("/login");
   };
 
   return (
@@ -124,14 +135,11 @@ const Register = () => {
           onChange={(e) => setSemester(e.target.value)}
           className="border p-2 rounded w-full"
         >
-          {[...Array(8)].map((_, i) => {
-            const semesterText = (i + 1) + "th Semester";
-            return (
-              <option key={i} value={semesterText}>
-                {semesterText}
-              </option>
-            );
-          })}
+          {[...Array(8)].map((_, i) => (
+            <option key={i} value={`${i + 1}th Semester`}>
+              {`${i + 1}th Semester`}
+            </option>
+          ))}
         </select>
 
         <button
@@ -146,7 +154,7 @@ const Register = () => {
           <Link to="/terms" className="text-xs text-blue-500 hover:text-blue-700">
             terms
           </Link>{" "}
-          that you didn't bother to read!
+          that you didn’t bother to read!
         </p>
       </div>
     </div>
