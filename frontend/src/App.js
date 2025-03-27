@@ -17,6 +17,9 @@ import Cart from "./pages/Cart";
 import About from "./components/About";
 import Terms from "./components/terms";
 import Privacy from "./components/privacy";
+import HowItWorks from "./components/HowItWorks";
+import CommunityGuidelines from "./components/CommunityGuidelines";
+
 function App() {
   const [fade, setFade] = useState(false);
   const [showContent, setShowContent] = useState(true);
@@ -51,9 +54,11 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<Home />} />
-            <Route path="/About" element={<About />} />
+            <Route path="/about" element={<About />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/community-guidelines" element={<CommunityGuidelines />} />
             <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
             <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
             <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />

@@ -115,7 +115,7 @@ const Register = () => {
 
           <input
             type="text"
-            placeholder="Phone Number"
+            placeholder="WhatsApp Number"
             value={phone}
             onChange={(e) => setPhone(e.target.value.replace(/\s/g, ""))}
             className="border p-2 rounded w-full"

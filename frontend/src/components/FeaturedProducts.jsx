@@ -28,7 +28,7 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
           exit={{ opacity: 0, scale: 0.95, y: 30 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <DialogContent className="w-[90vw] max-w-[90vw] h-[85vh] max-h-[85vh] bg-white/95 rounded-2xl shadow-2xl overflow-y-auto p-4 sm:p-6 flex flex-col">
+          <DialogContent className="w-[90vw] max-w-[90vw] h-[75vh] max-h-[75vh] bg-white/95 rounded-2xl shadow-2xl overflow-y-auto p-4 sm:p-6 flex flex-col">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Product Image */}
               <div className="relative flex justify-center items-center">
@@ -162,11 +162,11 @@ const Buy = () => {
               <motion.div 
                 key={product._id} 
                 whileHover={{ scale: 1 }} 
-                className="bg-white p-4 rounded-3xl border cursor-pointer" 
+                className="bg-white p-3 rounded-3xl border cursor-pointer" 
                 onClick={() => setSelectedProduct(product)}
               >
-                <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded-xl" />
-                <h3 className="mt-4 text-md font-bold text-gray-400">{product.name}</h3>
+                <img src={product.images[0]} alt={product.name} className="w-full h-52 object-cover rounded-xl" />
+                <h3 className="mt-4 text-sm font-bold text-gray-400">{product.name}</h3>
                 <h3 className="mt-1 text-md text-gray-900 truncate whitespace-nowrap overflow-hidden">{product.description}</h3>
                 <h3 className="mt-1 text-sm font-medium text-gray-400">{product.address}</h3>
                 <span className="text-xl font-bold text-gray-700">₹{product.price}</span> 
@@ -180,7 +180,7 @@ const Buy = () => {
           {/* Explore More Button - Navigate to Buy Page */}
           <div className="flex justify-center mt-10">
             <button 
-              className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-8 py-2 rounded-md transition-all hover:scale-105"
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-8 py-2 rounded-md transition-all hover:scale-95"
               onClick={() => navigate("/buy")} // Navigate to Buy Page
             >
               Explore More
