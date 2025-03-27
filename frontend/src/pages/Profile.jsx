@@ -180,9 +180,9 @@ const Profile = () => {
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
 
   return (
-    <div className="flex min-h-xl bg-white p-10 gap-6">
+    <div className="flex flex-col md:flex-row min-h-xl bg-white p-4 md:p-10 gap-6">
       {/* Profile Section */}
-      <div className="w-1/3">
+      <div className="w-full md:w-1/3">
         <div className="bg-white rounded-lg shadow-sm overflow-hidden h-full">
           <div className="p-4">
             <h2 className="text-lg font-semibold mb-4">Profile</h2>
@@ -239,7 +239,7 @@ const Profile = () => {
               </div>
 
               <div className="flex flex-col gap-2 w-full">
-                <Button 
+                <Button
                   className="bg-pink-400 hover:bg-pink-500 text-white w-full text-sm py-1 h-auto"
                   onClick={() => navigate("/edit-profile")}
                 >
@@ -264,7 +264,7 @@ const Profile = () => {
       </div>
 
       {/* Listed Products */}
-      <div className="w-2/3">
+      <div className="w-full md:w-2/3">
         <div className="bg-white rounded-lg shadow-sm overflow-hidden h-full">
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
@@ -336,7 +336,7 @@ const Profile = () => {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button 
+                                <Button
                                   variant="ghost" 
                                   size="icon" 
                                   className="h-7 w-7"
@@ -355,7 +355,7 @@ const Profile = () => {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button 
+                                <Button
                                   variant="ghost" 
                                   size="icon" 
                                   className="h-7 w-7 text-red-500"
@@ -380,6 +380,29 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* Avatar Upload Modal */}
+      {showAvatarModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4">Update Profile Picture</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="w-full mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button
+                onClick={() => setShowAvatarModal(false)}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
