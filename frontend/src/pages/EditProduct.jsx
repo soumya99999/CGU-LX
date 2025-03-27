@@ -207,8 +207,7 @@ const EditProduct = () => {
                     required
                   >
                     <option value="">Select Location Type</option>
-                    <option value="hostel">Hostel</option>
-                    <option value="campus">Campus</option>
+                    <option value="On-Campus">On-Campus</option>
                     <option value="nearby">Nearby Area</option>
                   </select>
                 </div>
@@ -226,11 +225,10 @@ const EditProduct = () => {
                     required
                   >
                     <option value="">Select Category</option>
-                    <option value="books">Books</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="furniture">Furniture</option>
-                    <option value="clothing">Clothing</option>
-                    <option value="other">Other</option>
+                    <option value="Study Essentials">Study Essentials</option>
+                    <option value="Room & Living">Room & Living</option>
+                    <option value="Tech & Accessories">Tech & Accessories</option>
+                    <option value="Health & Fitness">Health & Fitness</option>
                   </select>
                 </div>
 
@@ -244,11 +242,10 @@ const EditProduct = () => {
                     required
                   >
                     <option value="">Select Condition</option>
-                    <option value="new">New</option>
-                    <option value="like-new">Like New</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                    <option value="poor">Poor</option>
+                    <option value="New">New</option>
+                    <option value="Like New">Like New</option>
+                    <option value="Used - Good">Used - Good</option>
+                    <option value="Used - Acceptable">Used - Acceptable</option>
                   </select>
                 </div>
               </div>
