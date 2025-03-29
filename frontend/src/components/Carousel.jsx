@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Link } from "react-router-dom";
 
-const images = ["/temp01.png", "/temmp02.png"];
+const desktopImages = ["/temp01.png", "/temmp02.png"];
+const mobileImages = ["/mobile01.jpg", "/mobile02.jpg"];
 
 const Carousel = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const images = isMobile ? mobileImages : desktopImages;
+
   return (
     <div className="relative w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-screen-lg lg:max-w-screen-xl mx-auto overflow-hidden rounded-lg">
       <Link
