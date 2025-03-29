@@ -262,11 +262,11 @@ const Buy = () => {
                     />
                   )}
                 </div>
-                <h3 className="mt-2 sm:mt-4 text-sm sm:text-md font-bold text-gray-400">{product.name}</h3>
-                <h3 className="mt-1 text-xs sm:text-md text-gray-900 truncate overflow-hidden">
+                <h3 className="mt-1 sm:mt-4 text-md sm:text-md font-bold text-black">{product.name}</h3>
+                <h3 className="mt text-xs sm:text-md text-gray-500 truncate overflow-hidden">
                   {product.description}
                 </h3>
-                <h3 className="mt-1 text-xs sm:text-sm font-medium text-gray-400">{product.address}</h3>
+                {/* <h3 className="mt-1 text-xs sm:text-sm font-medium text-gray-400">{product.address}</h3> */}
                 <span className="text-lg sm:text-xl font-bold text-gray-700">₹{product.price}</span>
                 <div>
                   <span className="text-xs font-bold text-green-700">

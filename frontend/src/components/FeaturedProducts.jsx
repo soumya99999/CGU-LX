@@ -241,7 +241,7 @@ const Buy = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
+    <div className="min-h-screen p-6">
       {loading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="w-10 h-10 border-4 border-t-transparent border-gray-500 rounded-full animate-spin"></div>
