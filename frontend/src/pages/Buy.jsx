@@ -232,7 +232,7 @@ const Buy = () => {
                 onClick={() => setSelectedProduct(product)}
               >
                 <div
-                  className="w-full h-40 sm:h-72 rounded-xl overflow-hidden relative"
+                  className="w-full h-40 sm:h-52 rounded-xl overflow-hidden relative"
                   onMouseEnter={() => setHoveredProduct(product._id)}
                   onMouseLeave={() => setHoveredProduct(null)}
                 >
@@ -240,16 +240,16 @@ const Buy = () => {
                     <Swiper
                       modules={[Autoplay, Pagination]}
                       pagination={{ clickable: true }}
-                      autoplay={{ delay: 500 }}
+                      autoplay={{ delay: 1000 }}
                       loop
-                      className="w-full h-40 sm:h-72"
+                      className="w-full h-40 sm:h-52"
                     >
                       {product.images.map((image, index) => (
                         <SwiperSlide key={index}>
                           <img
                             src={image}
                             alt={`${product.name} ${index}`}
-                            className="w-full h-40 sm:h-72 object-cover rounded-xl"
+                            className="w-full h-40 sm:h-52 object-cover rounded-xl"
                           />
                         </SwiperSlide>
                       ))}
@@ -258,7 +258,7 @@ const Buy = () => {
                     <img
                       src={product.images[0]}
                       alt={product.name}
-                      className="w-full h-40 sm:h-72 object-cover rounded-xl"
+                      className="w-full h-40 sm:h-52 object-cover rounded-xl"
                     />
                   )}
                 </div>

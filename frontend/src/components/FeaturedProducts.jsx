@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from "react";
+
 import { Button } from '../ui/button';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { CartContext } from '../contexts/CartContext';
@@ -61,7 +62,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
         <Dialog open={!!mainProduct} onOpenChange={(open) => !open && onClose()}>
           {/* Background Overlay */}
           <motion.div
-            className="fixed inset-0 bg-black/40 z-30"
+            className="fixed inset-0 z-30"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -76,7 +77,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
             exit={{ opacity: 0, scale: 0.98, y: 20 }}
             transition={{ duration: 0.35, ease: "anticipate" }}
           >
-        <DialogContent className="w-full max-w-[850px] h-[90vh] sm:h-screen bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 overflow-hidden backdrop-blur-md">
+        <DialogContent className="w-full max-w-[850px] h-[90vh] sm:h-screen border border-gray-200 rounded-2xl p-6 overflow-hidden backdrop-blur-md">
 
 
               <div className="flex flex-col sm:flex-row h-full gap-6">
@@ -84,12 +85,12 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                 {/* Left Section: Image & Thumbnails */}
                 <div className="flex flex-col sm:flex-row h-full w-full sm:w-1/2">
                   {/* Image Container (Fixed Height) */}
-                  <div className="flex justify-center items-center p-2 border border-gray-300 rounded-lg bg-gray-50 w-full h-[50vh] sm:h-full">
+                  <div className="flex justify-center items-center p-2 rounded-lg w-full h-[50vh] sm:h-full">
                     <motion.img
                       key={currentImageIndex}
                       src={mainProduct.images[currentImageIndex]}
                       alt={mainProduct.name}
-                      className="w-auto h-full max-h-full object-contain rounded-md"
+                      className="w-auto h-full max-h-full object-contain rounded-3xl"
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
@@ -104,7 +105,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                         variant="ghost"
                         size="icon"
                         onClick={prevCarouselImage}
-                        className="bg-gray-50 p-2 rounded-full shadow-md hover:scale-110"
+                        className="bg-white p-2 rounded-full hover:scale-110"
                         disabled={currentImageIndex === 0}
                       >
                         <ChevronUp className="w-6 h-6 text-gray-600" />
@@ -129,7 +130,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                         variant="ghost"
                         size="icon"
                         onClick={nextCarouselImage}
-                        className="bg-gray-50 p-2 rounded-full shadow-md hover:scale-110"
+                        className="bg-white p-2 rounded-full shadow-md hover:scale-110"
                         disabled={currentImageIndex + maxVisible >= mainProduct.images.length}
                       >
                         <ChevronDown className="w-6 h-6 text-gray-600" />
@@ -250,7 +251,7 @@ const Buy = () => {
               <motion.div
                 key={product._id}
                 whileHover={{ scale: 1.03 }}
-                className="bg-gray-50 p-3 rounded-3xl shadow-[5px_5px_10px_rgba(0,0,0,0.1),-5px_-5px_10px_rgba(255,255,255,0.8)] cursor-pointer"
+                className="bg-gray-50 p-3 rounded-3xl border border-gray-200 cursor-pointer"
                 onClick={() => setSelectedProduct(product)}
               >
                 <img src={product.images[0]} alt={product.name} className="w-full h-52 object-cover rounded-xl" />
@@ -267,7 +268,7 @@ const Buy = () => {
 
           <div className="flex justify-center mt-10">
             <button
-              className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium px-8 py-2 rounded-md shadow-[3px_3px_6px_rgba(0,0,0,0.1),-3px_-3px_6px_rgba(255,255,255,0.9)] transition-all hover:scale-95"
+              className="bg-black hover:bg-gray-500 text-white font-medium px-20 py-2 rounded-md shadow-[3px_3px_6px_rgba(0,0,0,0.1),-3px_-3px_6px_rgba(255,255,255,0.9)] transition-all hover:scale-95"
               onClick={() => navigate("/buy")}
             >
               Explore More
