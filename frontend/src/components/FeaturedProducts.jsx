@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from "react";
+import { useAuth } from '../contexts/AuthContext'; 
 
 import { Button } from '../ui/button';
 import { Dialog, DialogContent } from '../ui/dialog';
@@ -55,6 +56,8 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
   }, []);
   
   const visibleImages = mainProduct.images.slice(carouselStartIndex, carouselStartIndex + maxVisible);
+  const navigate = useNavigate();
+  const { user } = useAuth();
   
   return (
     <AnimatePresence>
@@ -189,20 +192,26 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                     transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
                   >
                     <Button
-                      className="bg-yellow-100 text-yellow-700 flex items-center gap-2 hover:bg-yellow-200 shadow-md w-full sm:w-auto"
-                      onClick={() => {
-                        if (!mainProduct.seller?.phone) {
-                          alert("Seller contact unavailable");
-                          return;
-                        }
-                        const message = encodeURIComponent(`Hello, I'm interested in buying ${mainProduct.name}. Is it available?`);
-                        const whatsappURL = `https://wa.me/${mainProduct.seller.phone}?text=${message}`;
-                        window.open(whatsappURL, "_blank");
-                      }}
-                    >
-                      <MessageSquare className="w-5 h-5 text-yellow-700" />
-                      Message
-                    </Button>
+  className="bg-yellow-100 text-yellow-700 flex items-center gap-2 hover:bg-yellow-200 shadow-md w-full sm:w-auto"
+  onClick={() => {
+    if (!user) {
+      navigate("/login"); // Redirect to login page if not logged in
+      return;
+    }
+    if (!mainProduct.seller?.phone) {
+      alert("Seller contact unavailable");
+      return;
+    }
+    const message = encodeURIComponent(
+      `Hello, I'm interested in buying ${mainProduct.name}. Is it available?`
+    );
+    const whatsappURL = `https://wa.me/${mainProduct.seller.phone}?text=${message}`;
+    window.open(whatsappURL, "_blank");
+  }}
+>
+  <MessageSquare className="w-5 h-5 text-yellow-700" />
+  Message
+</Button>;
                   </motion.div>
                 </div>
               </div>
