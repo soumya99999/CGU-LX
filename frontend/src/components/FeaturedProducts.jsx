@@ -1,11 +1,12 @@
 import { useEffect, useState, useContext } from "react";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { CartContext } from '../contexts/CartContext';
 import { MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { ChevronUp, ChevronDown } from "lucide-react";
+
 
 const ProductDialog = ({ products, initialProduct, onClose }) => {
   const [mainProduct, setMainProduct] = useState(initialProduct);
@@ -41,16 +42,26 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
   };
 
   // Slice the images based on screen size: 2 for mobile, 4 for larger screens
-  const maxVisible = window.innerWidth < 768 ? 2 : 4; // Matches md breakpoint (768px)
-  const visibleImages = mainProduct.images.slice(carouselStartIndex, carouselStartIndex + maxVisible);
+  const [maxVisible, setMaxVisible] = useState(window.innerWidth < 768 ? 2 : 4);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setMaxVisible(window.innerWidth < 900 ? 2 : 4);
+    };
+  
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
+  const visibleImages = mainProduct.images.slice(carouselStartIndex, carouselStartIndex + maxVisible);
+  
   return (
     <AnimatePresence>
       {mainProduct && (
         <Dialog open={!!mainProduct} onOpenChange={(open) => !open && onClose()}>
           {/* Background Overlay */}
           <motion.div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/40 z-30"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -59,28 +70,26 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
 
           {/* Dialog Container */}
           <motion.div
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-            initial={{ opacity: 0, scale: 0.95, y: 30 }}
+            className="fixed inset-0 flex items-center justify-center z-50 mt-20 sm:mt-24"
+            initial={{ opacity: 0, scale: 0.98, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 30 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
+            exit={{ opacity: 0, scale: 0.98, y: 20 }}
+            transition={{ duration: 0.35, ease: "anticipate" }}
           >
-            <DialogContent 
-              className="w-full max-w-[900px] h-auto max-h-[90vh] bg-gray-50 rounded-2xl shadow-[5px_5px_10px_rgba(0,0,0,0.1),-5px_-5px_10px_rgba(255,255,255,0.8)] overflow-y-auto p-6"
-            >
-              {/* Responsive Grid: Stack on small screens, side-by-side on md+ */}
-              <div className="flex flex-col md:grid md:grid-cols-2 gap-6">
-                {/* Left Side (Top on small screens): Main Product Image and Carousel */}
-                <div className="flex flex-col items-center space-y-4">
-                  {/* Main Product Image with Fixed Frame, Centered */}
-                  <div 
-                    className="relative w-[250px] h-[250px] flex justify-center items-center bg-gray-50 rounded-xl shadow-[inset_3px_3px_6px_rgba(0,0,0,0.05),inset_-3px_-3px_6px_rgba(255,255,255,0.9)] overflow-hidden"
-                  >
+        <DialogContent className="w-full max-w-[850px] h-[90vh] sm:h-screen bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 overflow-hidden backdrop-blur-md">
+
+
+              <div className="flex flex-col sm:flex-row h-full gap-6">
+                
+                {/* Left Section: Image & Thumbnails */}
+                <div className="flex flex-col sm:flex-row h-full w-full sm:w-1/2">
+                  {/* Image Container (Fixed Height) */}
+                  <div className="flex justify-center items-center p-2 border border-gray-300 rounded-lg bg-gray-50 w-full h-[50vh] sm:h-full">
                     <motion.img
                       key={currentImageIndex}
                       src={mainProduct.images[currentImageIndex]}
                       alt={mainProduct.name}
-                      className="w-full h-full object-contain"
+                      className="w-auto h-full max-h-full object-contain rounded-md"
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
@@ -88,53 +97,65 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                     />
                   </div>
 
-                  {/* Carousel of Product Images */}
-                  <div className="flex justify-center items-center w-full space-x-4">
+                  {/* Thumbnails for Desktop */}
+                  <div className="hidden sm:flex flex-col items-center space-y-2 ml-2">
                     {mainProduct.images.length > maxVisible && (
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={prevCarouselImage}
-                        className="bg-gray-50 p-2 rounded-full shadow-[3px_3px_6px_rgba(0,0,0,0.1),-3px_-3px_6px_rgba(255,255,255,0.9)] hover:scale-110"
-                        disabled={carouselStartIndex === 0}
+                        className="bg-gray-50 p-2 rounded-full shadow-md hover:scale-110"
+                        disabled={currentImageIndex === 0}
                       >
-                        <ChevronLeft className="w-6 h-6 text-gray-600" />
+                        <ChevronUp className="w-6 h-6 text-gray-600" />
                       </Button>
                     )}
-                    <div className="flex space-x-4">
+
+                    {/* Thumbnails */}
+                    <div className="flex flex-col items-center space-y-2">
                       {visibleImages.map((image, index) => (
                         <motion.div
                           key={index}
-                          className="w-[100px] h-[100px] bg-gray-50 rounded-lg shadow-[3px_3px_6px_rgba(0,0,0,0.1),-3px_-3px_6px_rgba(255,255,255,0.9)] overflow-hidden cursor-pointer hover:shadow-[inset_3px_3px_6px_rgba(0,0,0,0.05),inset_-3px_-3px_6px_rgba(255,255,255,0.9)] transition-shadow"
-                          onClick={() => setCurrentImageIndex(carouselStartIndex + index)}
+                          className="w-[64px] h-[64px] border-2 border-white rounded-md overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                          onClick={() => setCurrentImageIndex(index)}
                         >
-                          <img
-                            src={image}
-                            alt={`${mainProduct.name} ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
+                          <img src={image} alt={`Thumbnail ${index}`} className="w-full h-full object-cover" />
                         </motion.div>
                       ))}
                     </div>
+
                     {mainProduct.images.length > maxVisible && (
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={nextCarouselImage}
-                        className="bg-gray-50 p-2 rounded-full shadow-[3px_3px_6px_rgba(0,0,0,0.1),-3px_-3px_6px_rgba(255,255,255,0.9)] hover:scale-110"
-                        disabled={carouselStartIndex + maxVisible >= mainProduct.images.length}
+                        className="bg-gray-50 p-2 rounded-full shadow-md hover:scale-110"
+                        disabled={currentImageIndex + maxVisible >= mainProduct.images.length}
                       >
-                        <ChevronRight className="w-6 h-6 text-gray-600" />
+                        <ChevronDown className="w-6 h-6 text-gray-600" />
                       </Button>
                     )}
                   </div>
                 </div>
 
-                {/* Right Side (Below on small screens): Product Details */}
-                <div className="flex flex-col justify-between space-y-4 md:ml-4">
+                {/* Mobile Thumbnails (Horizontal Scroll) */}
+                <div className="sm:hidden flex overflow-x-auto space-x-2 mt-2 pb-2">
+                  {visibleImages.map((image, index) => (
+                    <motion.div
+                      key={index}
+                      className="w-[60px] h-[60px] border-2 border-white rounded-md overflow-hidden cursor-pointer hover:shadow-md transition-shadow flex-shrink-0"
+                      onClick={() => setCurrentImageIndex(index)}
+                    >
+                      <img src={image} alt={`Thumbnail ${index}`} className="w-full h-full object-cover" />
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Right Section: Product Info */}
+                <div className="flex flex-col justify-between space-y-4 sm:w-1/2">
                   <div>
                     <motion.h2
-                      className="text-2xl font-semibold text-gray-800 leading-tight"
+                      className="text-xl sm:text-2xl font-semibold text-gray-800 leading-tight"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, ease: "easeOut" }}
@@ -142,7 +163,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                       {mainProduct.name}
                     </motion.h2>
                     <motion.p
-                      className="text-lg font-bold text-gray-800 mt-2"
+                      className="text-lg sm:text-xl font-bold text-gray-800 mt-2"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1, duration: 0.4, ease: "easeOut" }}
@@ -150,7 +171,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                       ₹{mainProduct.price} • <span className="text-sm text-gray-500">{timeAgo(mainProduct.createdAt)}</span>
                     </motion.p>
                     <motion.p
-                      className="text-gray-600 text-base mt-4"
+                      className="text-gray-600 text-sm sm:text-base mt-4"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2, duration: 0.4, ease: "easeOut" }}
@@ -167,15 +188,15 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                     transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
                   >
                     <Button
-                      className="bg-yellow-100 text-yellow-700 flex items-center gap-2 hover:bg-yellow-200 shadow-[3px_3px_6px_rgba(0,0,0,0.1),-3px_-3px_6px_rgba(255,255,255,0.9)]"
+                      className="bg-yellow-100 text-yellow-700 flex items-center gap-2 hover:bg-yellow-200 shadow-md w-full sm:w-auto"
                       onClick={() => {
                         if (!mainProduct.seller?.phone) {
-                          alert('Seller contact unavailable');
+                          alert("Seller contact unavailable");
                           return;
                         }
                         const message = encodeURIComponent(`Hello, I'm interested in buying ${mainProduct.name}. Is it available?`);
                         const whatsappURL = `https://wa.me/${mainProduct.seller.phone}?text=${message}`;
-                        window.open(whatsappURL, '_blank');
+                        window.open(whatsappURL, "_blank");
                       }}
                     >
                       <MessageSquare className="w-5 h-5 text-yellow-700" />
@@ -191,6 +212,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
     </AnimatePresence>
   );
 };
+
 
 const Buy = () => {
   const [products, setProducts] = useState([]);

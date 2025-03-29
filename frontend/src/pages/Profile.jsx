@@ -3,50 +3,44 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Pencil, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 import { Switch } from "../ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Button } from "../ui/button";
 import { toast } from "react-hot-toast";
 
 const maleAvatars = [
-  "adventurer",  // Explorer, warrior-like  
-  "bottts",      // Futuristic robot (can resemble a superhero)  
-  "micah",       // Expressive male faces  
-  "thumbs",      // Quirky male gestures  
-  "big-ears"     // Cartoon-style faces  
+  "adventurer",
+  "bottts",
+  "micah",
+  "thumbs",
+  "big-ears"
 ];
 
 const femaleAvatars = [
   "fun-emoji", 
-  "big-smile",        // Soft, friendly cartoon style  
-  "lorelei",          // Fantasy-themed female avatars  
-  "croodles",         // Cute, friendly cartoon faces  
-  "pixel-art-neutral" // Cute, pixel-style feminine faces  
+  "big-smile",        
+  "lorelei",          
+  "croodles",         
+  "pixel-art-neutral" 
 ];
 
 const Profile = () => {
   const [user, setUser] = useState({
     name: "",
-    username: "",
-    email: "",
-    bio: "",
+    phone: "",
     course: "",
     semester: "",
-    hostelite: "No",
     avatar: localStorage.getItem("avatar") || "adventurer",
   });
+
   const [loading, setLoading] = useState(true);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [avatarCategory, setAvatarCategory] = useState("male");
   const [listedProducts, setListedProducts] = useState([]);
-  const [activeImages, setActiveImages] = useState({});
-  const [editingField, setEditingField] = useState(null);
-  const [editValue, setEditValue] = useState("");
+  const [activeImages, setActiveImages] = useState({}); // Added missing state
+  const [editingSemester, setEditingSemester] = useState(false);
+  const [semesterValue, setSemesterValue] = useState("");
+  
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   const navigate = useNavigate();
@@ -109,22 +103,43 @@ const Profile = () => {
   const handleAvatarChange = async (avatar) => {
     try {
       const token = localStorage.getItem("token");
-      const { data } = await axios.put(
-        `${API_BASE_URL}/api/auth/profile`,
-        { avatar },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (data.success) {
-        setUser((prevUser) => ({ ...prevUser, avatar }));
-        localStorage.setItem("avatar", avatar);
-      }
+      await axios.put(`${API_BASE_URL}/api/auth/profile`, { avatar }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser((prev) => ({ ...prev, avatar }));
+      localStorage.setItem("avatar", avatar);
     } catch (error) {
       console.error("Error updating avatar:", error.message);
     } finally {
       setShowAvatarModal(false);
     }
   };
+  const handleSemesterChange = (e) => {
+    setSemesterValue(e.target.value);
+  };
+
+  const saveSemester = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const { data } = await axios.put(
+        `${API_BASE_URL}/api/auth/profile`, 
+        { semester: semesterValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      if (data.success) {
+        setUser((prev) => ({ ...prev, semester: semesterValue }));
+        setEditingSemester(false);
+        toast.success("Semester updated successfully!");
+      } else {
+        throw new Error("Failed to update semester");
+      }
+    } catch (error) {
+      console.error("Error updating semester:", error);
+      toast.error("Failed to update semester");
+    }
+  };
+
 
   const handleDeleteProduct = async (productId) => {
     try {
@@ -173,62 +188,12 @@ const Profile = () => {
     }
   };
 
-  const handleEditField = (field, value) => {
-    setEditingField(field);
-    setEditValue(value);
-  };
-
-  const handleSaveField = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const { data } = await axios.put(
-        `${API_BASE_URL}/api/auth/profile`,
-        { [editingField]: editValue },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (data.success) {
-        setUser(prev => ({ ...prev, [editingField]: editValue }));
-        setEditingField(null);
-        toast.success("Updated successfully!");
-      }
-    } catch (error) {
-      console.error("Error updating field:", error);
-      toast.error("Failed to update");
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingField(null);
-    setEditValue("");
-  };
-
-  const handleDeleteAccount = async () => {
-    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      const token = localStorage.getItem("token");
-      try {
-        const { data } = await axios.delete(`${API_BASE_URL}/api/auth/profile`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (data.success) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("avatar");
-          toast.success("Account deleted successfully");
-          navigate("/login");
-        }
-      } catch (error) {
-        console.error("Error deleting account:", error);
-        toast.error("Failed to delete account");
-      }
-    }
-  };
-
   const getAvatarUrl = (avatarName) => {
     return `https://api.dicebear.com/7.x/${avatarName}/svg?seed=${user.name}`;
   };
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+
 
   return (
     <div className="flex flex-col md:flex-row min-h-xl bg-white p-4 md:p-10 gap-6">
@@ -237,52 +202,106 @@ const Profile = () => {
         <div className="bg-white rounded-2xl border-2 overflow-hidden h-full">
           <div className="p-4">
             <h2 className="text-2xl font-semibold mb-8">Profile</h2>
-            <div className="flex flex-col items-center">
-              <div className="relative w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-3">
-                <img
-                  src={getAvatarUrl(user.avatar)}
-                  alt="Profile avatar"
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  onClick={() => setShowAvatarModal(true)}
-                  className="absolute bottom-0 right-0 bg-gray-200 p-1.5 rounded-full shadow-md hover:bg-gray-300 transition"
-                >
-                  <Pencil size={18} className="text-gray-700" />
-                </button>
-              </div>
-              <span className="text-xs text-gray-500 break-all text-center mb-3">{user.email}</span>
 
-              <div className="w-full">
-                <div className="mb-3">
-                  <h3 className="text-md text-gray-500">Name</h3>
-                  <p className="text-xl font-semibold">{user.name}</p>
+            <div className="relative flex flex-col items-center">
+            <div className="relative w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-3">
+              <img
+                src={getAvatarUrl(user.avatar)}
+                alt="Profile avatar"
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={() => setShowAvatarModal(true)}
+                className="absolute bottom-0 right-0 bg-gray-200 p-1.5 rounded-full shadow-md hover:bg-gray-300 transition"
+              >
+                <Pencil size={18} className="text-gray-700" />
+              </button>
+            </div>
+
+            {/* Avatar Modal (Above Profile Section) */}
+{showAvatarModal && (
+  <div className="absolute top-0 right-0 bg-white p-3 rounded-lg shadow-lg w-48 z-50">
+    <h3 className="text-sm font-semibold mb-2 text-center">Choose Avatar</h3>
+
+    <div className="flex justify-center gap-2 mb-3">
+      <button
+        onClick={() => setAvatarCategory("male")}
+        className={`px-2 py-1 rounded-md text-xs font-medium ${
+          avatarCategory === "male" ? "bg-blue-600 text-white" : "bg-gray-300"
+        }`}
+      >
+        Male
+      </button>
+      <button
+        onClick={() => setAvatarCategory("female")}
+        className={`px-2 py-1 rounded-md text-xs font-medium ${
+          avatarCategory === "female" ? "bg-pink-600 text-white" : "bg-gray-300"
+        }`}
+      >
+        Female
+      </button>
+    </div>
+
+    <div className="grid grid-cols-3 gap-2">
+      {(avatarCategory === "male" ? maleAvatars : femaleAvatars).map((avatar) => (
+        <img
+          key={avatar}
+          src={getAvatarUrl(avatar)}
+          alt={avatar}
+          className="w-12 h-12 rounded-md cursor-pointer hover:scale-105 transition"
+          onClick={() => handleAvatarChange(avatar)}
+        />
+      ))}
+    </div>
+
+    <button
+      onClick={() => setShowAvatarModal(false)}
+      className="mt-3 bg-gray-500 text-white px-3 py-1 text-xs rounded-md hover:bg-gray-700 w-full"
+    >
+      Close
+    </button>
+  </div>
+)}
+
+
+               {/* Profile Details */}
+               <div className="space-y-3 text-left">
+                      <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
+                        <span className="text-gray-700 font-medium">Name: </span>
+                        <span className="text-gray-900">{user.name || "Not provided"}</span>
+                      </div>
+                      <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
+                        <span className="text-gray-700 font-medium">Phone: </span>
+                        <span className="text-gray-900">{user.phone || "Not provided"}</span>
+                      </div>
+                      <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
+                        <span className="text-gray-700 font-medium">Course: </span>
+                        <span className="text-gray-900">{user.course || "Not provided"}</span>
+                      </div>
+
+                      <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
+                        <span className="text-gray-700 font-medium">Semester: </span>
+                        {editingSemester ? (
+                          <input
+                            type="text"
+                            value={semesterValue}
+                            onChange={handleSemesterChange}
+                            onBlur={saveSemester}
+                            autoFocus
+                          />
+                        ) : (
+                          <span>
+                            {user.semester} 
+                            <Pencil size={16} className="inline cursor-pointer" onClick={() => { setEditingSemester(true); setSemesterValue(user.semester); }} />
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
-
-                <div className="mb-3">
-                  <h3 className="text-md text-gray-500">Course</h3>
-                  <p className="text-xl">{user.course || "Not provided"}</p>
-                </div>
-
-                <div className="mb-3">
-                  <h3 className="text-md text-gray-500">Semester</h3>
-                  <p className="text-xl">{user.semester || "Not provided"}</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2 w-full">
-                <Button
-                  className="bg-black transition-all duration-500 ease-out hover:scale-95 hover:bg-gray-700 text-white w-full text-sm py-1 h-auto"
-
-                  onClick={() => navigate("/edit-profile")}
-                >
-                  Edit Profile
-                </Button>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
       {/* Listed Products */}
       <div className="w-full md:w-2/3 ">
@@ -401,29 +420,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
-      {/* Avatar Upload Modal */}
-      {showAvatarModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Update Profile Picture</h3>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="w-full mb-4"
-            />
-            <div className="flex justify-end gap-2">
-              <Button
-                onClick={() => setShowAvatarModal(false)}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-800"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
