@@ -7,6 +7,11 @@ import { Switch } from "../ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Button } from "../ui/button";
 import { toast } from "react-hot-toast";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const maleAvatars = [
   "adventurer",
@@ -40,6 +45,7 @@ const Profile = () => {
   const [activeImages, setActiveImages] = useState({}); // Added missing state
   const [editingSemester, setEditingSemester] = useState(false);
   const [semesterValue, setSemesterValue] = useState("");
+  const [hoveredProduct, setHoveredProduct] = useState(null);
   
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -322,36 +328,37 @@ const Profile = () => {
                     whileHover={{ scale: 1.02 }}
                     className="border rounded-lg overflow-hidden bg-white"
                   >
-                    <div className="relative aspect-square">
-                      {/* Main Image */}
-                      <div className="w-full h-full">
-                        <img
-                          src={product.images[activeImages[product._id] || 0]}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      
-                      {/* Thumbnail Navigation */}
-                      {product.images.length > 1 && (
-                        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
-                          {product.images.map((image, index) => (
-                            <button
-                              key={index}
-                              onClick={() => setActiveImages(prev => ({
-                                ...prev,
-                                [product._id]: index
-                              }))}
-                              className={`w-2 h-2 rounded-full transition-colors ${
-                                activeImages[product._id] === index 
-                                  ? 'bg-blue-500' 
-                                  : 'bg-white border border-gray-300 hover:bg-gray-200'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    <div
+                  className="w-full h-40 sm:h-52 rounded-xl overflow-hidden relative"
+                  onMouseEnter={() => setHoveredProduct(product._id)}
+                  onMouseLeave={() => setHoveredProduct(null)}
+                >
+                  {hoveredProduct === product._id ? (
+                    <Swiper
+                      modules={[Autoplay, Pagination]}
+                      pagination={{ clickable: true }}
+                      autoplay={{ delay: 1000 }}
+                      loop
+                      className="w-full h-40 sm:h-52"
+                    >
+                      {product.images.map((image, index) => (
+                        <SwiperSlide key={index}>
+                          <img
+                            src={image}
+                            alt={`${product.name} ${index}`}
+                            className="w-full h-40 sm:h-52 object-cover rounded-xl"
+                          />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  ) : (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-40 sm:h-52 object-cover rounded-xl"
+                    />
+                  )}
+                </div>
 
                     <div className="p-3">
                       <h3 className="font-semibold text-sm line-clamp-1">{product.name}</h3>

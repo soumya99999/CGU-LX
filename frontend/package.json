@@ -45,7 +45,7 @@
     "serve": "^14.2.4",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.17.2",
-    "swiper": "^11.2.4",
+    "swiper": "^11.2.6",
     "tailwind-merge": "^3.0.2",
     "ws": "^8.18.1"
   },

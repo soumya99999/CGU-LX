@@ -212,7 +212,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
 >
   <MessageSquare className="w-5 h-5 text-yellow-700" />
   Message
-</Button>;
+</Button>
                   </motion.div>
                 </div>
               </div>
