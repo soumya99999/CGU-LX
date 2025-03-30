@@ -1,21 +1,21 @@
 import { useEffect, useState, useContext } from "react";
-import { useAuth } from '../contexts/AuthContext'; 
-
+import { useAuth } from '../contexts/AuthContext';
+import { CartContext } from '../contexts/CartContext';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent } from '../ui/dialog';
-import { CartContext } from '../contexts/CartContext';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ChevronUp, ChevronDown } from "lucide-react";
-
 
 const ProductDialog = ({ products, initialProduct, onClose }) => {
   const [mainProduct, setMainProduct] = useState(initialProduct);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
+  const [maxVisible, setMaxVisible] = useState(window.innerWidth < 900 ? 2 : 4);
+  const { user } = useAuth();
+  const { addToCart } = useContext(CartContext);
+  const navigate = useNavigate();
 
-  // Calculate time ago (assuming product.createdAt exists)
   const timeAgo = (date) => {
     const now = new Date();
     const created = new Date(date);
@@ -29,174 +29,21 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
     return `${days} day${days > 1 ? 's' : ''} ago`;
   };
 
-  // Carousel navigation for product images
-  const nextCarouselImage = () => {
-    const maxVisible = window.innerWidth < 768 ? 2 : 4; // 2 for mobile (<md), 4 for md+
-    if (carouselStartIndex + maxVisible < mainProduct.images.length) {
-      setCarouselStartIndex((prev) => prev + 1);
-    }
-  };
-
   const prevCarouselImage = () => {
     if (carouselStartIndex > 0) {
-      setCarouselStartIndex((prev) => prev - 1);
+      setCarouselStartIndex(prev => prev - 1);
     }
   };
 
-  // Slice the images based on screen size: 2 for mobile, 4 for larger screens
-  const [maxVisible, setMaxVisible] = useState(window.innerWidth < 768 ? 2 : 4);
+  const nextCarouselImage = () => {
+    if (carouselStartIndex + maxVisible < mainProduct.images.length) {
+      setCarouselStartIndex(prev => prev + 1);
+    }
+  };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setMaxVisible(window.innerWidth < 900 ? 2 : 4);
-    };
-  
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-  
-  const visibleImages = mainProduct.images.slice(carouselStartIndex, carouselStartIndex + maxVisible);
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  
-  return (
-    <AnimatePresence>
-      {mainProduct && (
-        <Dialog open={!!mainProduct} onOpenChange={(open) => !open && onClose()}>
-          {/* Background Overlay */}
-          <motion.div
-            className="fixed inset-0 z-30"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          />
-
-          {/* Dialog Container */}
-          <motion.div
-            className="fixed inset-0 flex items-center justify-center z-50 mt-20 sm:mt-24"
-            initial={{ opacity: 0, scale: 0.98, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98, y: 20 }}
-            transition={{ duration: 0.35, ease: "anticipate" }}
-          >
-        <DialogContent className="w-full max-w-[850px] h-[90vh] sm:h-screen border border-gray-200 rounded-2xl p-6 overflow-hidden backdrop-blur-md">
-
-
-              <div className="flex flex-col sm:flex-row h-full gap-6">
-                
-                {/* Left Section: Image & Thumbnails */}
-                <div className="flex flex-col sm:flex-row h-full w-full sm:w-1/2">
-                  {/* Image Container (Fixed Height) */}
-                  <div className="flex justify-center items-center p-2 rounded-lg w-full h-[50vh] sm:h-full">
-                    <motion.img
-                      key={currentImageIndex}
-                      src={mainProduct.images[currentImageIndex]}
-                      alt={mainProduct.name}
-                      className="w-auto h-full max-h-full object-contain rounded-3xl"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                    />
-                  </div>
-
-                  {/* Thumbnails for Desktop */}
-                  <div className="hidden sm:flex flex-col items-center space-y-2 ml-2">
-                    {mainProduct.images.length > maxVisible && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={prevCarouselImage}
-                        className="bg-white p-2 rounded-full hover:scale-110"
-                        disabled={currentImageIndex === 0}
-                      >
-                        <ChevronUp className="w-6 h-6 text-gray-600" />
-                      </Button>
-                    )}
-
-                    {/* Thumbnails */}
-                    <div className="flex flex-col items-center space-y-2">
-                      {visibleImages.map((image, index) => (
-                        <motion.div
-                          key={index}
-                          className="w-[64px] h-[64px] border-2 border-white rounded-md overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-                          onClick={() => setCurrentImageIndex(index)}
-                        >
-                          <img src={image} alt={`Thumbnail ${index}`} className="w-full h-full object-cover" />
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {mainProduct.images.length > maxVisible && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={nextCarouselImage}
-                        className="bg-white p-2 rounded-full shadow-md hover:scale-110"
-                        disabled={currentImageIndex + maxVisible >= mainProduct.images.length}
-                      >
-                        <ChevronDown className="w-6 h-6 text-gray-600" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Mobile Thumbnails (Horizontal Scroll) */}
-                <div className="sm:hidden flex overflow-x-auto space-x-2 mt-2 pb-2">
-                  {visibleImages.map((image, index) => (
-                    <motion.div
-                      key={index}
-                      className="w-[60px] h-[60px] border-2 border-white rounded-md overflow-hidden cursor-pointer hover:shadow-md transition-shadow flex-shrink-0"
-                      onClick={() => setCurrentImageIndex(index)}
-                    >
-                      <img src={image} alt={`Thumbnail ${index}`} className="w-full h-full object-cover" />
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Right Section: Product Info */}
-                <div className="flex flex-col justify-between space-y-4 sm:w-1/2">
-                  <div>
-                    <motion.h2
-                      className="text-xl sm:text-2xl font-semibold text-gray-800 leading-tight"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                    >
-                      {mainProduct.name}
-                    </motion.h2>
-                    <motion.p
-                      className="text-lg sm:text-xl font-bold text-gray-800 mt-2"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1, duration: 0.4, ease: "easeOut" }}
-                    >
-                      ₹{mainProduct.price} • <span className="text-sm text-gray-500">{timeAgo(mainProduct.createdAt)}</span>
-                    </motion.p>
-                    <motion.p
-                      className="text-gray-600 text-sm sm:text-base mt-4"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2, duration: 0.4, ease: "easeOut" }}
-                    >
-                      <span className="font-semibold">Description:</span> 
-                      <p style={{ whiteSpace: 'pre-wrap' }}>{mainProduct.description}</p>
-                    </motion.p>
-                  </div>
-
-                  {/* Message Button */}
-                  <motion.div
-                    className="flex gap-4"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
-                  >
-                    <Button
-  className="bg-yellow-100 text-yellow-700 flex items-center gap-2 hover:bg-yellow-200 shadow-md w-full sm:w-auto"
-  onClick={() => {
+  const handleWhatsAppClick = () => {
     if (!user) {
-      navigate("/login"); // Redirect to login page if not logged in
+      navigate("/login");
       return;
     }
     if (!mainProduct.seller?.phone) {
@@ -208,30 +55,162 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
     );
     const whatsappURL = `https://wa.me/${mainProduct.seller.phone}?text=${message}`;
     window.open(whatsappURL, "_blank");
-  }}
->
-  <MessageSquare className="w-5 h-5 text-yellow-700" />
-  Message
-</Button>
-                  </motion.div>
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setMaxVisible(window.innerWidth < 900 ? 2 : 4);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const visibleImages = mainProduct?.images?.slice(carouselStartIndex, carouselStartIndex + maxVisible) || [];
+
+  if (!mainProduct) return null;
+
+  return (
+    <AnimatePresence>
+      <Dialog open={!!mainProduct} onOpenChange={(open) => !open && onClose()}>
+        <motion.div
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        />
+
+        <motion.div
+          className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4 pt-20"
+          initial={{ opacity: 0, scale: 0.98, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.98, y: 20 }}
+          transition={{ duration: 0.35, ease: "anticipate" }}
+        >
+          <DialogContent className="w-full max-w-[95vw] md:max-w-[850px] h-[90vh] sm:h-[80vh] border border-gray-200 rounded-2xl p-4 sm:p-6 overflow-hidden bg-white">
+            <button 
+              onClick={onClose}
+              className="absolute right-4 top-4 z-50 p-1.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+
+            <div className="flex flex-col sm:flex-row h-full gap-4 sm:gap-6">
+              {/* Left Section */}
+              <div className="flex flex-col-reverse sm:flex-row h-[60%] sm:h-full w-full sm:w-1/2 gap-2">
+                {/* Thumbnails */}
+                <div className="hidden sm:flex flex-col items-center space-y-2 w-20">
+                  {mainProduct.images.length > maxVisible && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={prevCarouselImage}
+                      className="bg-white p-1 rounded-full hover:bg-gray-50"
+                      disabled={carouselStartIndex === 0}
+                    >
+                      <ChevronUp className="w-5 h-5 text-gray-600" />
+                    </Button>
+                  )}
+
+                  <div className="flex flex-col items-center space-y-2 overflow-y-auto scrollbar-hide">
+                    {visibleImages.map((image, index) => (
+                      <motion.button
+                        key={index}
+                        className={`w-16 h-16 rounded-lg overflow-hidden border-2 ${
+                          currentImageIndex === index + carouselStartIndex 
+                            ? 'border-blue-500' 
+                            : 'border-transparent'
+                        }`}
+                        onClick={() => setCurrentImageIndex(index + carouselStartIndex)}
+                      >
+                        <img src={image} alt="" className="w-full h-full object-cover" />
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  {mainProduct.images.length > maxVisible && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={nextCarouselImage}
+                      className="bg-white p-1 rounded-full hover:bg-gray-50"
+                      disabled={carouselStartIndex + maxVisible >= mainProduct.images.length}
+                    >
+                      <ChevronDown className="w-5 h-5 text-gray-600" />
+                    </Button>
+                  )}
+                </div>
+
+                {/* Main Image */}
+                <div className="relative flex-1 h-full">
+                  <motion.img
+                    key={currentImageIndex}
+                    src={mainProduct.images[currentImageIndex]}
+                    alt={mainProduct.name}
+                    className="w-full h-full object-contain sm:object-cover rounded-xl"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
                 </div>
               </div>
-            </DialogContent>
-          </motion.div>
-        </Dialog>
-      )}
+
+              {/* Right Section */}
+              <div className="flex flex-col justify-between flex-1 gap-4 sm:gap-6">
+                <div className="space-y-3 sm:space-y-4">
+                  <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
+                    {mainProduct.name}
+                  </h2>
+                  
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold text-gray-900">
+                      ₹{mainProduct.price}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      • {timeAgo(mainProduct.createdAt)}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-gray-700">Description</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">
+                      {mainProduct.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="flex flex-col gap-2">
+                  {/* <Button
+                    className="w-full bg-green-100 hover:bg-green-200 text-green-800 h-12 rounded-lg"
+                    onClick={() => addToCart(mainProduct)}
+                  >
+                    Add to Cart
+                  </Button> */}
+                  
+                  <Button
+                    className="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 h-12 rounded-lg flex items-center gap-2"
+                    onClick={handleWhatsAppClick}
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    Chat via WhatsApp
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </motion.div>
+      </Dialog>
     </AnimatePresence>
   );
 };
-
 
 const Buy = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { addToCart } = useContext(CartContext);
-  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
   const navigate = useNavigate();
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/products`)
@@ -239,53 +218,71 @@ const Buy = () => {
       .then((data) => setProducts(data))
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [API_BASE_URL]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-10 h-10 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen p-6">
-      {loading ? (
-        <div className="flex items-center justify-center h-screen">
-          <div className="w-10 h-10 border-4 border-t-transparent border-gray-500 rounded-full animate-spin"></div>
-        </div>
-      ) : (
-        <>
-          <div className="flex items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Featured Products</h2>
-            <span className="ml-3 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full shadow-[3px_3px_6px_rgba(0,0,0,0.1),-3px_-3px_6px_rgba(255,255,255,0.9)]">
-              Latest
-            </span>
-          </div>
+    <div className="min-h-screen p-4 sm:p-6 max-w-7xl mx-auto">
+      <div className="flex items-center gap-3 mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          Featured Products
+        </h2>
+        <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+          New Arrivals
+        </span>
+      </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {products.sort(() => 0.5 - Math.random()).slice(0, 8).map((product) => (
-              <motion.div
-                key={product._id}
-                whileHover={{ scale: 1.03 }}
-                className="bg-gray-50 p-3 rounded-3xl border border-gray-200 cursor-pointer"
-                onClick={() => setSelectedProduct(product)}
-              >
-                <img src={product.images[0]} alt={product.name} className="w-full h-52 object-cover rounded-xl" />
-                <h3 className="mt-4 text-sm font-bold text-gray-500">{product.name}</h3>
-                <h3 className="mt-1 text-md text-gray-800 truncate whitespace-nowrap overflow-hidden">{product.description}</h3>
-                <h3 className="mt-1 text-sm font-medium text-gray-500">{product.address}</h3>
-                <span className="text-xl font-bold text-gray-800">₹{product.price}</span>
-                <div>
-                  <span className="text-xs font-bold text-green-600">₹0 platform fee (EarlyBirdOffer)</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
+        {products.slice(0, 8).map((product) => (
+          <motion.div
+            key={product._id}
+            whileHover={{ y: -4 }}
+            className="group bg-white p-3 rounded-2xl border border-gray-200 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
+            onClick={() => setSelectedProduct(product)}
+          >
+            <div className="aspect-square overflow-hidden rounded-xl">
+              <img 
+                src={product.images[0]} 
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+              />
+            </div>
+            
+            <div className="mt-4 space-y-1">
+              <h3 className="text-sm font-semibold text-gray-900 truncate">
+                {product.name}
+              </h3>
+              <p className="text-xs text-gray-500 line-clamp-2 h-10">
+                {product.description}
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-bold text-gray-900">
+                  ₹{product.price}
+                </span>
+                <span className="text-xs font-medium text-green-600">
+                  Free Platform Fee
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
-          <div className="flex justify-center mt-10">
-            <button
-              className="bg-black hover:bg-gray-500 text-white font-medium px-20 py-2 rounded-md shadow-[3px_3px_6px_rgba(0,0,0,0.1),-3px_-3px_6px_rgba(255,255,255,0.9)] transition-all hover:scale-95"
-              onClick={() => navigate("/buy")}
-            >
-              Explore More
-            </button>
-          </div>
-        </>
-      )}
+      <div className="flex justify-center mt-8 sm:mt-12">
+        <Button
+          className="px-8 py-4 text-base font-medium bg-gray-900 hover:bg-gray-800 text-white rounded-lg shadow-sm"
+          onClick={() => navigate("/buy")}
+        >
+          View All Products
+        </Button>
+      </div>
 
       {selectedProduct && (
         <ProductDialog
