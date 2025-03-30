@@ -45,11 +45,11 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-8 items-center">
-          <Link to="/buy" className="text-gray-700 hover:text-black transition-colors text-sm font-medium">Buy</Link>
-          <Link to="/sell" className="text-gray-700 hover:text-black transition-colors text-sm font-medium">Sell</Link>
+          <Link to="/buy" className="text-gray-700 hover:text-black transition-colors text-md font-bold">Buy</Link>
+          <Link to="/sell" className="text-gray-700 hover:text-black transition-colors text-md font-bold">Sell</Link>
           {user ? (
             <>
-              <Link to="/profile" className="text-gray-700 hover:text-black transition-colors text-sm font-medium">Profile</Link>
+              <Link to="/profile" className="text-gray-700 hover:text-black transition-colors text-md font-bold">Profile</Link>
               <button
                 onClick={handleLogout}
                 className="bg-gray-900 text-white px-4 py-1.5 rounded-md text-sm font-medium shadow-lg hover:bg-gray-700 hover:scale-90 transition duration-200"
