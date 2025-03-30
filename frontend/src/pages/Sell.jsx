@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast"; 
 import { useAuth } from "../contexts/AuthContext"; // Import useAuth
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 
@@ -28,7 +29,7 @@ const Sell = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 5) {
-      setError("You can upload a maximum of 5 images.");
+      toast.error("You can upload a maximum of 5 images.");
       return;
     }
     setImages(files);
@@ -43,7 +44,7 @@ const Sell = () => {
     setError("");
 
     if (!user || !user._id) { // Ensure user is logged in and has an _id
-      setError("User not logged in");
+      toast.error("User not logged in");
       setLoading(false);
       return;
     }
@@ -58,7 +59,7 @@ const Sell = () => {
       !product.condition ||
       images.length === 0
     ) {
-      setError("Please fill in all fields and upload at least one image.");
+      toast.error("Please fill in all fields and upload at least one image.");
       setLoading(false);
       return;
     }
@@ -87,32 +88,36 @@ const Sell = () => {
       });
 
       if (response.ok) {
-        alert("Product listed successfully!");
-        setProduct({
-          name: "",
-          price: "",
-          description: "",
-          locationType: "",
-          address: "",
-          category: "",
-          condition: "",
-        });
-        setImages([]);
-        setImagePreviews([]);
-        navigate("/profile"); // Redirect to profile page
+        toast.success("Product listed successfully!");
+
+        setTimeout(() => {
+          setProduct({
+            name: "",
+            price: "",
+            description: "",
+            locationType: "",
+            address: "",
+            category: "",
+            condition: "",
+          });
+          setImages([]);
+          setImagePreviews([]);
+          navigate("/profile");
+        }, 3000); // Redirect to profile page
       } else {
         const data = await response.json();
-        setError(data.message || "Error listing product");
+        toast.error(data.message || "Error listing product");
       }
     } catch (error) {
       console.error("Error submitting product:", error);
-      setError("Error listing product. Please try again.");
+      toast.error("Error listing product. Please try again.");
     } finally {
       setLoading(false);
     }
   };
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4 md:p-8">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="w-full max-w-4xl mx-auto space-y-6">
         <h1 className="text-4xl font-bold text-gray-900">Sell an Item</h1>
         <label className="text-lg text-gray-400">

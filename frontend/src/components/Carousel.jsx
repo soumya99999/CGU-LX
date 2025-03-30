@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation"; // Import navigation styles
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext"; // Import the AuthContext hook
 
 const desktopImages = ["/temp01.png", "/temmp02.png"];
 const mobileImages = ["/mobile01.jpg", "/mobile02.jpg"];
 
 const Carousel = () => {
+  const { user } = useAuth(); // Get the user authentication status from context
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -21,20 +24,22 @@ const Carousel = () => {
   }, []);
 
   const images = isMobile ? mobileImages : desktopImages;
+  const redirectTo = user ? "/buy" : "/login";
 
   return (
     <div className="relative w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-screen-lg lg:max-w-screen-xl mx-auto overflow-hidden rounded-lg">
       <Link
-        to="/register"
+        to={redirectTo}
         className="block hover:scale-[1.02] md:hover:scale-[0.97] active:scale-[1.01] transition-transform duration-500 ease-out"
       >
         <Swiper
-          modules={[Autoplay, Pagination]}
+          modules={[Autoplay, Pagination, Navigation]}
           spaceBetween={0}
           slidesPerView={1}
-          autoplay={{ delay: 2000, disableOnInteraction: false }}
+          autoplay={{ delay: user ? 2000 : 2500, disableOnInteraction: false }}
           loop={true}
           pagination={{ clickable: true, dynamicBullets: true }}
+          navigation={{ clickable: true }}
           touchStartPreventDefault={false}
           className="w-full h-[25vh] sm:h-[35vh] md:h-[45vh] lg:h-[55vh] xl:h-[65vh]"
         >
