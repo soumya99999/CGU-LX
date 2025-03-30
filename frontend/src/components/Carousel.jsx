@@ -27,7 +27,7 @@ const Carousel = () => {
   const redirectTo = user ? "/buy" : "/login";
 
   return (
-    <div className="relative w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-screen-lg lg:max-w-screen-xl mx-auto overflow-hidden rounded-lg">
+    <div className="relative w-full px-4 sm:px-8 max-w-screen-2xl sm:max-w-[85vw] md:max-w-screen-lg lg:max-w-screen-2xl mx-auto overflow-hidden rounded-xl my-8 group">
       <Link
         to={redirectTo}
         className="block hover:scale-[1.02] md:hover:scale-[0.97] active:scale-[1.01] transition-transform duration-500 ease-out"
@@ -48,7 +48,7 @@ const Carousel = () => {
               <img
                 src={src}
                 alt={`Slide ${index + 1}`}
-                className="w-full h-full object-contain sm:object-cover md:object-cover transition-opacity duration-700 ease-in-out"
+                className="w-full h-full object-contain sm:object-cover md:object-cover transition-opacity duration-700 ease-in-out rounded-xl"
                 onError={(e) => {
                   console.error("Image not found:", e.target.src);
                   e.target.src = "/fallback.jpg";
