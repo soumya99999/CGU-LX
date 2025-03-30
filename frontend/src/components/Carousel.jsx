@@ -48,7 +48,7 @@ const Carousel = () => {
           spaceBetween={16}
           slidesPerView={1}
           autoplay={{
-            delay: user ? 2500 : 3000,
+            delay: user ? 1500 : 2000,
             disableOnInteraction: false,
             pauseOnMouseEnter: true,
             waitForTransition: true
@@ -89,14 +89,14 @@ const Carousel = () => {
                     e.target.src = "/fallback.jpg";
                   }}
                 />
-<div className="absolute bottom-8 left-8 z-20 text-white max-w-2xl">
-  {/* <h2 className="text-3xl sm:text-xl md:text-2xl lg:text-5xl font-bold mb-4 animate-fade-in-up">
-    New Collection 2024
-  </h2> */}
-  <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90 animate-fade-in-up delay-100">
-    Hello Beta Testers!
-  </p>
-</div>
+                <div className="absolute bottom-8 left-8 z-20 text-white max-w-2xl">
+                  {/* <h2 className="text-3xl sm:text-xl md:text-2xl lg:text-5xl font-bold mb-4 animate-fade-in-up">
+                    New Collection 2024
+                  </h2> */}
+                  <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90 animate-fade-in-up delay-100">
+                    Hello Beta Testers!
+                  </p>
+                </div>
 
               </div>
             </SwiperSlide>

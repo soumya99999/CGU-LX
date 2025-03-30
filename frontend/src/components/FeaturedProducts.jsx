@@ -230,11 +230,14 @@ const Buy = () => {
 
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-7xl mx-auto">
-      <div className="flex items-center gap-3 mb-6 sm:mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+      <div className="flex items-center justify-between mb-8 sm:mb-10">
+        {/* Section Title */}
+        <h2 className="text-3xl sm:text-6xl font-semibold text-gray-900">
           Featured Products
         </h2>
-        <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+
+        {/* "New Arrivals" Tag */}
+        <span className="px-4 py-2 text-sm sm:text-base font-medium bg-blue-100 text-blue-800 rounded-full">
           New Arrivals
         </span>
       </div>
