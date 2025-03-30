@@ -80,14 +80,16 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
                 >
                   {product.name}
                 </motion.h2>
-                <motion.p 
+                <motion.p
                   className="text-gray-600 text-sm sm:text-base"
-                  initial={{ opacity: 0, y: 10 }} 
-                  animate={{ opacity: 1, y: 0 }} 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1, duration: 0.4, ease: "easeOut" }}
+                  style={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}
                 >
                   {product.description}
                 </motion.p>
+
                 <span className="text-lg sm:text-xl font-bold text-black">₹{product.price}</span>
                 {/* WhatsApp CTA */}
                 <motion.div

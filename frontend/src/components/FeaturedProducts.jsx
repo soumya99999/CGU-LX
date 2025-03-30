@@ -180,7 +180,8 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2, duration: 0.4, ease: "easeOut" }}
                     >
-                      <span className="font-semibold">Description:</span> {mainProduct.description}
+                      <span className="font-semibold">Description:</span> 
+                      <p style={{ whiteSpace: 'pre-wrap' }}>{mainProduct.description}</p>
                     </motion.p>
                   </div>
 
