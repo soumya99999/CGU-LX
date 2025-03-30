@@ -72,7 +72,7 @@ const Register = () => {
 
     if (response?.error) {
       console.error("❌ Error:", response.error);
-      setError(response.error);
+      setError("Authentication failed please don't block/close the pop up window.");
       return;
     }
   };
@@ -135,12 +135,16 @@ const Register = () => {
           onChange={(e) => setSemester(e.target.value)}
           className="border p-2 rounded w-full"
         >
-          {[...Array(8)].map((_, i) => (
-            <option key={i} value={`${i + 1}th Semester`}>
-              {`${i + 1}th Semester`}
-            </option>
-          ))}
+          {[...Array(8)].map((_, i) => {
+            const suffix = i + 1 === 1 ? "st" : i + 1 === 2 ? "nd" : i + 1 === 3 ? "rd" : "th";
+            return (
+              <option key={i} value={`${i + 1}${suffix} Semester`}>
+                {`${i + 1}${suffix} Semester`}
+              </option>
+            );
+          })}
         </select>
+
 
         <button
           onClick={handleGoogleRegister}
