@@ -17,7 +17,7 @@ const Filter = ({ onFilterChange }) => {
     { label: "₹100 - ₹500", value: "100-500" },
     { label: "₹500 - ₹1000", value: "500-1000" },
     { label: "₹1000 - ₹2000", value: "1000-2000" },
-    { label: "₹2000 - ₹5000+", value: "2000-5000" },
+    { label: "₹2000 - ₹5000+", value: "2000-5000+" },
   ];
 
   const categories = [

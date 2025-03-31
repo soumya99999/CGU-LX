@@ -1,6 +1,68 @@
 import Product from "../models/Product.js";
 import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
+import multer from "multer";
+import fs from "fs-extra";
+
+// Configure Multer to store files in `uploads/`
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    try {
+      const uploadDir = "uploads/";
+      fs.ensureDirSync(uploadDir);
+      cb(null, uploadDir);
+    } catch (error) {
+      console.error("Error ensuring upload directory:", error);
+      cb(error, null);
+    }
+  },
+  filename: (req, file, cb) => {
+    try {
+      cb(null, `${Date.now()}-${file.originalname}`);
+    } catch (error) {
+      console.error("Error generating filename:", error);
+      cb(error, null);
+    }
+  }
+});
+
+// Allow only images
+const fileFilter = (req, file, cb) => {
+  try {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed!"), false);
+    }
+  } catch (error) {
+    console.error("Error in file filter:", error);
+    cb(error, false);
+  }
+};
+
+// Configure Multer with a 15MB limit
+export const upload = multer({
+  storage: storage,
+  limits: { fileSize: 15 * 1024 * 1024 }, // ✅ 15MB limit
+  fileFilter: fileFilter
+}).array("images", 5);
+
+const uploadToCloudinary = async (filePath) => {
+  try {
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: "products",
+      transformation: [
+        { width: 1920, crop: "limit" }, // ✅ Resize image (optional)
+        { quality: "auto:good" }        // ✅ Automatic compression by Cloudinary
+      ]
+    });
+    console.log(`Uploaded to Cloudinary: ${result.secure_url}`);
+    return result.secure_url;
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    throw error;
+  }
+};
 
 export const createProduct = async (req, res) => { 
   try {
@@ -11,50 +73,53 @@ export const createProduct = async (req, res) => {
     const { name, price, description, address, locationType, condition, category } = req.body;
     const seller = req.user._id; 
 
-    if (!seller) {
-      return res.status(400).json({ message: "Seller ID is missing." });
-    }
-
+    if (!seller) return res.status(400).json({ message: "Seller ID is missing." });
     if (!name || !price || !description || !address || !locationType || !condition || !category) {
-      return res.status(400).json({ message: "All fields are required: name, price, description, address, locationType, condition, category." });
+      return res.status(400).json({ message: "All fields are required." });
     }
-
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "Please upload at least one image." });
     }
 
-    // Upload images to Cloudinary
-    const imageUrls = [];
-    for (const file of req.files) {
+    // ✅ Convert files to correct format before uploading
+    const imageUrls = await Promise.all(req.files.map(async (file) => {
       try {
-        const result = await cloudinary.uploader.upload(file.path, { folder: "products" });
-        imageUrls.push(result.secure_url);
-      } catch (uploadError) {
-        console.error("Cloudinary upload error:", uploadError);
-        return res.status(500).json({ message: "Image upload failed. Try again later." });
+        if (!(file instanceof Object) || !file.path) {
+          console.error("Invalid file format:", file);
+          throw new Error("Invalid file format");
+        }
+        return await uploadToCloudinary(file.path);
+      } catch (error) {
+        console.error("Error uploading image to Cloudinary:", error);
+        throw error;
       }
-    }
+    }));
 
-    // Create and save the product
+    // ✅ Delete local files after upload
+    req.files.forEach((file) => {
+      try {
+        fs.unlinkSync(file.path);
+      } catch (error) {
+        console.error("Error deleting local file:", error);
+      }
+    });
+
+    // ✅ Save product in database
     const product = new Product({
-      name,
-      price,
-      description,
-      address,
-      locationType,
-      condition,
-      category,
-      images: imageUrls,
-      seller,
+      name, price, description, address, locationType, condition, category,
+      images: imageUrls, seller,
     });
 
     await product.save();
     return res.status(201).json({ message: "Product created successfully!", product });
   } catch (error) {
     console.error("Error creating product:", error);
-    return res.status(500).json({ message: error.message || "Error creating product" });
+    return res.status(500).json({ message: "Error creating product" });
   }
 };
+
+
+
 
 
 export const getProducts = async (req, res) => {
@@ -168,13 +233,15 @@ export const getFilteredProducts = async (req, res) => {
 
     // Price range filtering
     if (priceRange) {
-      const [minPrice, maxPrice] = priceRange.split("-").map(Number);
+      const [minPrice, maxPrice] = priceRange.split("-").map((val) =>
+        val.includes("+") ? Infinity : Number(val) // Convert "5000+" to Infinity
+      );
+    
       filter.price = {};
       if (!isNaN(minPrice)) filter.price.$gte = minPrice;
-      if (!isNaN(maxPrice)) filter.price.$lte = maxPrice;
+      if (maxPrice !== Infinity) filter.price.$lte = maxPrice; // Only set upper limit if not "5000+"
     }
 
-    console.log("Filter Query:", filter); // Debugging filter query
 
     // Fetch products along with the seller's phone number
     const products = await Product.find(filter).populate("seller", "phone");

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast"; 
 import { useAuth } from "../contexts/AuthContext"; // Import useAuth
-import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import { useNavigate } from "react-router-dom"; 
+import { X } from "lucide-react"; 
 
 const Sell = () => {
   const { user } = useAuth(); // Get logged-in user details
@@ -28,15 +29,46 @@ const Sell = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length > 5) {
+    const maxSize = 15 * 1024 * 1024; // 15MB in bytes
+  
+    // Filter valid files (size < 15MB)
+    const validFiles = files.filter((file) => {
+      if (file.size > maxSize) {
+        toast.error(`File is too large (Max: 15MB).`);
+        return false;
+      }
+      return true;
+    });
+  
+    // Ensure total images do not exceed 5
+    if (images.length + validFiles.length > 5) {
       toast.error("You can upload a maximum of 5 images.");
       return;
     }
-    setImages(files);
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews(previews);
-    setError(""); // Clear any previous errors
+  
+    // Update state with new images and previews
+    const newImages = [...images, ...validFiles];
+    const newPreviews = [...imagePreviews, ...validFiles.map((file) => URL.createObjectURL(file))];
+  
+    setImages(newImages);
+    setImagePreviews(newPreviews);
+  
+    if (validFiles.length > 0) {
+      toast.success(`${validFiles.length} image(s) added successfully!`);
+    }
   };
+  
+  
+  
+  // Function to remove an image
+  const handleRemoveImage = (index) => {
+    const updatedImages = images.filter((_, i) => i !== index);
+    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
+  
+    setImages(updatedImages);
+    setImagePreviews(updatedPreviews);
+  };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,6 +95,11 @@ const Sell = () => {
       setLoading(false);
       return;
     }
+    if (isNaN(product.price) || Number(product.price) <= 0) {
+      toast.error("Price must be greater than zero.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const token = await user.getIdToken(); // Fetch the ID token
@@ -78,6 +115,8 @@ const Sell = () => {
       formData.append("condition", product.condition);
       formData.append("seller", user._id); // Add seller field
       images.forEach((image) => formData.append("images", image));
+      console.log("Images to send:", images);
+
 
       const response = await fetch(`${API_BASE_URL}/api/products/create`, {
         method: "POST",
@@ -243,7 +282,7 @@ const Sell = () => {
                   <span className="text-gray-500 text-center">
                     Drag & drop images or click to upload
                     <label className="block text-sm font-medium text-gray-400 mb-2">
-                      Select all the images at once.
+                      Select the images.
                     </label>
                   </span>
                 </div>
@@ -253,16 +292,24 @@ const Sell = () => {
 
           {/* Image Previews */}
           <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mt-6">
-            {imagePreviews.map((src, index) => (
-              <div key={index} className="relative group">
-                <img
-                  src={src}
-                  alt="Preview"
-                  className="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
-                />
-              </div>
-            ))}
-          </div>
+  {imagePreviews.map((src, index) => (
+    <div key={index} className="relative group">
+      <img
+        src={src}
+        alt="Preview"
+        className="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
+      />
+      <button
+        type="button"
+        onClick={() => handleRemoveImage(index)}
+        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full hover:bg-red-800"
+      >
+        <X size={16} />
+      </button>
+    </div>
+  ))}
+</div>
+
 
           {/* Submit Button */}
           <button

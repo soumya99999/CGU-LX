@@ -2,6 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const countryOptions = [
   { name: "India", code: "+91", pattern: /^[6-9]\d{9}$/ },
@@ -72,7 +73,19 @@ const Register = () => {
 
     if (response?.error) {
       console.error("❌ Error:", response.error);
-      setError("Authentication failed please don't block/close the pop up window.");
+    
+      Swal.fire({
+        toast: true,
+        icon: "error",
+        title: "Authentication Failed",
+        text: "Please don't block/close the pop-up window.",
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: true,
+      });
+      
+    
       return;
     }
   };

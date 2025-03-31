@@ -194,6 +194,9 @@ const Buy = () => {
       console.log("Fetched Products:", data);
 
       if (data.success) {
+        if (data.products.length === 0) {
+          console.warn("No products found");
+        }
         setProducts(data.products);
       } else {
         setProducts([]);
@@ -278,7 +281,10 @@ const Buy = () => {
               </motion.div>
             ))
           ) : (
-            <p className="text-gray-500 text-center col-span-2 sm:col-span-3 md:col-span-4">No products found.</p>
+            <div className="col-span-full flex justify-center items-center h-80">
+  <p className="text-gray-900 text-lg font-semibold">No products found.</p>
+</div>
+
           )}
         </div>
       )}
