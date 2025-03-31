@@ -8,6 +8,7 @@ import {
   getFilteredProducts,
   getProductById,
   toggleSold,
+  updateProductClickCount,
 } from "../controllers/productController.js";
 import upload from "../middleware/upload.js"; // Ensure correct path
 import authMiddleware from "../middleware/authMiddleware.js"; // Ensure correct path
@@ -17,6 +18,7 @@ const router = express.Router();
 // Fetch all products (for Buy Page)
 router.get("/", getProducts);
 router.get("/filter", getFilteredProducts);
+router.post("/:productId/click", updateProductClickCount);
 
 // ✅ Protected Routes (Authentication required)
 // Create a new product (with image upload middleware)

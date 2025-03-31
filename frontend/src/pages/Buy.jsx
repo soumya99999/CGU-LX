@@ -208,6 +208,23 @@ const Buy = () => {
       setLoading(false);
     }
   };
+  
+  const handleProductClick = async (product) => {
+    setSelectedProduct(product);
+  
+    try {
+      await fetch(`${API_BASE_URL}/api/products/${product._id}/click`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error updating click count:", error);
+    }
+  };
+  
+  
 
   const handleFilterChange = (newFilters) => {
     console.log("Filters received from Filter component:", newFilters);
@@ -234,7 +251,7 @@ const Buy = () => {
                 key={product._id}
                 whileHover={{ scale: 1.02 }}
                 className="bg-white p-2 sm:p-4 rounded-2xl border cursor-pointer"
-                onClick={() => setSelectedProduct(product)}
+                onClick={() => handleProductClick(product)}
               >
                 <div
                   className="w-full h-40 sm:h-52 rounded-xl overflow-hidden relative"
