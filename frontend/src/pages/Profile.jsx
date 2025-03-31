@@ -35,6 +35,7 @@ const Profile = () => {
     phone: "",
     course: "",
     semester: "",
+    email: "", 
     avatar: localStorage.getItem("avatar") || "adventurer",
   });
 
@@ -50,8 +51,10 @@ const Profile = () => {
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   const navigate = useNavigate();
+  
 
   useEffect(() => {
+    
     const fetchProfile = async () => {
       setLoading(true);
       const token = localStorage.getItem("token");
@@ -280,6 +283,11 @@ const Profile = () => {
                         <span className="text-gray-700 font-medium">Phone: </span>
                         <span className="text-gray-900">{user.phone || "Not provided"}</span>
                       </div>
+                      <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
+                        <span className="text-gray-700 font-medium">Email id: </span>
+                        <span className="text-gray-900">{user.email || "Not provided"}</span>
+                      </div>
+
                       <div className="bg-gray-100 p-3 rounded-lg shadow-sm">
                         <span className="text-gray-700 font-medium">Course: </span>
                         <span className="text-gray-900">{user.course || "Not provided"}</span>

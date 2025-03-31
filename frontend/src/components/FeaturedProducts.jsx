@@ -235,7 +235,7 @@ const Buy = () => {
     <div className="min-h-screen p-4 sm:p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-8 sm:mb-10">
         {/* Section Title */}
-        <h2 className="text-3xl sm:text-6xl font-semibold text-gray-900">
+        <h2 className="text-4xl sm:text-4xl font-semibold text-gray-900">
           Featured Products
         </h2>
 
