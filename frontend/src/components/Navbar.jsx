@@ -51,27 +51,27 @@ const Navbar = () => {
     }
   };
 
-const menuVariants = {
-  open: { 
-    opacity: 1,
-    y: 0,
-    transition: { 
-      type: "spring", 
-      stiffness: 400,  // More stiffness for instant snap
-      damping: 10,     // Lower damping for less resistance
-      when: "beforeChildren",
-      staggerChildren: 0.02 // Faster child appearance
+  const menuVariants = {
+    open: { 
+      opacity: 1,
+      y: 0,
+      transition: { 
+        type: "ease",  // Use ease instead of spring
+        duration: 0.2,  // Shorter duration for faster animation
+        when: "beforeChildren",
+        staggerChildren: 0.05 
+      }
+    },
+    closed: { 
+      opacity: 0,
+      y: -20,
+      transition: { 
+        duration: 0.1,  // Even faster close duration
+        when: "afterChildren"
+      }
     }
-  },
-  closed: { 
-    opacity: 0,
-    y: -10,  // Smaller offset for quicker closing
-    transition: { 
-      duration: 0.1, // Reduced duration for instant effect
-      when: "afterChildren"
-    }
-  }
-};
+  };
+  
 
 const itemVariants = {
   open: { opacity: 1, x: 0, transition: { duration: 0.08 } }, 
