@@ -90,6 +90,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
         >
           <DialogContent className="w-full max-w-[95vw] md:max-w-[850px] h-[90vh] sm:h-[80vh] border border-gray-200 rounded-2xl p-4 sm:p-6 overflow-hidden bg-white mt-16">
 
+
             <button 
               onClick={onClose}
               className="absolute right-4 top-4 z-50 p-1.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-gray-100 transition-colors"
