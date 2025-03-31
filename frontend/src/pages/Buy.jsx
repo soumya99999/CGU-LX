@@ -90,7 +90,7 @@ const ProductDialog = ({ product, onClose, currentImageIndex, nextImage, prevIma
                   {product.description}
                 </motion.p>
 
-                <span className="text-lg sm:text-xl font-bold text-black">₹{product.price}</span>
+                <span className="text-lg sm:text-xl font-bold text-black">₹{product.price.toLocaleString("en-IN")}</span>
                 {/* WhatsApp CTA */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }} 
@@ -272,7 +272,8 @@ const Buy = () => {
                   {product.description}
                 </h3>
                 {/* <h3 className="mt-1 text-xs sm:text-sm font-medium text-gray-400">{product.address}</h3> */}
-                <span className="text-lg sm:text-xl font-bold text-gray-700">₹{product.price}</span>
+                <span className="text-lg sm:text-xl font-bold text-gray-700">₹{product.price.toLocaleString("en-IN")}
+                </span>
                 <div>
                   <span className="text-xs font-bold text-green-700">
                     ₹0 platform fee (EarlyBirdOffer)

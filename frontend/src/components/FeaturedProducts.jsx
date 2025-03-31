@@ -7,6 +7,7 @@ import { MessageSquare, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
+
 const ProductDialog = ({ products, initialProduct, onClose }) => {
   const [mainProduct, setMainProduct] = useState(initialProduct);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -81,13 +82,14 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
         />
 
         <motion.div
-          className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4 pt-20"
+          className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4 pt-24"
           initial={{ opacity: 0, scale: 0.98, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.98, y: 20 }}
           transition={{ duration: 0.35, ease: "anticipate" }}
         >
-          <DialogContent className="w-full max-w-[95vw] md:max-w-[850px] h-[90vh] sm:h-[80vh] border border-gray-200 rounded-2xl p-4 sm:p-6 overflow-hidden bg-white">
+          <DialogContent className="w-full max-w-[95vw] md:max-w-[850px] h-[90vh] sm:h-[80vh] border border-gray-200 rounded-2xl p-4 sm:p-6 overflow-hidden bg-white mt-16">
+
             <button 
               onClick={onClose}
               className="absolute right-4 top-4 z-50 p-1.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-gray-100 transition-colors"
@@ -164,7 +166,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                   
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-gray-900">
-                      ₹{mainProduct.price}
+                    ₹{Number(mainProduct.price).toLocaleString("en-IN")}
                     </span>
                     <span className="text-sm text-gray-500">
                       • {timeAgo(mainProduct.createdAt)}
@@ -267,7 +269,7 @@ const Buy = () => {
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-gray-900">
-                  ₹{product.price}
+                ₹{product.price.toLocaleString("en-IN")}
                 </span>
                 <span className="text-xs font-medium text-green-600">
                   Free Platform Fee

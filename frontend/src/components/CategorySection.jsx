@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, DollarSign, HelpCircle } from "lucide-react";
+import { ShoppingCart, DollarSign, HelpCircle, IndianRupee } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
 
@@ -17,7 +17,7 @@ const categories = [
     id: "sell",
     title: "SELL",
     description: "Turn your pre-loved items into campus cash",
-    icon: DollarSign,
+    icon: IndianRupee,
     color: "from-blue-500/20 to-blue-700/30",
     href: "/sell",
     image: "/4.png",
