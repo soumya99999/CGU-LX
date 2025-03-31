@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+import { X } from "lucide-react";
 
 const EditProduct = () => {
-  const { productId } = useParams(); 
+  const { productId } = useParams();
   const navigate = useNavigate();
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -17,6 +19,7 @@ const EditProduct = () => {
     category: "",
     images: [],
   });
+
   const [newImages, setNewImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,22 +34,22 @@ const EditProduct = () => {
       }
 
       try {
-        console.log("Fetching product with ID:", productId);
         const { data } = await axios.get(`${API_BASE_URL}/api/products/${productId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("API Response:", data);
-
         if (data.success) {
           setProduct(data.product);
-          setImagePreviews(data.product.images); 
+          // Set previews for existing images (use url if available)
+          setImagePreviews(data.product.images.map(img => img.url || img));
         } else {
           setError("Failed to fetch product details.");
+          toast.error("Failed to fetch product details.");
         }
       } catch (error) {
-        console.error("Error fetching product:", error.message);
+        console.error("Error fetching product:", error);
         setError("Error fetching product details. Please try again.");
+        toast.error("Error fetching product details. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -65,15 +68,49 @@ const EditProduct = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + product.images.length > 5) {
-      setError("You can upload a maximum of 5 images.");
+    const maxSize = 15 * 1024 * 1024; // 15MB in bytes
+
+    // Filter valid files (size < 15MB)
+    const validFiles = files.filter((file) => {
+      if (file.size > maxSize) {
+        toast.error(`File is too large (Max: 15MB).`);
+        return false;
+      }
+      return true;
+    });
+
+    // Ensure total images do not exceed 5
+    if (imagePreviews.length + validFiles.length > 5) {
+      toast.error("You can upload a maximum of 5 images.");
       return;
     }
 
-    setNewImages(files);
+    // Update state with new images and previews
+    const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+    setNewImages([...newImages, ...validFiles]);
+    setImagePreviews([...imagePreviews, ...newPreviews]);
 
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews((prevPreviews) => [...prevPreviews, ...previews]);
+    if (validFiles.length > 0) {
+      toast.success(`${validFiles.length} image(s) added successfully!`);
+    }
+  };
+
+  const handleRemoveImage = (index) => {
+    // Check if the image is from the existing product images or new uploads
+    if (index < product.images.length) {
+      // Remove from existing images
+      const updatedImages = product.images.filter((_, i) => i !== index);
+      setProduct({ ...product, images: updatedImages });
+    } else {
+      // Remove from new uploads
+      const adjustedIndex = index - product.images.length;
+      const updatedNewImages = newImages.filter((_, i) => i !== adjustedIndex);
+      setNewImages(updatedNewImages);
+    }
+
+    // Remove from previews
+    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
+    setImagePreviews(updatedPreviews);
   };
 
   const handleSubmit = async (e) => {
@@ -96,6 +133,15 @@ const EditProduct = () => {
       formData.append("locationType", product.locationType);
       formData.append("condition", product.condition);
       formData.append("category", product.category);
+
+      // Append existing image URLs (if any)
+      product.images.forEach((img) => {
+        if (typeof img === 'string' || img.url) {
+          formData.append("existingImages", img.url || img);
+        }
+      });
+
+      // Append new images
       newImages.forEach((image) => formData.append("images", image));
 
       const { data } = await axios.put(
@@ -110,14 +156,16 @@ const EditProduct = () => {
       );
 
       if (data.success) {
-        alert("Product updated successfully!");
-        navigate("/profile"); 
+        toast.success("Product updated successfully!");
+        navigate("/profile");
       } else {
         setError(data.message || "Error updating product.");
+        toast.error(data.message || "Error updating product.");
       }
     } catch (error) {
-      console.error("Error updating product:", error.message);
+      console.error("Error updating product:", error);
       setError("Error updating product. Please try again.");
+      toast.error("Error updating product. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -252,7 +300,9 @@ const EditProduct = () => {
 
               {/* Images Section */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Product Images (Max 5, each under 15MB)
+                </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {imagePreviews.map((src, index) => (
                     <div key={index} className="relative group">
@@ -263,16 +313,10 @@ const EditProduct = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => {
-                          setImagePreviews(prev => prev.filter((_, i) => i !== index));
-                          setProduct(prev => ({
-                            ...prev,
-                            images: prev.images.filter((_, i) => i !== index)
-                          }));
-                        }}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
                       >
-                        ×
+                        <X size={16} />
                       </button>
                     </div>
                   ))}
