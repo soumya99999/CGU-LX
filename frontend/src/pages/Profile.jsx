@@ -210,7 +210,7 @@ const Profile = () => {
             <h2 className="text-2xl font-semibold mb-8">Profile</h2>
 
             <div className="relative flex flex-col items-center">
-            <div className="relative w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-3">
+            <div className="relative w-24 h-24 rounded-full bg-gray-200 overflow-visible mb-3">
               <img
                 src={getAvatarUrl(user.avatar)}
                 alt="Profile avatar"
@@ -218,7 +218,7 @@ const Profile = () => {
               />
               <button
                 onClick={() => setShowAvatarModal(true)}
-                className="absolute bottom-0 right-0 bg-gray-200 p-1.5 rounded-full shadow-md hover:bg-gray-300 transition"
+                className="absolute bottom-0 right-0 bg-gray-200 p-1.5 rounded-full shadow-md hover:bg-gray-300 transition z-10"
               >
                 <Pencil size={18} className="text-gray-700" />
               </button>

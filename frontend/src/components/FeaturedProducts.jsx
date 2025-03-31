@@ -264,9 +264,9 @@ const Buy = () => {
               <h3 className="text-sm font-semibold text-gray-900 truncate">
                 {product.name}
               </h3>
-              <p className="text-xs text-gray-500 line-clamp-2 h-10">
-                {product.description}
-              </p>
+              <h3 className="mt text-xs sm:text-md text-gray-500 truncate overflow-hidden">
+                  {product.description}
+                </h3>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-gray-900">
                 ₹{product.price.toLocaleString("en-IN")}
