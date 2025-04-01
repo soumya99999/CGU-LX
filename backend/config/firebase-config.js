@@ -1,6 +1,6 @@
-// // ⚠️ use the below comented code only if you are using on local
+// ⚠️ use the below comented code only if you are using on local
 // import admin from "firebase-admin"; // <-- Fix: Import as default
-// import firebaseAdminConfig from './firebaseAdminConfig.json' with { type: 'json' };
+// import firebaseAdminConfig from './firebaseAdminConfig.json' assert { type: 'json' };
 
 // const serviceAccount = firebaseAdminConfig;
 
@@ -11,7 +11,7 @@
 
 // export default admin; // Export initialized instanceon 
 
-// ⚠️ below comented code is for rendering on server
+// // ⚠️ below comented code is for rendering on server
 import { initializeApp, cert } from "firebase-admin/app";
 import fs from "fs";
 
