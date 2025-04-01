@@ -6,6 +6,9 @@ import { Dialog, DialogContent } from '../ui/dialog';
 import { MessageSquare, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast"; 
+
+
 
 
 const ProductDialog = ({ products, initialProduct, onClose }) => {
@@ -47,16 +50,32 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
       navigate("/login");
       return;
     }
+  
+    // Log the user and seller IDs for debugging
+    console.log("User ID:", user._id);  // Use user._id here
+    console.log("Seller ID:", mainProduct.seller._id);  // Use seller._id here
+  
+    // Check if the user and seller are both available before comparing
+    if (user._id && mainProduct.seller._id) {
+      if (user._id === mainProduct.seller._id) {
+        // If the user is the seller, do not allow WhatsApp interaction
+        toast.error("You cannot contact yourself.");
+        return;
+      }
+    }
+  
     if (!mainProduct.seller?.phone) {
-      alert("Seller contact unavailable");
+      toast.error("Seller contact unavailable");
       return;
     }
+  
     const message = encodeURIComponent(
       `Hello, I'm interested in buying ${mainProduct.name}. Is it available?`
     );
     const whatsappURL = `https://wa.me/${mainProduct.seller.phone}?text=${message}`;
     window.open(whatsappURL, "_blank");
   };
+  
 
   useEffect(() => {
     const handleResize = () => {
@@ -73,6 +92,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
   return (
     <AnimatePresence>
       <Dialog open={!!mainProduct} onOpenChange={(open) => !open && onClose()}>
+      <Toaster />
         <motion.div
           className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm"
           initial={{ opacity: 0 }}
@@ -192,12 +212,16 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                   </Button> */}
                   
                   <Button
-                    className="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 h-12 rounded-lg flex items-center gap-2"
-                    onClick={handleWhatsAppClick}
-                  >
-                    <MessageSquare className="w-5 h-5" />
-                    Chat via WhatsApp
-                  </Button>
+  className="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 h-12 rounded-lg flex items-center gap-2"
+  onClick={handleWhatsAppClick}
+>
+  <MessageSquare className="w-5 h-5" />
+  {user?._id && mainProduct.seller?._id && user._id === mainProduct.seller._id
+    ? "You can't chat with yourself"
+    : "Chat via WhatsApp"}
+</Button>
+
+
                 </div>
               </div>
             </div>
