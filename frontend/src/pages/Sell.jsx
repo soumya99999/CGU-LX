@@ -285,32 +285,30 @@ const Sell = () => {
                       Select the images.
                     </label>
                   </span>
+
                 </div>
               </div>
+              {/* Image Previews */}
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mt-6">
+            {imagePreviews.map((src, index) => (
+              <div key={index} className="relative group">
+                  <img
+                    src={src}
+                    alt="Preview"
+                    className="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full hover:bg-red-800"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
             </div>
           </div>
-
-          {/* Image Previews */}
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mt-6">
-  {imagePreviews.map((src, index) => (
-    <div key={index} className="relative group">
-      <img
-        src={src}
-        alt="Preview"
-        className="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
-      />
-      <button
-        type="button"
-        onClick={() => handleRemoveImage(index)}
-        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full hover:bg-red-800"
-      >
-        <X size={16} />
-      </button>
-    </div>
-  ))}
-</div>
-
-
           {/* Submit Button */}
           <button
             type="submit"
