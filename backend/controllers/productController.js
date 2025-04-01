@@ -177,17 +177,23 @@ export const updateProduct = async (req, res) => {
   try {
     const { productId } = req.params;
     const sellerId = req.user._id; 
-    const { name, price, description, address, locationType, condition, category } = req.body;
-
-    console.log("Product ID:", productId); 
-    console.log("Seller ID:", sellerId); 
+    const { 
+      name, 
+      price, 
+      description, 
+      address, 
+      locationType, 
+      condition, 
+      category,
+      existingImages // This comes from formData as JSON string
+    } = req.body;
 
     const product = await Product.findOne({ _id: productId, seller: sellerId });
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found or unauthorized" });
     }
 
-    // Update product fields only if new values are provided
+    // Update product fields
     product.name = name || product.name;
     product.price = price || product.price;
     product.description = description || product.description;
@@ -196,15 +202,37 @@ export const updateProduct = async (req, res) => {
     product.condition = condition || product.condition;
     product.category = category || product.category;
 
-    // If new images are uploaded, update them
+    // Handle images
+    let finalImages = [];
+    
+    // 1. Process existing images that were kept
+    if (existingImages) {
+      try {
+        const keptImages = JSON.parse(existingImages);
+        finalImages = keptImages;
+        
+        // Delete images from Cloudinary that were removed
+        const imagesToDelete = product.images.filter(img => !keptImages.includes(img));
+        for (const imgUrl of imagesToDelete) {
+          const publicId = imgUrl.split('/').pop().split('.')[0];
+          await cloudinary.uploader.destroy(`products/${publicId}`);
+        }
+      } catch (err) {
+        console.error("Error parsing existingImages:", err);
+        return res.status(400).json({ success: false, message: "Invalid existing images data" });
+      }
+    }
+
+    // 2. Add new images
     if (req.files && req.files.length > 0) {
-      const imageUrls = [];
       for (const file of req.files) {
         const result = await cloudinary.uploader.upload(file.path, { folder: "products" });
-        imageUrls.push(result.secure_url);
+        finalImages.push(result.secure_url);
       }
-      product.images = imageUrls;
     }
+
+    // Update product images
+    product.images = finalImages;
 
     await product.save();
     res.status(200).json({ success: true, message: "Product updated successfully", product });
@@ -338,6 +366,18 @@ export const updateProductClickCount = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

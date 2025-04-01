@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { X } from "lucide-react";
 
 const EditProduct = () => {
@@ -23,12 +23,41 @@ const EditProduct = () => {
   const [newImages, setNewImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
+  // Toast configuration
+  const showError = (message) => {
+    toast.error(message, {
+      position: "top-center",
+      style: {
+        background: '#ff4444',
+        color: '#fff',
+        fontWeight: 'bold',
+        padding: '16px',
+        borderRadius: '8px'
+      },
+      duration: 4000
+    });
+  };
+
+  const showSuccess = (message) => {
+    toast.success(message, {
+      position: "top-center",
+      style: {
+        background: '#4BB543',
+        color: '#fff',
+        fontWeight: 'bold',
+        padding: '16px',
+        borderRadius: '8px'
+      },
+      duration: 3000
+    });
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
+        showError("Please login to continue");
         navigate("/login");
         return;
       }
@@ -40,16 +69,14 @@ const EditProduct = () => {
 
         if (data.success) {
           setProduct(data.product);
-          // Set previews for existing images (use url if available)
           setImagePreviews(data.product.images.map(img => img.url || img));
+          showSuccess("Product loaded successfully");
         } else {
-          setError("Failed to fetch product details.");
-          toast.error("Failed to fetch product details.");
+          showError(data.message || "Failed to load product");
         }
       } catch (error) {
-        console.error("Error fetching product:", error);
-        setError("Error fetching product details. Please try again.");
-        toast.error("Error fetching product details. Please try again.");
+        const errorMsg = error.response?.data?.message || "Error loading product";
+        showError(errorMsg);
       } finally {
         setLoading(false);
       }
@@ -60,89 +87,115 @@ const EditProduct = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
+    setProduct(prev => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const maxSize = 15 * 1024 * 1024; // 15MB in bytes
+    const maxSize = 15 * 1024 * 1024; // 15MB
 
-    // Filter valid files (size < 15MB)
-    const validFiles = files.filter((file) => {
-      if (file.size > maxSize) {
-        toast.error(`File is too large (Max: 15MB).`);
-        return false;
-      }
-      return true;
-    });
+    if (!files.length) return;
 
-    // Ensure total images do not exceed 5
-    if (imagePreviews.length + validFiles.length > 5) {
-      toast.error("You can upload a maximum of 5 images.");
+    if (files.length + imagePreviews.length > 5) {
+      showError(`Maximum 5 images allowed (you have ${imagePreviews.length})`);
+      e.target.value = "";
       return;
     }
 
-    // Update state with new images and previews
-    const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
-    setNewImages([...newImages, ...validFiles]);
-    setImagePreviews([...imagePreviews, ...newPreviews]);
-
-    if (validFiles.length > 0) {
-      toast.success(`${validFiles.length} image(s) added successfully!`);
+    const oversizedFiles = files.filter(file => file.size > maxSize);
+    if (oversizedFiles.length > 0) {
+      showError("Each image must be under 15MB");
+      e.target.value = "";
+      return;
     }
+
+    const previews = files.map(file => URL.createObjectURL(file));
+    setNewImages(prev => [...prev, ...files]);
+    setImagePreviews(prev => [...prev, ...previews]);
+    showSuccess(`Added ${files.length} image(s)`);
   };
 
   const handleRemoveImage = (index) => {
-    // Check if the image is from the existing product images or new uploads
-    if (index < product.images.length) {
+    const isExistingImage = index < product.images.length;
+    
+    if (isExistingImage) {
       // Remove from existing images
-      const updatedImages = product.images.filter((_, i) => i !== index);
-      setProduct({ ...product, images: updatedImages });
+      setProduct(prev => ({
+        ...prev,
+        images: prev.images.filter((_, i) => i !== index)
+      }));
     } else {
-      // Remove from new uploads
-      const adjustedIndex = index - product.images.length;
-      const updatedNewImages = newImages.filter((_, i) => i !== adjustedIndex);
-      setNewImages(updatedNewImages);
+      // Remove from new images
+      const newIndex = index - product.images.length;
+      setNewImages(prev => prev.filter((_, i) => i !== newIndex));
     }
-
-    // Remove from previews
-    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
-    setImagePreviews(updatedPreviews);
+    
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    showSuccess("Image removed");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
+    // Validate form
+    const requiredFields = [
+      { field: "name", message: "Product name is required" },
+      { field: "price", message: "Price is required" },
+      { field: "description", message: "Description is required" },
+      { field: "address", message: "Address is required" },
+      { field: "locationType", message: "Location type is required" },
+      { field: "category", message: "Category is required" },
+      { field: "condition", message: "Condition is required" },
+    ];
+
+    for (const { field, message } of requiredFields) {
+      if (!product[field]) {
+        showError(message);
+        setLoading(false);
+        return;
+      }
+    }
+
+    if (isNaN(product.price)) {
+      showError("Price must be a number");
+      setLoading(false);
+      return;
+    }
+
+    if (imagePreviews.length === 0) {
+      showError("Please upload at least one image");
+      setLoading(false);
       return;
     }
 
     try {
-      const formData = new FormData();
-      formData.append("name", product.name);
-      formData.append("price", product.price);
-      formData.append("description", product.description);
-      formData.append("address", product.address);
-      formData.append("locationType", product.locationType);
-      formData.append("condition", product.condition);
-      formData.append("category", product.category);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        showError("Session expired. Please login again");
+        navigate("/login");
+        return;
+      }
 
-      // Append existing image URLs (if any)
-      product.images.forEach((img) => {
-        if (typeof img === 'string' || img.url) {
-          formData.append("existingImages", img.url || img);
+      const formData = new FormData();
+      
+      // Add product data
+      Object.entries(product).forEach(([key, value]) => {
+        if (key !== 'images') {
+          formData.append(key, value);
         }
       });
 
-      // Append new images
-      newImages.forEach((image) => formData.append("images", image));
+      // Add existing images as JSON string
+const existingImages = product.images
+.filter(img => imagePreviews.includes(img.url || img))
+.map(img => img.url || img);
+
+formData.append("existingImages", JSON.stringify(existingImages));
+      // Add new images
+      newImages.forEach(img => {
+        formData.append("images", img);
+      });
 
       const { data } = await axios.put(
         `${API_BASE_URL}/api/products/${productId}`,
@@ -156,16 +209,14 @@ const EditProduct = () => {
       );
 
       if (data.success) {
-        toast.success("Product updated successfully!");
-        navigate("/profile");
+        showSuccess("Product updated successfully!");
+        setTimeout(() => navigate("/profile"), 2000);
       } else {
-        setError(data.message || "Error updating product.");
-        toast.error(data.message || "Error updating product.");
+        throw new Error(data.message || "Failed to update product");
       }
     } catch (error) {
-      console.error("Error updating product:", error);
-      setError("Error updating product. Please try again.");
-      toast.error("Error updating product. Please try again.");
+      const errorMsg = error.response?.data?.message || error.message || "Error updating product";
+      showError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -179,22 +230,18 @@ const EditProduct = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+      <Toaster />
+      
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="px-4 py-5 sm:p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Edit Product</h2>
 
-            {error && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-600">{error}</p>
-              </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                  <label className="block text-sm font-medium text-gray-700">Product Name*</label>
                   <input
                     type="text"
                     name="name"
@@ -206,7 +253,7 @@ const EditProduct = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Price (₹)</label>
+                  <label className="block text-sm font-medium text-gray-700">Price (₹)*</label>
                   <input
                     type="number"
                     name="price"
@@ -220,7 +267,7 @@ const EditProduct = () => {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <label className="block text-sm font-medium text-gray-700">Description*</label>
                 <textarea
                   name="description"
                   value={product.description}
@@ -234,7 +281,7 @@ const EditProduct = () => {
               {/* Location and Condition */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Address</label>
+                  <label className="block text-sm font-medium text-gray-700">Address*</label>
                   <input
                     type="text"
                     name="address"
@@ -246,7 +293,7 @@ const EditProduct = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Location Type</label>
+                  <label className="block text-sm font-medium text-gray-700">Location Type*</label>
                   <select
                     name="locationType"
                     value={product.locationType}
@@ -264,7 +311,7 @@ const EditProduct = () => {
               {/* Category and Condition */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Category</label>
+                  <label className="block text-sm font-medium text-gray-700">Category*</label>
                   <select
                     name="category"
                     value={product.category}
@@ -281,7 +328,7 @@ const EditProduct = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Condition</label>
+                  <label className="block text-sm font-medium text-gray-700">Condition*</label>
                   <select
                     name="condition"
                     value={product.condition}
@@ -301,7 +348,7 @@ const EditProduct = () => {
               {/* Images Section */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Product Images (Max 5, each under 15MB)
+                  Product Images* (Max 5, each under 15MB)
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {imagePreviews.map((src, index) => (
@@ -334,6 +381,9 @@ const EditProduct = () => {
                     multiple
                     accept="image/*"
                   />
+                  <p className="mt-2 text-sm text-gray-500">
+                    {imagePreviews.length}/5 images uploaded
+                  </p>
                 </div>
               </div>
 
@@ -351,7 +401,15 @@ const EditProduct = () => {
                   disabled={loading}
                   className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? "Updating..." : "Update Product"}
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Updating...
+                    </>
+                  ) : "Update Product"}
                 </button>
               </div>
             </form>
@@ -362,4 +420,4 @@ const EditProduct = () => {
   );
 };
 
-export default EditProduct;
+export default EditProduct;  
