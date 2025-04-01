@@ -1,5 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import ReactGA from "react-ga4";
+import { Analytics } from "@vercel/analytics/react"
 import React, { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,12 +22,17 @@ import Terms from "./components/terms";
 import Privacy from "./components/privacy";
 import HowItWorks from "./components/HowItWorks";
 import CommunityGuidelines from "./components/CommunityGuidelines";
+ReactGA.initialize("G-XXXXXXXXXX");
 function App() {
   const [fade, setFade] = useState(false);
   const [showContent, setShowContent] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
+    ReactGA.send({ 
+      hitType: "pageview", 
+      page: location.pathname + location.search 
+    });
     setFade(true);
     setShowContent(false);
 
