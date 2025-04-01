@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast"; 
 import { useAuth } from "../contexts/AuthContext"; // Import useAuth
 import { useNavigate } from "react-router-dom"; 
+import AIProductDescription from '../components/AIProductDescription';
 import { X } from "lucide-react"; 
 
 const Sell = () => {
@@ -22,10 +23,22 @@ const Sell = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(""); // For displaying error messages
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  const [showAIForm, setShowAIForm] = useState(false);
+
+  const handleSaveDescription = (description) => {
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      description, // Update only the description field
+    }));
+    setShowAIForm(false); // Close AI generator dialog
+  };
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
+  
+
+  
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -257,17 +270,49 @@ const Sell = () => {
 
             {/* Right Column */}
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
-                  name="description"
-                  value={product.description}
-                  onChange={handleChange}
-                  rows="5"
-                  className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Describe your product in detail"
-                />
-              </div>
+            <div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+
+  {/* Textarea for manual + AI-generated descriptions */}
+  <textarea
+    name="description"
+    value={product.description}
+    onChange={handleChange} // Allows manual input
+    rows="5"
+    className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+    placeholder="Describe your product in detail or use AI to generate it"
+  />
+
+  {/* AI Generate Button */}
+  <button
+    type="button"
+    onClick={() => setShowAIForm(true)}
+    className="mt-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg"
+  >
+    Generate with AI
+  </button>
+
+  {/* AI Generator Dialog (Fixed Extra Box Issue) */}
+  {showAIForm && (
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+      {/* Close Button (Now inside the modal) */}
+      <button
+        onClick={() => setShowAIForm(false)}
+        className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl"
+      >
+        ✖
+      </button>
+
+      {/* AI Description Component */}
+      <AIProductDescription onSaveDescription={handleSaveDescription} />
+    </div>
+  </div>
+)}
+
+</div>
+
+
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Upload Images (Max 5)</label>

@@ -212,14 +212,14 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                   </Button> */}
                   
                   <Button
-  className="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 h-12 rounded-lg flex items-center gap-2"
-  onClick={handleWhatsAppClick}
->
-  <MessageSquare className="w-5 h-5" />
-  {user?._id && mainProduct.seller?._id && user._id === mainProduct.seller._id
-    ? "You can't chat with yourself"
-    : "Chat via WhatsApp"}
-</Button>
+            className="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 h-12 rounded-lg flex items-center gap-2"
+            onClick={handleWhatsAppClick}
+          >
+            <MessageSquare className="w-5 h-5" />
+            {user?._id && mainProduct.seller?._id && user._id === mainProduct.seller._id
+              ? "You can't chat with yourself"
+              : "Chat via WhatsApp"}
+          </Button>
 
 
                 </div>
