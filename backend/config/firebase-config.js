@@ -9,7 +9,7 @@
 //   credential: admin.credential.cert(serviceAccount)
 // });
 
- export default admin; // Export initialized instanceon 
+//  export default admin; // Export initialized instanceon 
 
 // // ⚠️ below comented code is for rendering on server
 import { initializeApp, cert } from "firebase-admin/app";
