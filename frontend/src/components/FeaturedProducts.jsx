@@ -212,14 +212,14 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                   </Button> */}
                   
                   <Button
-  className="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 h-12 rounded-lg flex items-center gap-2"
-  onClick={handleWhatsAppClick}
->
-  <MessageSquare className="w-5 h-5" />
-  {user?._id && mainProduct.seller?._id && user._id === mainProduct.seller._id
-    ? "You can't chat with yourself"
-    : "Chat via WhatsApp"}
-</Button>
+            className="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 h-12 rounded-lg flex items-center gap-2"
+            onClick={handleWhatsAppClick}
+          >
+            <MessageSquare className="w-5 h-5" />
+            {user?._id && mainProduct.seller?._id && user._id === mainProduct.seller._id
+              ? "You can't chat with yourself"
+              : "Chat via WhatsApp"}
+          </Button>
 
 
                 </div>
@@ -232,20 +232,39 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
   );
 };
 
+
 const Buy = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/products`)
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [API_BASE_URL]);
+    const fetchProducts = async () => {
+      if (!API_BASE_URL) {
+        setError("API URL is missing.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/products`);
+        if (!res.ok) throw new Error("Failed to fetch products");
+        
+        const data = await res.json();
+        const shuffledProducts = data.sort(() => 0.5 - Math.random()).slice(0, 8);
+        setProducts(shuffledProducts);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   if (loading) {
     return (
@@ -255,22 +274,27 @@ const Buy = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-500 font-medium">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-8 sm:mb-10">
-        {/* Section Title */}
         <h2 className="text-4xl sm:text-4xl font-semibold text-gray-900">
           Featured Products
         </h2>
-
-        {/* "New Arrivals" Tag */}
         <span className="px-4 py-2 text-sm sm:text-base font-medium bg-blue-100 text-blue-800 rounded-full">
           New Arrivals
         </span>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
-        {products.slice(0, 8).map((product) => (
+        {products.map((product) => (
           <motion.div
             key={product._id}
             whileHover={{ y: -4 }}
@@ -278,23 +302,23 @@ const Buy = () => {
             onClick={() => setSelectedProduct(product)}
           >
             <div className="aspect-square overflow-hidden rounded-xl">
-              <img 
-                src={product.images[0]} 
+              <img
+                src={product.images?.[0] || "/fallback-image.jpg"}
                 alt={product.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform"
               />
             </div>
-            
+
             <div className="mt-4 space-y-1">
               <h3 className="text-sm font-semibold text-gray-900 truncate">
                 {product.name}
               </h3>
               <h3 className="mt text-xs sm:text-md text-gray-500 truncate overflow-hidden">
-                  {product.description}
-                </h3>
+                {product.description}
+              </h3>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-gray-900">
-                ₹{product.price.toLocaleString("en-IN")}
+                  ₹{product.price.toLocaleString("en-IN")}
                 </span>
                 <span className="text-xs font-medium text-green-600">
                   Free Platform Fee
