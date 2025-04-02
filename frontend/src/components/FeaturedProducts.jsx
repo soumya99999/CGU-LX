@@ -7,6 +7,11 @@ import { MessageSquare, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast"; 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 
 
@@ -240,6 +245,33 @@ const Buy = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  // const [products, setProducts] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [selectedProduct, setSelectedProduct] = useState(null);
+  const [hoveredProduct, setHoveredProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  const [filters, setFilters] = useState({
+    locationType: "",
+    condition: "",
+    category: "",
+    priceRange: "",
+  });
+  const handleProductClick = async (product) => {
+    setSelectedProduct(product);
+  
+    try {
+      await fetch(`${API_BASE_URL}/api/products/${product._id}/click`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error updating click count:", error);
+    }
+  };
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -301,15 +333,66 @@ const Buy = () => {
             className="group bg-white p-3 rounded-2xl border border-gray-200 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
             onClick={() => setSelectedProduct(product)}
           >
-            <div className="aspect-square overflow-hidden rounded-xl">
+            {/* <div className="aspect-square overflow-hidden rounded-xl">
               <img
                 src={product.images?.[0] || "/fallback-image.jpg"}
                 alt={product.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform"
               />
-            </div>
+            </div> */}
 
-            <div className="mt-4 space-y-1">
+<motion.div
+                key={product._id}
+                whileHover={{ scale: 1.02 }}
+                className="bg-white p-2 sm:p-4 rounded-2xl border cursor-pointer"
+                onClick={() => handleProductClick(product)}
+              >
+                <div
+                  className="w-full h-40 sm:h-52 rounded-xl overflow-hidden relative"
+                  onMouseEnter={() => setHoveredProduct(product._id)}
+                  onMouseLeave={() => setHoveredProduct(null)}
+                >
+                  {hoveredProduct === product._id ? (
+                    <Swiper
+                      modules={[Autoplay, Pagination]}
+                      pagination={{ clickable: true }}
+                      autoplay={{ delay: 1000 }}
+                      loop
+                      className="w-full h-40 sm:h-52"
+                    >
+                      {product.images.map((image, index) => (
+                        <SwiperSlide key={index}>
+                          <img
+                            src={image}
+                            alt={`${product.name} ${index}`}
+                            className="w-full h-40 sm:h-52 object-cover rounded-xl"
+                          />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  ) : (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-40 sm:h-52 object-cover rounded-xl"
+                    />
+                  )}
+                </div>
+                <h3 className="mt-1 sm:mt-4 text-md sm:text-md font-bold text-black">{product.name}</h3>
+                <h3 className="mt text-xs sm:text-md text-gray-500 truncate overflow-hidden">
+                  {product.description}
+                </h3>
+                {/* <h3 className="mt-1 text-xs sm:text-sm font-medium text-gray-400">{product.address}</h3> */}
+                <span className="text-lg sm:text-xl font-bold text-gray-700">₹{product.price.toLocaleString("en-IN")}
+                </span>
+                <div>
+                  <span className="text-xs font-bold text-green-700">
+                    ₹0 platform fee (EarlyBirdOffer)
+                  </span>
+                </div>
+              </motion.div>
+
+            {/* <div className="mt-4 space-y-1">
               <h3 className="text-sm font-semibold text-gray-900 truncate">
                 {product.name}
               </h3>
@@ -324,7 +407,7 @@ const Buy = () => {
                   Free Platform Fee
                 </span>
               </div>
-            </div>
+            </div> */}
           </motion.div>
         ))}
       </div>
