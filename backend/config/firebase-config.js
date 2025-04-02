@@ -1,6 +1,6 @@
 // ⚠️ use the below comented code only if you are using on local
 import admin from "firebase-admin"; // <-- Fix: Import as default
-import firebaseAdminConfig from './firebaseAdminConfig.json' assert { type: 'json' };
+import firebaseAdminConfig from './firebaseAdminConfig.json' with { type: 'json' };
 
 const serviceAccount = firebaseAdminConfig;
 

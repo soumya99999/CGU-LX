@@ -7,6 +7,12 @@ import { MessageSquare, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast"; 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { FaWhatsapp } from "react-icons/fa";
 
 
 
@@ -59,7 +65,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
     if (user._id && mainProduct.seller._id) {
       if (user._id === mainProduct.seller._id) {
         // If the user is the seller, do not allow WhatsApp interaction
-        toast.error("You cannot contact yourself.");
+        toast.error("This is your product.");
         return;
       }
     }
@@ -108,7 +114,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
           exit={{ opacity: 0, scale: 0.98, y: 20 }}
           transition={{ duration: 0.35, ease: "anticipate" }}
         >
-          <DialogContent className="w-full max-w-[95vw] md:max-w-[850px] h-[90vh] sm:h-[80vh] border border-gray-200 rounded-2xl p-4 sm:p-6 overflow-hidden bg-white mt-16">
+          <DialogContent className="w-full max-w-[95vw] md:max-w-[850px] h-[90vh] sm:h-[80vh] border border-gray-200 rounded-2xl p-4 sm:p-6 overflow-hidden bg-white mt-16 ">
 
 
             <button 
@@ -203,7 +209,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 mb-10">
                   {/* <Button
                     className="w-full bg-green-100 hover:bg-green-200 text-green-800 h-12 rounded-lg"
                     onClick={() => addToCart(mainProduct)}
@@ -212,10 +218,10 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                   </Button> */}
                   
                   <Button
-            className="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 h-12 rounded-lg flex items-center gap-2"
+            className="w-full bg-green-100 hover:bg-green-200 text-green-800 h-12 rounded-lg flex items-center gap-2"
             onClick={handleWhatsAppClick}
           >
-            <MessageSquare className="w-5 h-5" />
+            <FaWhatsapp className="h-5 sm:h-6 w-5 sm:w-6" />
             {user?._id && mainProduct.seller?._id && user._id === mainProduct.seller._id
               ? "You can't chat with yourself"
               : "Chat via WhatsApp"}
@@ -239,6 +245,8 @@ const Buy = () => {
   const [error, setError] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
+  const [hoveredProduct, setHoveredProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
@@ -281,6 +289,20 @@ const Buy = () => {
       </div>
     );
   }
+  const handleProductClick = async (product) => {
+    setSelectedProduct(product);
+  
+    try {
+      await fetch(`${API_BASE_URL}/api/products/${product._id}/click`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error updating click count:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-7xl mx-auto">
@@ -295,37 +317,56 @@ const Buy = () => {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
         {products.map((product) => (
-          <motion.div
-            key={product._id}
-            whileHover={{ y: -4 }}
-            className="group bg-white p-3 rounded-2xl border border-gray-200 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
-            onClick={() => setSelectedProduct(product)}
-          >
-            <div className="aspect-square overflow-hidden rounded-xl">
-              <img
-                src={product.images?.[0] || "/fallback-image.jpg"}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-              />
-            </div>
-
-            <div className="mt-4 space-y-1">
-              <h3 className="text-sm font-semibold text-gray-900 truncate">
-                {product.name}
-              </h3>
+              <motion.div
+              key={product._id}
+              whileHover={{ scale: 1.02 }}
+              className="bg-white p-2 sm:p-4 rounded-2xl border cursor-pointer"
+              onClick={() => handleProductClick(product)}
+            >
+              <div
+                className="w-full h-40 sm:h-52 rounded-xl overflow-hidden relative"
+                onMouseEnter={() => setHoveredProduct(product._id)}
+                onMouseLeave={() => setHoveredProduct(null)}
+              >
+                {hoveredProduct === product._id ? (
+                  <Swiper
+                    modules={[Autoplay, Pagination]}
+                    pagination={{ clickable: true }}
+                    autoplay={{ delay: 1000 }}
+                    loop
+                    className="w-full h-40 sm:h-52"
+                  >
+                    {product.images.map((image, index) => (
+                      <SwiperSlide key={index}>
+                        <img
+                          src={image}
+                          alt={`${product.name} ${index}`}
+                          className="w-full h-40 sm:h-52 object-cover rounded-xl"
+                        />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                ) : (
+                  <img
+                    src={product.images[0]}
+                    alt={product.name}
+                    className="w-full h-40 sm:h-52 object-cover rounded-xl"
+                  />
+                )}
+              </div>
+              <h3 className="mt-1 sm:mt-4 text-md sm:text-md font-bold text-black">{product.name}</h3>
               <h3 className="mt text-xs sm:text-md text-gray-500 truncate overflow-hidden">
                 {product.description}
               </h3>
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-gray-900">
-                  ₹{product.price.toLocaleString("en-IN")}
-                </span>
-                <span className="text-xs font-medium text-green-600">
-                  Free Platform Fee
+              {/* <h3 className="mt-1 text-xs sm:text-sm font-medium text-gray-400">{product.address}</h3> */}
+              <span className="text-lg sm:text-xl font-bold text-gray-700">₹{product.price.toLocaleString("en-IN")}
+              </span>
+              <div>
+                <span className="text-xs font-bold text-green-700">
+                  ₹0 platform fee (EarlyBirdOffer)
                 </span>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
         ))}
       </div>
 
