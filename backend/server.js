@@ -37,7 +37,7 @@ app.use("/api/products", productRoutes);
 app.post("/api/ai/generate-description", async (req, res) => {
   const { title, features } = req.body;
 
-  // Validate input
+  // Validate input.
   if (!title || !features || typeof features !== "object" || features.length === 0) {
     return res.status(400).json({ error: "Title and features are required. Features should be an array." });
   }
