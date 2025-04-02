@@ -70,7 +70,7 @@ const EditProduct = () => {
         if (data.success) {
           setProduct(data.product);
           setImagePreviews(data.product.images.map(img => img.url || img));
-          showSuccess("Product loaded successfully");
+          // showSuccess("Product loaded successfully");
         } else {
           showError(data.message || "Failed to load product");
         }
