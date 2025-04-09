@@ -94,7 +94,7 @@ const Carousel = () => {
                     New Collection 2024
                   </h2> */}
                   <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90 animate-fade-in-up delay-100">
-                    Hello Beta Testers!
+                    Welcome to CGUMarketplace!
                   </p>
                 </div>
 
