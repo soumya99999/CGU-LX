@@ -23,7 +23,9 @@ app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
 
 const allowedOrigins = [
   "https://cgumarketplace.com",
-  "https://www.cgumarketplace.com"
+  "https://www.cgumarketplace.com",
+  "http://localhost:3000",
+
 ];
 
 app.use(

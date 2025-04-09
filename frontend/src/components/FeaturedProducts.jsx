@@ -218,7 +218,7 @@ const ProductDialog = ({ products, initialProduct, onClose }) => {
                   </Button> */}
                   
                   <Button
-            className="w-full bg-green-100 hover:bg-green-200 text-green-800 h-12 rounded-lg flex items-center gap-2"
+            className="w-full bg-green-500 text-white text-sm sm:text-lg flex items-center justify-center gap-2 py-3 sm:py-4 rounded-xl shadow-lg hover:scale-105 hover:bg-green-600 transition-transform duration-200"
             onClick={handleWhatsAppClick}
           >
             <FaWhatsapp className="h-5 sm:h-6 w-5 sm:w-6" />
