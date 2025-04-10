@@ -5,6 +5,8 @@ import Buy from "./Buy";
 import FeaturedProducts from "../components/FeaturedProducts.jsx"; // Import FeaturedProducts
 import About from "../components/About";
 import Terms from "../components/terms";
+import Register from "./Register";
+import Sell from "./Sell";
 
 
 function Home() {
@@ -19,8 +21,8 @@ function Home() {
             </section>
             {/* Featured Products Section */}
             <FeaturedProducts /> {/* Now it's a separate component */}
-
-            {/* <Buy /> */}
+            <Register />
+            <Buy />
         </div>
     );
 }

@@ -184,15 +184,15 @@ const itemVariants = {
   </motion.div>
 ) : (
   <motion.div
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
+    whileHover={{ scale: 0.95 }}
+    whileTap={{ scale: 1.05 }}
   >
     <button
-      onClick={() => navigate("/login")}
+      onClick={() => navigate("/Register")}
       className="px-5 py-2.5 bg-black text-white font-semibold rounded-lg  hover:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       aria-label="Sign in"
     >
-      Login
+      Sign up
     </button>
   </motion.div>
 )}
