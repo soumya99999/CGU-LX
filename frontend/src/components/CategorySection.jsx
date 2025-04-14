@@ -1,37 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, DollarSign, HelpCircle, IndianRupee } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
-
-const categories = [
-  {
-    id: "buy",
-    title: "BUY",
-    description: "Discover unique items from your campus community",
-    icon: ShoppingCart,
-    color: "from-pink-500/20 to-pink-700/30",
-    href: "/buy",
-    image: "/2.png",
-  },
-  {
-    id: "sell",
-    title: "SELL",
-    description: "Turn your pre-loved items into campus cash",
-    icon: IndianRupee,
-    color: "from-blue-500/20 to-blue-700/30",
-    href: "/sell",
-    image: "/4.png",
-  },
-  {
-    id: "request",
-    title: "REQUEST",
-    description: "Seek what you need, find campus solutions",
-    icon: HelpCircle,
-    color: "from-purple-500/20 to-purple-700/30",
-    comingSoon: true,
-    image: "/6.png",
-  },
-];
+import { categories } from "../constants/category"; // Adjust the import path as necessary
+import '../custom-css/Category.css';
 
 export default function CategorySection() {
   const navigate = useNavigate();
@@ -105,19 +76,6 @@ export default function CategorySection() {
           </motion.div>
         ))}
       </div>
-
-      <style jsx global>{`
-        .bg-noise {
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        @media (max-width: 640px) {
-          .aspect-square {
-            aspect-ratio: 1/1;
-            height: auto;
-          }
-        }
-      `}</style>
     </section>
   );
 }
