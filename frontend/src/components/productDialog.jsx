@@ -149,7 +149,7 @@ export const ProductDialog = ({ initialProduct, onClose }) => {
                                                 <img
                                                     src={image}
                                                     alt=""
-                                                    className="w-full h-full object-cover"
+                                                    className="w-full h-full object-contain"
                                                 />
                                             </motion.button>
                                         ))}
@@ -177,7 +177,7 @@ export const ProductDialog = ({ initialProduct, onClose }) => {
                                         key={currentImageIndex}
                                         src={mainProduct.images[currentImageIndex]}
                                         alt={mainProduct.name}
-                                        className="w-full h-full object-contain sm:object-cover rounded-xl"
+                                        className="w-full h-full object-contain sm:object-contain rounded-xl"
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.3 }}

@@ -33,7 +33,7 @@ const FeaturedProducts = () => {
         if (!res.ok) throw new Error("Failed to fetch products");
         
         const data = await res.json();
-        const shuffledProducts = data.sort(() => 0.5 - Math.random()).slice(0, 12);
+        const shuffledProducts = data.sort(() => 0.5 - Math.random()).slice(0, 8);
         setProducts(shuffledProducts);
       } catch (err) {
         setError(err.message);
@@ -82,7 +82,7 @@ const FeaturedProducts = () => {
           Featured Products
         </h2>
         <span className="px-4 py-2 text-sm sm:text-base font-medium bg-blue-100 text-blue-800 rounded-full">
-          New Arrivals
+        Top Picks
         </span>
       </div>
 
@@ -141,14 +141,6 @@ const FeaturedProducts = () => {
         ))}
       </div>
 
-      <div className="flex justify-center mt-8 sm:mt-12">
-        <Button
-          className="px-8 py-4 text-base font-medium bg-gray-900 hover:bg-gray-800 text-white rounded-lg shadow-sm"
-          onClick={() => navigate("/buy")}
-        >
-          View All Products
-        </Button>
-      </div>
 
       {selectedProduct && (
         <ProductDialog
