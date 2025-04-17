@@ -8,7 +8,15 @@ const productSchema = new mongoose.Schema({
   address: { type: String, required: true }, // Address field added
   category: { 
     type: String, 
-    enum: ["Study Essentials", "Room & Living", "Tech & Accessories", "Health & Fitness"], 
+    enum: [
+      "Study Essentials",
+      "Room & Living",
+      "Tech & Accessories",
+      "Health & Fitness",
+      "Mobility & Transport",
+      "Fashion & Lifestyle"
+    ],
+    
     required: true 
   }, // Category filter
   condition: { 

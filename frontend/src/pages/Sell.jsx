@@ -219,9 +219,17 @@ const Sell = () => {
                   className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select Category</option>
-                  {["Study Essentials", "Room & Living", "Tech & Accessories", "Health & Fitness"].map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
+                  {[
+                      "Study Essentials",
+                      "Room & Living",
+                      "Tech & Accessories",
+                      "Health & Fitness",
+                      "Mobility & Transport",
+                      "Fashion & Lifestyle"
+                    ].map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+
                 </select>
               </div>
 
