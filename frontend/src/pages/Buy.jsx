@@ -51,7 +51,10 @@ const Buy = () => {
         if (data.products.length === 0) {
           console.warn("No products found");
         }
-        setProducts(data.products);
+        // Shuffle function
+        const shuffled = [...data.products].sort(() => 0.5 - Math.random());
+        setProducts(shuffled);
+
       } else {
         setProducts([]);
         console.error("Error:", data.message);
