@@ -102,7 +102,7 @@ const Buy = () => {
           <div className="w-10 h-10 border-4 border-t-transparent border-green-500 rounded-full animate-spin" />
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
           {products.length > 0 ? (
             products.map((product) => (
               <motion.div
