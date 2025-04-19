@@ -27,7 +27,7 @@ const Carousel = () => {
   const redirectTo = user ? "/buy" : "/login";
 
   return (
-    <div className="relative w-[100vw] px-4 sm:px-6 lg:px-8 max-w-screen-2xl mx-auto my-4 sm:my-6 lg:my-8 group rounded-xl">
+    <div className="relative w-[100vw] px-4 sm:px-6 lg:px-8 max-w-screen-2xl mx-auto mt-4 sm:my-6 lg:my-8 group rounded-xl">
       <Link
         to={redirectTo}
         className="block hover:scale-[1.005] transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] rounded-xl"
@@ -95,7 +95,7 @@ const Carousel = () => {
                     New Collection 2024
                   </h2> */}
                   <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90 animate-fade-in-up delay-100">
-                    Welcome to CGUMarketplace!
+                   
                   </p>
                 </div>
 

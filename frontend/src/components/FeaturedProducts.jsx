@@ -77,13 +77,19 @@ const FeaturedProducts = () => {
 
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-8 sm:mb-10">
-        <h2 className="text-4xl sm:text-4xl font-semibold text-gray-900">
-          Featured Products
-        </h2>
-        <span className="px-4 py-2 text-sm sm:text-base font-medium bg-blue-100 text-blue-800 rounded-full">
-        Top Picks
-        </span>
+      <div className="flex items-center justify-between mb-4 sm:mb-4">
+      <motion.h2
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      // Smaller base text size, scales up
+      className="text-md sm:text-4xl lg:text-5xl font-bold text-center lg:mt-8 mb-0 sm:mb-0 lg:mb-0 bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent"
+    >
+      Featured Products
+    </motion.h2>
+    <span className="px-1.5 py-0.5 text-xs sm:px-2 sm:py-1 sm:text-sm md:px-3 lg:mt-8 md:text-base lg:px-4 lg:text-lg font-medium bg-blue-100 text-blue-800 rounded-full inline-block">
+  Top Picks
+</span>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
