@@ -132,14 +132,25 @@ const LatestProducts = () => {
               )}
             </div>
 
-            <h3 className="mt-3 text-lg font-bold text-black">{product.name}</h3>
-            <p className="mt-1 text-sm text-gray-500 truncate">{product.description}</p>
-            <p className="mt-2 text-lg font-bold text-gray-700">
-              ₹{product.price.toLocaleString("en-IN")}
-            </p>
-            <p className="text-xs font-semibold text-green-700">
-              ₹0 platform fee <span className="ml-1">(EarlyBirdOffer)</span>
-            </p>
+            <h3 className="mt-1 sm:mt-4 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-black truncate whitespace-nowrap overflow-hidden">
+                {product.name}
+              </h3>
+
+
+              <h3 className="mt text-xs sm:text-md text-gray-500 truncate whitespace-nowrap overflow-hidden">
+                {product.description}
+              </h3>
+
+                            {/* <h3 className="mt-1 text-xs sm:text-sm font-medium text-gray-400">{product.address}</h3> */}
+                            <span className="text-base sm:text-xl md:text-xl lg:text-2xl font-bold text-gray-700">
+                ₹{product.price.toLocaleString("en-IN")}
+              </span>
+
+                            <div>
+                            <span className="text-xs sm:text-sm font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-md inline-block">
+                ₹0 platform fee <span className="text-[10px] sm:text-xs font-normal">EarlyBirdOffer</span>
+              </span>
+            </div>
           </motion.div>
         ))}
       </div>
