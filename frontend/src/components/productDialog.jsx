@@ -229,7 +229,7 @@ export const ProductDialog = ({ initialProduct, onClose }) => {
                                             mainProduct.seller?._id &&
                                             user._id === mainProduct.seller._id
                                             ? "You can't chat with yourself"
-                                            : "Chat via WhatsApp"}
+                                            : "Let’s Chat & Seal the Deal 💬"}
                                     </Button>
                                 </div>
                             </div>
