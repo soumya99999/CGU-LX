@@ -10,23 +10,24 @@ function Home() {
             
             <div className="w-full overflow-hidden bg-yellow-50 border-y-2 border-yellow-400 py-3 mb-6 relative">
                 <div className="sr-only">
-                    Notice: We're improving our image system - some images may not appear temporarily. We're working hard to fix this!
+                    Notice: We're improving our image system - some images may not appear temporarily. We're working to fix this!
                 </div>
                 <div 
                     className="whitespace-nowrap will-change-transform"
                     aria-hidden="true"
                     style={{
-                        animation: 'marquee 20s linear infinite',
+                        animation: 'marquee 5s linear infinite',
                     }}
                 >
                     <span className="mx-4 text-yellow-800 font-bold inline-block">⚠️ Notice:</span>
                     <span className="text-yellow-700 inline-block">
-                        We're improving our image system - some images may not appear temporarily. We're working hard to fix this!
+                        We're improving our image system - some images may not appear temporarily. We're working to fix this!
                     </span>
                     <span className="mx-4 text-yellow-800 font-bold inline-block">⚠️ Notice:</span>
                     <span className="text-yellow-700 inline-block">
-                        We're improving our image system - some images may not appear temporarily. We're working hard to fix this!
+                        We're improving our image system - some images may not appear temporarily. We're working to fix this!
                     </span>
+                    
                 </div>
             </div>
 
