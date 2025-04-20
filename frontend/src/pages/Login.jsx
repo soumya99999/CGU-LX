@@ -52,12 +52,13 @@ const Login = () => {
           that you didn't bother to read!
         </p>
 
-        <p className="mt-6 text-sm sm:text-lg">
+        <p className="mt-6 text-sm sm:text-md">
           Don't have an account?{" "}
-          <Link to="/register" className="text-blue-500 hover:text-blue-700">
-            Register now!
-          </Link>
+
         </p>
+        <Link to="/register" className="text-blue-500 hover:text-blue-700 text-base sm:text-xl font-medium underline">
+            Create Your Account!
+          </Link>
       </div>
     </div>
   );

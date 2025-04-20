@@ -19,15 +19,45 @@ app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
 
 
 
+
+
+const allowedOrigins = [
+  "https://cgumarketplace.com",
+  "https://www.cgumarketplace.com",
+  "http://localhost:3000",
+
+];
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // ✅ Correct origin
-    // origin: "https://cgumarketplace.vercel.app",
-    credentials: true, // ✅ If using cookies or sessions
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ""))) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, 
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
+
+
+
+
+
+
+
+// app.use(
+//   cors({
+//     // origin: "http://localhost:3000", // ✅ Correct origin
+//     origin: "https://www.cgumarketplace.com/",
+//     credentials: true, // ✅ If using cookies or sessions
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 
 
 app.use("/api/auth", authRoutes);

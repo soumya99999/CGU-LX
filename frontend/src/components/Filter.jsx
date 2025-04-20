@@ -26,7 +26,10 @@ const Filter = ({ onFilterChange }) => {
     { label: "Room & Living", value: "Room & Living" },
     { label: "Tech & Accessories", value: "Tech & Accessories" },
     { label: "Health & Fitness", value: "Health & Fitness" },
+    { label: "Mobility & Transport", value: "Mobility & Transport" },
+    { label: "Fashion & Lifestyle", value: "Fashion & Lifestyle" },
   ];
+  
 
   const conditions = [
     { label: "All Conditions", value: "" },

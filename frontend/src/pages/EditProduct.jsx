@@ -324,6 +324,8 @@ formData.append("existingImages", JSON.stringify(existingImages));
                     <option value="Room & Living">Room & Living</option>
                     <option value="Tech & Accessories">Tech & Accessories</option>
                     <option value="Health & Fitness">Health & Fitness</option>
+                    <option value="Mobility & Transport">Mobility & Transport</option>
+                    <option value="Fashion & Lifestyle">Fashion & Lifestyle</option>
                   </select>
                 </div>
 

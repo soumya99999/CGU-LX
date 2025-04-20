@@ -7,9 +7,10 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import "../custom-css/Carousel.css";
 
 const desktopImages = ["/temp01.png", "/temmp02.png"];
-const mobileImages = ["/mobile01.jpg", "/mobile02.jpg"];
+const mobileImages = ["/mobile03.png", "/mobile04.png", "/mobile01.jpg", "/mobile02.jpg"];
 
 const Carousel = () => {
   const { user } = useAuth();
@@ -26,7 +27,7 @@ const Carousel = () => {
   const redirectTo = user ? "/buy" : "/login";
 
   return (
-    <div className="relative w-[100vw] px-4 sm:px-6 lg:px-8 max-w-screen-2xl mx-auto my-4 sm:my-6 lg:my-8 group rounded-xl">
+    <div className="relative w-[100vw] px-4 sm:px-6 lg:px-8 max-w-screen-2xl mx-auto mt-4 sm:my-6 lg:my-8 group rounded-xl">
       <Link
         to={redirectTo}
         className="block hover:scale-[1.005] transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] rounded-xl"
@@ -94,7 +95,7 @@ const Carousel = () => {
                     New Collection 2024
                   </h2> */}
                   <p className="text-xs sm:text-sm md:text-base lg:text-lg opacity-90 animate-fade-in-up delay-100">
-                    Hello Beta Testers!
+                   
                   </p>
                 </div>
 
@@ -115,68 +116,6 @@ const Carousel = () => {
           </div>
         </Swiper>
       </Link>
-
-      <style jsx global>{`
-        .swiper-pagination-bullet-custom {
-          width: 12px;
-          height: 12px;
-          background: rgba(255,255,255,0.6);
-          opacity: 1;
-          margin: 0 8px !important;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          transform-origin: center center;
-          backdrop-filter: blur(4px);
-          border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .swiper-pagination-bullet-custom:hover {
-          transform: scale(1.4);
-          background: rgba(255,255,255,0.9) !important;
-        }
-
-        .swiper-pagination-bullet-active {
-          background: #fff !important;
-          width: 40px;
-          border-radius: 8px;
-          box-shadow: 0 4px 16px rgba(255,255,255,0.3);
-        }
-
-        @media (min-width: 640px) {
-          .swiper-pagination-bullet-custom {
-            width: 14px;
-            height: 14px;
-          }
-          .swiper-pagination-bullet-active {
-            width: 48px;
-          }
-        }
-
-        .carousel-container {
-          transition: opacity 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-          0% { transform: scale(1.05); opacity: 0; filter: blur(4px); }
-          100% { transform: scale(1); opacity: 1; filter: blur(0); }
-        }
-
-        .animate-fade-in-up {
-          animation: fadeInUp 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-          opacity: 0;
-          transform: translateY(20px);
-        }
-
-        .delay-100 {
-          animation-delay: 100ms;
-        }
-
-        @keyframes fadeInUp {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 };
