@@ -8,7 +8,6 @@ import "swiper/css/pagination";
 import Filter from "../components/Filter";
 import AllProducts from "../components/AllProducts";
 
-
 const Buy = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,28 +46,27 @@ const Buy = () => {
       const data = await response.json();
       console.log("Fetched Products:", data);
 
-      if (data.success) {
-        if (data.products.length === 0) {
+      if (Array.isArray(data)) {
+        if (data.length === 0) {
           console.warn("No products found");
         }
-        // Shuffle function
-        const shuffled = [...data.products].sort(() => 0.5 - Math.random());
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
         setProducts(shuffled);
-
       } else {
+        console.error("Unexpected response format:", data);
         setProducts([]);
-        console.error("Error:", data.message);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   };
-  
+
   const handleProductClick = async (product) => {
     setSelectedProduct(product);
-  
+
     try {
       await fetch(`${API_BASE_URL}/api/products/${product._id}/click`, {
         method: "POST",
@@ -80,23 +78,23 @@ const Buy = () => {
       console.error("Error updating click count:", error);
     }
   };
-  
-  
 
   const handleFilterChange = (newFilters) => {
     console.log("Filters received from Filter component:", newFilters);
     setFilters(newFilters);
   };
 
-  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % selectedProduct.images.length);
-  const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length);
+  const nextImage = () =>
+    setCurrentImageIndex((prev) => (prev + 1) % selectedProduct.images.length);
+  const prevImage = () =>
+    setCurrentImageIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length);
 
   return (
     <div className="min-h-screen p-4 sm:p-6 bg-gradient-to-b from-white via-gray-50 to-gray-100">
       <div className="mb-6">
         <Filter onFilterChange={handleFilterChange} />
       </div>
-  
+
       {loading ? (
         <div className="flex items-center justify-center h-[60vh]">
           <div className="w-10 h-10 border-4 border-t-transparent border-green-500 rounded-full animate-spin" />
@@ -110,7 +108,11 @@ const Buy = () => {
                 whileHover={{ scale: 1.03 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 className="bg-white p-3 sm:p-4 rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-                onClick={() => handleProductClick(product)}
+                onClick={() => !product.isSold && handleProductClick(product)}
+                style={{
+                  opacity: product.isSold ? 0.6 : 1,
+                  pointerEvents: product.isSold ? "none" : "auto",
+                }}
               >
                 <div
                   className="w-full h-40 sm:h-52 rounded-xl overflow-hidden relative"
@@ -143,7 +145,7 @@ const Buy = () => {
                     />
                   )}
                 </div>
-  
+
                 <div className="mt-3 sm:mt-4 space-y-1">
                   <h3 className="text-md sm:text-lg font-semibold text-gray-900 line-clamp-1">
                     {product.name}
@@ -154,9 +156,17 @@ const Buy = () => {
                   <span className="text-lg sm:text-xl font-bold text-green-700 block">
                     ₹{product.price.toLocaleString("en-IN")}
                   </span>
-                  <span className="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-md inline-block">
-                    ₹0 platform fee <span className="text-[10px]">EarlyBirdOffer</span>
-                  </span>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-md inline-block">
+                      ₹0 platform fee <span className="text-[10px]">EarlyBirdOffer</span>
+                    </span>
+
+                    {product.isSold && (
+                      <span className="text-xs font-semibold text-white bg-red-500 px-2 py-1 rounded-md inline-block">
+                        Sold
+                      </span>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))
@@ -169,19 +179,18 @@ const Buy = () => {
           )}
         </div>
       )}
-  
+
       {selectedProduct && (
-        <AllProducts 
-          product={{ ...selectedProduct, images: selectedProduct.images }} 
-          onClose={() => setSelectedProduct(null)} 
-          currentImageIndex={currentImageIndex} 
-          nextImage={nextImage} 
-          prevImage={prevImage} 
+        <AllProducts
+          product={{ ...selectedProduct, images: selectedProduct.images }}
+          onClose={() => setSelectedProduct(null)}
+          currentImageIndex={currentImageIndex}
+          nextImage={nextImage}
+          prevImage={prevImage}
         />
       )}
     </div>
   );
-  
 };
 
 export default Buy;

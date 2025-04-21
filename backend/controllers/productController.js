@@ -124,14 +124,28 @@ export const createProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
-    // Only fetch products that are not sold
-    const products = await Product.find({ isSold: false }).populate("seller", "phone");
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+
+    const products = await Product.find({
+      $or: [
+        { isSold: false },
+        {
+          isSold: true,
+          soldAt: { $gte: fiveDaysAgo },
+        },
+      ],
+    }).populate("seller", "phone");
+
     return res.status(200).json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
     return res.status(500).json({ message: "Error fetching products" });
   }
 };
+
+
+
 
 
 export const getUserProducts = async (req, res) => {
@@ -246,9 +260,18 @@ export const getFilteredProducts = async (req, res) => {
   try {
     const { locationType, condition, category, priceRange } = req.query;
 
-    // Build filter query dynamically
-    let filter = { isSold: false }; // Exclude sold products
+    // Build the base filter for showing unsold OR recently sold products (within 5 days)
+    const currentDate = new Date();
+    const fiveDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - 5));
 
+    let filter = {
+      $or: [
+        { isSold: false },
+        { isSold: true, soldAt: { $gte: fiveDaysAgo } },
+      ],
+    };
+
+    // Apply additional filters dynamically
     if (locationType) {
       filter.locationType = locationType;
     }
@@ -256,34 +279,28 @@ export const getFilteredProducts = async (req, res) => {
       filter.condition = condition;
     }
     if (category) {
-      filter.category = { $regex: `^${category}$`, $options: "i" }; // Exact case-insensitive match
+      filter.category = { $regex: `^${category}$`, $options: "i" };
     }
 
-    // Price range filtering
     if (priceRange) {
-      const [minPrice, maxPrice] = priceRange.split("-").map((val) =>
-        val.includes("+") ? Infinity : Number(val) // Convert "5000+" to Infinity
-      );
-    
+      const [minPrice, maxPriceRaw] = priceRange.split("-");
+      const maxPrice = maxPriceRaw?.includes("+") ? Infinity : Number(maxPriceRaw);
+      const min = Number(minPrice);
+
       filter.price = {};
-      if (!isNaN(minPrice)) filter.price.$gte = minPrice;
-      if (maxPrice !== Infinity) filter.price.$lte = maxPrice; // Only set upper limit if not "5000+"
+      if (!isNaN(min)) filter.price.$gte = min;
+      if (maxPrice !== Infinity) filter.price.$lte = maxPrice;
     }
 
-
-    // Fetch products along with the seller's phone number
     const products = await Product.find(filter).populate("seller", "phone");
 
-    if (products.length === 0) {
-      return res.status(200).json({ success: true, products: [], message: "No products found" });
-    }
-
-    return res.status(200).json({ success: true, products });
+    res.status(200).json(products);
   } catch (error) {
     console.error("Error filtering products:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({ message: "Server error while filtering products" });
   }
 };
+
 
 export const getProductById = async (req, res) => {
   try {
@@ -323,6 +340,14 @@ export const toggleSold = async (req, res) => {
 
     // Toggle the isSold status
     product.isSold = !product.isSold;
+
+    // Set or clear the soldAt timestamp accordingly
+    if (product.isSold) {
+      product.soldAt = new Date();
+    } else {
+      product.soldAt = null;
+    }
+
     await product.save();
 
     res.status(200).json({ 
@@ -335,6 +360,7 @@ export const toggleSold = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
 
 export const updateProductClickCount = async (req, res) => {
   try {

@@ -27,6 +27,7 @@ const productSchema = new mongoose.Schema({
   images: [{ type: String }], // Store Cloudinary image URLs
   seller: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to the seller
   isSold: { type: Boolean, default: false }, // Add isSold field
+  soldAt: { type: Date }, 
   clickCount: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
 });

@@ -1,4 +1,4 @@
-// // //⚠️ use the below comented code only if you are using on local
+// //⚠️ use the below comented code only if you are using on local
 // import admin from "firebase-admin"; // <-- Fix: Import as default
 // import firebaseAdminConfig from './firebaseAdminConfig.json' with { type: 'json' };
 
@@ -32,7 +32,3 @@ const firebaseAdmin = initializeApp({
 console.log("Firebase initialized successfully");
 
 export default firebaseAdmin;
-
-
-
-
