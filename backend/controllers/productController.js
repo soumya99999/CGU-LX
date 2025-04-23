@@ -262,7 +262,7 @@ export const getFilteredProducts = async (req, res) => {
 
     // Build the base filter for showing unsold OR recently sold products (within 5 days)
     const currentDate = new Date();
-    const fiveDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - 5));
+    const fiveDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - 30));
 
     let filter = {
       $or: [
