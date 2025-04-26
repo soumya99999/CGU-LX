@@ -2,54 +2,105 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="/frontend/public/favicon.ico" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="CGUMarketplace – The trusted campus marketplace for CGU students. Buy, sell, and trade used items easily and securely within your college community." />
-    <meta name="keywords" content="CGU Marketplace, CGUMarketplace, Bhubaneswar, buy and sell, student marketplace, college trading, CGU buy and sell, secure campus deals, second-hand items, CGU shopping" />
-    
 
-    
+    <title>CGU Marketplace: Buy & Sell Exclusively for CV Raman Global Students</title>
 
-    <link rel="apple-touch-icon" href="/frontend/public/favicon.ico" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+    <meta name="description" content="CGU Marketplace is the official platform for CV Raman Global University students to buy and sell items securely. Verified through college email ID. Join the CGU community marketplace today!" />
+    
+    <meta name="keywords" content="CGU Marketplace, CGUMarketplace, CV Raman Global University, CGU buy sell, student marketplace, secure campus deals, Bhubaneswar, college trading, second-hand items, CGU shopping, Buy and Sell CGU" />
+    
+    <meta name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    <link rel="canonical" href="https://cgumarketplace.com/" />
+
+    <!-- Open Graph (Facebook, LinkedIn, etc) -->
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CGU Marketplace: Buy & Sell Exclusively for CV Raman Global Students" />
+    <meta property="og:description" content="A trusted buying and selling platform for CGU students. Get verified with your college email and explore exclusive deals inside CV Raman Global University!" />
+    <meta property="og:url" content="https://cgumarketplace.com/" />
+    <meta property="og:site_name" content="CGU Marketplace" />
+    <meta property="og:image" content="%PUBLIC_URL%/assets/images/cgu-marketplace-banner.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CGU Marketplace: Buy & Sell Exclusively for CV Raman Global Students" />
+    <meta name="twitter:description" content="Connect with the CGU student community to buy and sell safely. Verified through official college email ID." />
+    <meta name="twitter:image" content="%PUBLIC_URL%/assets/images/cgu-marketplace-banner.png" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://cgumarketplace.com/#organization",
+          "name": "CGU Marketplace",
+          "url": "https://cgumarketplace.com",
+          "logo": {
+            "@type": "ImageObject",
+            "@id": "https://cgumarketplace.com/#logo",
+            "url": "https://cgumarketplace.com/assets/images/logo.png",
+            "width": "400",
+            "height": "100",
+            "caption": "CGU Marketplace"
+          },
+          "sameAs": []
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://cgumarketplace.com/#website",
+          "url": "https://cgumarketplace.com",
+          "name": "CGU Marketplace",
+          "publisher": {
+            "@id": "https://cgumarketplace.com/#organization"
+          },
+          "inLanguage": "en-US",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://cgumarketplace.com/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://cgumarketplace.com/#webpage",
+          "url": "https://cgumarketplace.com/",
+          "name": "CGU Marketplace: Buy & Sell Exclusively for CV Raman Global Students",
+          "isPartOf": {
+            "@id": "https://cgumarketplace.com/#website"
+          },
+          "about": {
+            "@id": "https://cgumarketplace.com/#organization"
+          },
+          "description": "Official marketplace for CV Raman Global University students. Verified members only. Buy and sell securely within the CGU community.",
+          "inLanguage": "en-US"
+        }
+      ]
+    }
+    </script>
+
+    <meta name="google-site-verification" content="YOUR-GOOGLE-VERIFICATION-CODE-HERE" />
+
+    <!-- PWA Manifest and Favicon -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>CGU Marketplace - Buy & Sell Easily</title>
-    <meta name="description" content="CGU Marketplace is the best platform for buying and selling products securely. Join now and start trading today!" />
-<meta name="keywords" content="CGU Marketplace, buy and sell, online marketplace, CGU shopping" />
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VTT700DPSY"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-VTT700DPSY');
-</script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VTT700DPSY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VTT700DPSY');
+    </script>
+
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>You need to enable JavaScript on your browser to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>
