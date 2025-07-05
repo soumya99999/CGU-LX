@@ -9,12 +9,13 @@ import Filter from "../components/Filter";
 import AllProducts from "../components/AllProducts";
 
 const Buy = () => {
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [hoveredProduct, setHoveredProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
   const [filters, setFilters] = useState({
     locationType: "",
     condition: "",
@@ -123,7 +124,7 @@ const Buy = () => {
                     <Swiper
                       modules={[Autoplay, Pagination]}
                       pagination={{ clickable: true }}
-                      autoplay={{ delay: 1500 }}
+                      autoplay={{ delay: 500 }}
                       loop
                       className="w-full h-full"
                     >
