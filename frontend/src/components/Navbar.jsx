@@ -1,7 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { CartContext } from "../contexts/CartContext";
 import { auth } from "../firebase/firebaseConfig";
 import { signOut } from "firebase/auth";
 import {
@@ -15,7 +14,6 @@ import { toast } from "react-toastify";
 
 const Navbar = () => {
   const { user } = useContext(AuthContext);
-  const { items } = useContext(CartContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,7 +21,6 @@ const Navbar = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { scrollY } = useScroll();
   const scaleX = useSpring(scrollY, { stiffness: 100, damping: 30 });
-  const cartControls = useAnimationControls();
 
   useEffect(() => {
     setMenuOpen(false);
@@ -35,14 +32,7 @@ const Navbar = () => {
     });
   }, [scrollY]);
 
-  useEffect(() => {
-    if (items.length > 0) {
-      cartControls.start({
-        scale: [1, 1.2, 1],
-        transition: { duration: 0.3 },
-      });
-    }
-  }, [items.length]);
+
 
   const handleLogout = async () => {
     try {

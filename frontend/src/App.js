@@ -2,6 +2,8 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import ReactGA from "react-ga4";
 import React, { useEffect } from "react";
+import ServerNoticeDialog from "./ui/ServerNoticeDialog";
+
 
 //import pages
 import Navbar from "./components/Navbar";
@@ -34,6 +36,7 @@ function App() {
   
   return (
     <div className="relative">
+      <ServerNoticeDialog className="mt-[100px]" />
       <div className={`app-content  pt-[57px] `}>
         <Navbar />
             <Routes>

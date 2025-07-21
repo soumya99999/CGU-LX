@@ -13,7 +13,7 @@ const Login = () => {
     try {
       const result = await signInWithGoogle();
       if (result) {
-        console.log("✅ User logged in successfully!");
+        console.log("User logged in successfully from login page!");
         navigate("/");
       } else {
         setError("Login failed. Please try again.");
