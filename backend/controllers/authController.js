@@ -17,12 +17,14 @@ export const googleLogin = async (req, res) => {
 
         const { email, name, picture } = decodedToken;
 
+
+
         // 🔍 Search for user by email
         let user = await User.findOne({ email });
 
         // ❌ If user is not found, return 307 to redirect to registration
         if (!user) {
-            return res.status(401).json({ success: false, message: "User not registered." });
+            return res.status(403).json({ success: false, message: "User not registered." });
         }
 
         // ✅ Return user data

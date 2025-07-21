@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
         if (!res.ok) {
           console.warn("❌ Backend returned an error:", data.message);
 
-          if (data.message.includes("User not registered")) {
+          if (data?.message.includes("User not registered")) {
             navigate("/register", {
               state: {
                 email: currentUser.email,
@@ -127,7 +127,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Invalid JSON response from backend.");
       }
 
-      if (data.success === false && data.message.includes("User not registered")) {
+      if (data?.success === false && typeof data.message === "string" && data.message.includes("User not registered"))
+{
         await Swal.fire({
           icon: "warning",
           title: "User Not Registered",
@@ -146,7 +147,8 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      if (data.message.includes("User already registered")) {
+      if (typeof data.message === "string" && data.message.includes("User already registered"))
+ {
         Swal.fire({
             icon: "info",
             title: "Already Registered",
